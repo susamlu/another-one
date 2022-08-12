@@ -1,4 +1,8 @@
+title: 编程什锦
+description:
+lang: zh
 remote_theme: rundocs/jekyll-rtd-theme
+
 # folders sort
 readme_index:
   with_frontmatter: true
