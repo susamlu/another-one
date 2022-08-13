@@ -1,5 +1,1 @@
-# 编程什锦
-
-## 慢查询优化实践
-
-- [团队慢查询优化实践]()
+# [编程什锦](https://susamlu.github.io/another-one)
