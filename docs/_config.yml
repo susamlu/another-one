@@ -3,6 +3,8 @@ description:
 lang: zh
 remote_theme: rundocs/jekyll-rtd-theme
 
+github_docs_folder: true
+
 # folders sort
 readme_index:
   with_frontmatter: true
