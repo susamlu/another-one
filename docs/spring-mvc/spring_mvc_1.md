@@ -38,7 +38,6 @@ public class HelloWorldController {
 
 ```java
 @SpringBootApplication
-@RestController
 public class Application {
 
     public static void main(String[] args) {
