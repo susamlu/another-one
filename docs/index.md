@@ -1,5 +1,5 @@
-# 技术琐话
+# 三穆的杂谈
 
-## 性能优化实践
+## Spring MVC
 
-[团队慢查询优化实践](./performance/团队慢查询优化实践.html)
+[从零搭建 Spring MVC 项目(1) —— HelloWorld](./spring-mvc/spring_mvc_1.html)
