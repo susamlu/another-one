@@ -1,4 +1,4 @@
-# 从零搭建 Spring MVC 项目(1) —— HelloWorld
+# 从零搭建 Spring MVC 项目 —— HelloWorld
 
 ## 1. 继承 Spring Boot 项目
 
@@ -54,4 +54,4 @@ public class Application {
 <img src="../images/spring_mvc_1_0.png" width="100%">
 
 [返回首页](https://susamlu.github.io/another-one)
-[获取源码](https://github.com/susamlu/micro-service)
+[获取源码](https://github.com/susamlu/spring-mvc)
