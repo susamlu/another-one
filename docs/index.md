@@ -2,4 +2,4 @@
 
 ## Spring MVC
 
-[从零搭建 Spring MVC 项目 —— HelloWorld](./spring-mvc/spring_mvc_1.html)
+[从零搭建 Spring MVC 项目 —— HelloWorld](./spring-mvc/spring_mvc_helloworld.html)
