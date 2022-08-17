@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
 
         Map<String, Object> errorMessageMap = CollectionUtils.newLinkedHashMap(2);
         errorMessageMap.put("code", HttpStatus.BAD_REQUEST.value());
-        errorMessageMap.put("message", String.join("; ", errorMessages));
+        errorMessageMap.put("message", errorMessages.stream().sorted().collect(Collectors.toList()));
         return ResponseEntity.badRequest().body(errorMessageMap);
     }
 
@@ -82,8 +82,11 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 
 ```json
 {
-  "code": 400,
-  "message": "age 最小不能小于0; name 不能为空"
+    "code": 400,
+    "message": [
+        "age 最小不能小于0",
+        "name 不能为空"
+    ]
 }
 ```
 
@@ -137,3 +140,5 @@ public class InvertAnnotationRequest {
 
 ## 其他内容
 
+[返回首页](https://susamlu.github.io/another-one)
+[获取源码](https://github.com/susamlu/spring-mvc)
