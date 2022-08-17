@@ -34,7 +34,7 @@ public class UserRequest {
 ### 3. 指定校验参数
 
 ```java
-public UserRequest createUser(@RequestBody @Validated UserRequest userRequest){
+public UserRequest createUser(@RequestBody @Validated UserRequest userRequest) {
     return userRequest;
 }
 ```
