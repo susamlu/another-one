@@ -108,18 +108,6 @@ public class InvertAnnotationRequest {
     @NotNull
     private Object notNullObject;
 
-    @NotNull
-    private String notNullString;
-
-    @NotNull
-    private Collection<Integer> notNullCollection;
-
-    @NotNull
-    private Map<String, String> notNullMap;
-
-    @NotNull
-    private int[] notNullArray;
-
     @NotEmpty
     private String notEmptyString;
 
