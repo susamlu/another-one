@@ -136,7 +136,46 @@ public class InvertAnnotationRequest {
 }
 ```
 
-## 其他内容
+### @Size 与 @Max、@Min
+
+| 注解 | 作用对象 | 含义 |
+| :--- | :--- | :--- |
+| @Size | 可以作用于 String、Collection、Map 和数组 | min 默认为 0 ，表示对象的最小长度；max 默认为 Integer.MAX_VALUE ，表示对象的最大长度 |
+| @Max | 可以作用于 BigDecimal、BigInteger，byte、short、int、long以及它们的包装类型 | 表示数字的最小值 |
+| @Min | 可以作用于 BigDecimal、BigInteger，byte、short、int、long以及它们的包装类型 | 表示数字的最大值 |
+
+示例代码：
+
+```java
+@Data
+public class RangeAnnotationRequest {
+
+    @Size(min = 1, max = 5)
+    private String limitedString;
+
+    @Size(min = 1, max = 5)
+    private Collection<Integer> limitedCollection;
+
+    @Size(min = 1, max = 5)
+    private Map<String, String> limitedMap;
+
+    @Size(min = 1, max = 5)
+    private int[] limitedArray;
+
+    @Min(1)
+    @Max(2)
+    private Integer limitedNumber;
+
+}
+```
+
+### @Pattern
+
+### message
+
+### @Valid 与 @Validated
+
+## 高阶内容
 
 [返回首页](https://susamlu.github.io/another-one)
 [获取源码](https://github.com/susamlu/spring-mvc)
