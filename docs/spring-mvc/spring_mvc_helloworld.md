@@ -20,58 +20,6 @@
 </dependency>
 ```
 
-<details><summary>完整的 pom 文件</summary>
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.2</version>
-        <relativePath/>
-    </parent>
-
-    <groupId>org.susamlu.springmvc</groupId>
-    <artifactId>spring-mvc-helloworld</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
-    <name>spring-mvc-helloworld</name>
-    <description>Demo project for Spring MVC</description>
-
-    <dependencies>
-        <!-- spring mvc -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- test -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-</project>
-```
-
-</details>
-
 ## 3. 编写 Controller 代码
 
 ```java
@@ -98,32 +46,6 @@ public class Application {
 
 }
 ```
-
-<details><summary>项目目录结构</summary>
-
-```
-.
-├── pom.xml
-└── src
-    ├── main
-    │   ├── java
-    │   │   └── org
-    │   │       └── susamlu
-    │   │           └── springmvc
-    │   │               ├── Application.java
-    │   │               └── controller
-    │   │                   └── HelloWorldController.java
-    │   └── resources
-    │       └── application.yml
-    └── test
-        ├── java
-        │   └── org
-        │       └── susamlu
-        │           └── springmvc
-        └── resources
-```
-
-</details>
 
 ## 5. 运行启动类
 
