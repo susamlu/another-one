@@ -51,7 +51,7 @@ public class Application {
 
 运行启动类，在浏览器中输入：`http://localhost:8080/hello?name=小穆` ，即可看到如下效果：
 
-<img src="../images/spring_mvc_helloworld_0.png" width="100%">
+<img src="../images/spring_mvc_helloworld_0.png" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-mvc)
