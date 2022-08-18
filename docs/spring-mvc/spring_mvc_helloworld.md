@@ -22,8 +22,6 @@
 
 <details><summary>完整的 pom 文件</summary>
 
-<p>
-
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -72,8 +70,6 @@
 </project>
 ```
 
-<p>
-
 </details>
 
 ## 3. 编写 Controller 代码
@@ -105,31 +101,27 @@ public class Application {
 
 <details><summary>项目目录结构</summary>
 
-<p>
-
-```text
+```
 .
 ├── pom.xml
 └── src
     ├── main
-    │   ├── java
-    │   │   └── org
-    │   │       └── susamlu
-    │   │           └── springmvc
-    │   │               ├── Application.java
-    │   │               └── controller
-    │   │                   └── HelloWorldController.java
-    │   └── resources
-    │       └── application.yml
+    │   ├── java
+    │   │   └── org
+    │   │       └── susamlu
+    │   │           └── springmvc
+    │   │               ├── Application.java
+    │   │               └── controller
+    │   │                   └── HelloWorldController.java
+    │   └── resources
+    │       └── application.yml
     └── test
         ├── java
-        │   └── org
-        │       └── susamlu
-        │           └── springmvc
+        │   └── org
+        │       └── susamlu
+        │           └── springmvc
         └── resources
 ```
-
-</p>
 
 </details>
 
