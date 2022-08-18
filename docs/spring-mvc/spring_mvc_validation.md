@@ -140,9 +140,9 @@ public class InvertAnnotationRequest {
 
 | 注解 | 作用对象 | 含义 |
 | :--- | :--- | :--- |
-| @Size | 可以作用于 String、Collection、Map 和数组 | min 默认为 0 ，表示对象的最小长度；max 默认为 Integer.MAX_VALUE ，表示对象的最大长度 |
-| @Max | 可以作用于 BigDecimal、BigInteger，byte、short、int、long以及它们的包装类型 | 表示数字的最小值 |
-| @Min | 可以作用于 BigDecimal、BigInteger，byte、short、int、long以及它们的包装类型 | 表示数字的最大值 |
+| @Size | 可以作用于 String、Collection、Map 和数组 | 包含两个变量：min 和 max，其中 min 的默认值为 0 ，表示对象的最小长度；max 的默认值为 Integer.MAX_VALUE ，表示对象的最大长度 |
+| @Min | 可以作用于 BigDecimal、BigInteger，byte、short、int、long 以及它们的包装类型 | 表示数字的最小值 |
+| @Max | 可以作用于 BigDecimal、BigInteger，byte、short、int、long 以及它们的包装类型 | 表示数字的最大值 |
 
 示例代码：
 
