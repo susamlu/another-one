@@ -18,7 +18,10 @@
 
 ### 2. 编写校验代码
 
+> @Data 为 lombok 的注解，在此不做详细说明。
+
 ```java
+@Data
 public class UserRequest {
 
     @NotBlank
@@ -34,14 +37,20 @@ public class UserRequest {
 ### 3. 指定校验参数
 
 ```java
-public UserRequest createUser(@RequestBody @Validated UserRequest userRequest) {
-    return userRequest;
+@RestController
+public class UserController {
+
+    @PostMapping("/api/users")
+    public UserRequest createUser(@RequestBody @Validated UserRequest userRequest) {
+        return userRequest;
+    }
+
 }
 ```
 
 ### 4. 捕捉全局异常
 
-> 这一步不是必须的，主要是为了能方便查看校验结果。
+> 这一步不是必须的，目的是为了能方便查看校验结果。
 
 ```java
 @ControllerAdvice
@@ -103,6 +112,7 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 示例代码：
 
 ```java
+@Data
 public class InvertAnnotationRequest {
 
     @NotNull
