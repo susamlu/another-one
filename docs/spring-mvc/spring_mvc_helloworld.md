@@ -3,7 +3,6 @@
 ## 1. 继承 Spring Boot 项目
 
 ```xml
-
 <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -15,7 +14,6 @@
 ## 2. 引入 Spring MVC 依赖
 
 ```xml
-
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-web</artifactId>
@@ -23,6 +21,8 @@
 ```
 
 <details><summary>完整的 pom 文件</summary>
+
+<p>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -72,12 +72,13 @@
 </project>
 ```
 
+<p>
+
 </details>
 
 ## 3. 编写 Controller 代码
 
 ```java
-
 @RestController
 public class HelloWorldController {
 
@@ -92,7 +93,6 @@ public class HelloWorldController {
 ## 4. 编写启动类
 
 ```java
-
 @SpringBootApplication
 public class Application {
 
@@ -104,6 +104,8 @@ public class Application {
 ```
 
 <details><summary>项目目录结构</summary>
+
+<p>
 
 ```text
 .
@@ -126,6 +128,8 @@ public class Application {
         │           └── springmvc
         └── resources
 ```
+
+</p>
 
 </details>
 
