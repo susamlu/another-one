@@ -53,5 +53,5 @@ public class Application {
 
 <img src="../images/spring_mvc_helloworld_0.png" width="100%">
 
-[返回首页](https://susamlu.github.io/another-one)
+[返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-mvc)
