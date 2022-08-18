@@ -171,11 +171,27 @@ public class RangeAnnotationRequest {
 
 ### @Pattern
 
-### message
+| 参数 | 含义 |
+| :--- | :--- |
+| regexp | 正则表达式 |
+| flags | 标识正则表达式的模式，包含：Pattern.Flag.UNIX_LINES、Pattern.Flag.CASE_INSENSITIVE、Pattern.Flag.COMMENTS、Pattern.Flag.MULTILINE、Pattern.Flag.DOTALL、Pattern.Flag.UNICODE_CASE、Pattern.Flag.CANON_EQ 共7种模式 |
+| message | 错误提示信息（该参数不是 @Pattern 特有，所有 Validation 注解都包含该参数） |
+
+示例代码：
+
+```java
+@Data
+public class PatternAnnotationRequest {
+
+    @Pattern(regexp = "^1[3456789]\\d{9}$", message = "手机号码格式不正确")
+    private String mobile;
+
+}
+```
 
 ### @Valid 与 @Validated
 
-## 高阶内容
+## 扩展内容
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-mvc)
