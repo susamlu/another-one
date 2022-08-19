@@ -210,7 +210,7 @@ public class UserController {
 
 #### 嵌套校验
 
-定义父对象：
+编写校验代码：
 
 ```java
 @Data
@@ -225,8 +225,6 @@ public class CompanyRequest {
 
 }
 ```
-
-定义子对象：
 
 ```java
 @Data
@@ -259,6 +257,55 @@ public class NestValidController {
 ```
 
 #### 分组校验
+
+定义分组：
+
+```java
+public interface CreateGroup {
+}
+```
+
+```java
+public interface UpdateGroup {
+}
+```
+
+编写校验代码：
+
+```java
+@Data
+public class OrganizationRequest {
+
+    @NotBlank(groups = CreateGroup.class)
+    @Null(groups = UpdateGroup.class)
+    private String orgCode;
+
+    @NotBlank
+    private String orgName;
+
+}
+```
+
+指定校验参数：
+
+```java
+@RestController
+public class GroupValidController {
+
+    @PostMapping("/api/organizations")
+    public OrganizationRequest createOrganization(
+            @RequestBody @Validated({CreateGroup.class, Default.class}) OrganizationRequest organizationRequest) {
+        return organizationRequest;
+    }
+
+    @PutMapping("/api/organizations")
+    public OrganizationRequest updateOrganization(
+            @RequestBody @Validated({UpdateGroup.class, Default.class}) OrganizationRequest organizationRequest) {
+        return organizationRequest;
+    }
+
+}
+```
 
 ## 扩展内容
 

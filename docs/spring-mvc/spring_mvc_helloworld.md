@@ -38,10 +38,10 @@ public class HelloWorldController {
 
 ```java
 @SpringBootApplication
-public class Application {
+public class HelloWorldApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(HelloWorldApplication.class, args);
     }
 
 }
