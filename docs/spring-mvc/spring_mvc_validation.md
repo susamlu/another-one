@@ -9,11 +9,6 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-validation</artifactId>
 </dependency>
-<dependency>
-    <groupId>javax.validation</groupId>
-    <artifactId>validation-api</artifactId>
-    <version>2.0.1.Final</version>
-</dependency>
 ```
 
 ### 2. 编写校验代码
@@ -114,7 +109,7 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 
 ```java
 @Data
-public class InvertAnnotationRequest {
+public class NotAnnotationRequest {
 
     @NotNull
     private Object notNullObject;
@@ -175,7 +170,7 @@ public class RangeAnnotationRequest {
 | 参数 | 含义 |
 | :--- | :--- |
 | regexp | 正则表达式 |
-| flags | 标识正则表达式的模式，包含：Pattern.Flag.UNIX_LINES、Pattern.Flag.CASE_INSENSITIVE、Pattern.Flag.COMMENTS、Pattern.Flag.MULTILINE、Pattern.Flag.DOTALL、Pattern.Flag.UNICODE_CASE、Pattern.Flag.CANON_EQ 共7种模式 |
+| flags | 标识正则表达式的模式，包含：<br/>Pattern.Flag.UNIX_LINES、<br/>Pattern.Flag.CASE_INSENSITIVE、<br/>Pattern.Flag.COMMENTS、<br/>Pattern.Flag.MULTILINE、<br/>Pattern.Flag.DOTALL、<br/>Pattern.Flag.UNICODE_CASE、<br/>Pattern.Flag.CANON_EQ<br/>共7种模式 |
 | message | 错误提示信息（该参数不是 @Pattern 特有，所有 Validation 注解都包含该参数） |
 
 示例代码：
@@ -191,6 +186,79 @@ public class PatternAnnotationRequest {
 ```
 
 ### @Valid 与 @Validated
+
+@Valid 和 @Validated 都可以用来定义需要校验的参数，但它们并不完全一样，它们的区别主要包含以下几个方面：
+
+- @Valid 是定义在 javax 包下的标准注解，@Validated 是 Spring 官方定义的注解。
+- @Valid 可以作用于方法、字段、构造函数、参数和运行时类型，@Validated 可作用于类型、方法和参数。
+- @Valid 可以用来定义嵌套校验，@Validated 无法单独完成嵌套校验的定义。
+- @Validated 支持分组校验，@Valid 不支持分组校验。
+
+#### 使用 @Valid 指定校验参数
+
+```java
+@RestController
+public class UserController {
+
+    @PostMapping("/api/users")
+    public UserRequest createUser(@RequestBody @Valid UserRequest userRequest) {
+        return userRequest;
+    }
+
+}
+```
+
+#### 嵌套校验
+
+定义父对象：
+
+```java
+@Data
+public class CompanyRequest {
+
+    @NotBlank
+    private String name;
+
+    @Valid
+    @NotNull
+    private AddressRequest address;
+
+}
+```
+
+定义子对象：
+
+```java
+@Data
+public class AddressRequest {
+
+    @NotBlank
+    private String country;
+
+    @NotBlank
+    private String province;
+
+    @NotBlank
+    private String city;
+
+}
+```
+
+指定校验参数：
+
+```java
+@RestController
+public class NestValidController {
+
+    @PostMapping("/api/companies")
+    public CompanyRequest createCompany(@RequestBody @Validated CompanyRequest companyRequest) {
+        return companyRequest;
+    }
+
+}
+```
+
+#### 分组校验
 
 ## 扩展内容
 
