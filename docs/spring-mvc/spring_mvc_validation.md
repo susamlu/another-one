@@ -59,15 +59,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException exception) {
-        List<FieldError> fieldErrors = exception.getFieldErrors();
-        List<String> errorMessages = new ArrayList<>(fieldErrors.size());
-        for (FieldError fieldError : fieldErrors) {
-            errorMessages.add(fieldError.getField() + " " + fieldError.getDefaultMessage());
-        }
+        List<String> errorMessages = exception.getFieldErrors()
+                .stream()
+                .map(fieldError -> String.format("%s %s", fieldError.getField(), fieldError.getDefaultMessage()))
+                .sorted()
+                .collect(Collectors.toList());
 
         Map<String, Object> errorMessageMap = CollectionUtils.newLinkedHashMap(2);
         errorMessageMap.put("code", HttpStatus.BAD_REQUEST.value());
-        errorMessageMap.put("message", errorMessages.stream().sorted().collect(Collectors.toList()));
+        errorMessageMap.put("message", errorMessages);
+
         return ResponseEntity.badRequest().body(errorMessageMap);
     }
 
@@ -136,7 +137,7 @@ public class InvertAnnotationRequest {
 }
 ```
 
-### @Size 与 @Max、@Min
+### @Size 与 @Min、@Max
 
 | 注解 | 作用对象 | 含义 |
 | :--- | :--- | :--- |
