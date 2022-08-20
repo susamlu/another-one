@@ -29,7 +29,7 @@ public class UserRequest {
 }
 ```
 
-### 3. 指定校验参数
+### 3. 声明校验参数
 
 ```java
 @RestController
@@ -56,7 +56,8 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException exception) {
         List<String> errorMessages = exception.getFieldErrors()
                 .stream()
-                .map(fieldError -> String.format("%s %s", fieldError.getField(), fieldError.getDefaultMessage()))
+                .map(fieldError -> String.format("%s %s", fieldError.getField(), 
+                        fieldError.getDefaultMessage()))
                 .sorted()
                 .collect(Collectors.toList());
 
@@ -95,7 +96,7 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 }
 ```
 
-## 进阶内容
+## 常用注解
 
 ### @NotNull、@NotEmpty 与 @NotBlank
 
@@ -171,7 +172,7 @@ public class RangeAnnotationRequest {
 | :--- | :--- |
 | regexp | 正则表达式 |
 | flags | 标识正则表达式的模式，包含：<br/>Pattern.Flag.UNIX_LINES、<br/>Pattern.Flag.CASE_INSENSITIVE、<br/>Pattern.Flag.COMMENTS、<br/>Pattern.Flag.MULTILINE、<br/>Pattern.Flag.DOTALL、<br/>Pattern.Flag.UNICODE_CASE、<br/>Pattern.Flag.CANON_EQ<br/>共7种模式 |
-| message | 错误提示信息（该参数不是 @Pattern 特有，所有 Validation 注解都包含该参数） |
+| message | 错误提示信息（message 不是 @Pattern 特有的，所有 Validation 注解都包含该参数） |
 
 示例代码：
 
@@ -187,14 +188,14 @@ public class PatternAnnotationRequest {
 
 ### @Valid 与 @Validated
 
-@Valid 和 @Validated 都可以用来定义需要校验的参数，但它们并不完全一样，它们的区别主要包含以下几个方面：
+@Valid 和 @Validated 都可以用来声明校验参数，但它们并不完全一样，它们的区别主要包含以下几个方面：
 
 - @Valid 是定义在 javax 包下的标准注解，@Validated 是 Spring 官方定义的注解。
-- @Valid 可以作用于方法、字段、构造函数、参数和运行时类型，@Validated 可作用于类型、方法和参数。
+- @Valid 可以作用于方法、字段、构造函数、参数和运行时使用的类型，@Validated 可作用于类型、方法和参数。
 - @Valid 可以用来定义嵌套校验，@Validated 无法单独完成嵌套校验的定义。
 - @Validated 支持分组校验，@Valid 不支持分组校验。
 
-#### 使用 @Valid 指定校验参数
+#### 使用 @Valid 声明校验参数
 
 ```java
 @RestController
@@ -242,7 +243,7 @@ public class AddressRequest {
 }
 ```
 
-指定校验参数：
+声明校验参数：
 
 ```java
 @RestController
@@ -261,12 +262,12 @@ public class NestValidController {
 定义分组：
 
 ```java
-public interface CreateGroup {
+public interface CreateGroup extends Default {
 }
 ```
 
 ```java
-public interface UpdateGroup {
+public interface UpdateGroup extends Default {
 }
 ```
 
@@ -286,7 +287,7 @@ public class OrganizationRequest {
 }
 ```
 
-指定校验参数：
+声明校验参数：
 
 ```java
 @RestController
@@ -294,20 +295,148 @@ public class GroupValidController {
 
     @PostMapping("/api/organizations")
     public OrganizationRequest createOrganization(
-            @RequestBody @Validated({CreateGroup.class, Default.class}) OrganizationRequest organizationRequest) {
+            @RequestBody @Validated(CreateGroup.class) OrganizationRequest organizationRequest) {
         return organizationRequest;
     }
 
     @PutMapping("/api/organizations")
     public OrganizationRequest updateOrganization(
-            @RequestBody @Validated({UpdateGroup.class, Default.class}) OrganizationRequest organizationRequest) {
+            @RequestBody @Validated(UpdateGroup.class) OrganizationRequest organizationRequest) {
         return organizationRequest;
     }
 
 }
 ```
 
-## 扩展内容
+## 其他注解
+
+### @Null
+
+| 注解 | 作用对象 | 含义 |
+| :--- | :--- | :--- |
+| @Null | 可以作用于任意对象 | 对象必须为 null |
+
+示例代码：
+
+```java
+@Data
+public class NullAnnotationRequest {
+
+    @Null
+    private Object nullObject;
+
+}
+```
+
+### @Email
+
+| 注解 | 作用对象 | 含义 |
+| :--- | :--- | :--- |
+| @Email | 只能作用于 String | 字符串必须为合法的 email |
+
+示例代码：
+
+```java
+@Data
+public class EmailAnnotationRequest {
+
+    @Email
+    private String email;
+
+}
+```
+
+### @AssertTrue、@AssertFalse
+
+| 注解 | 作用对象 | 含义 |
+| :--- | :--- | :--- |
+| @AssertTrue | 可以作用于 boolean 和 Boolean | 对象必须为 true |
+| @AssertFalse | 可以作用于 boolean 和 Boolean | 对象必须为 false |
+
+示例代码：
+
+```java
+@Data
+public class BooleanAnnotationRequest {
+
+    @AssertTrue
+    private Boolean trueParam;
+
+    @AssertFalse
+    private boolean falseParam;
+
+}
+```
+
+### @DecimalMin、@DecimalMax、@Digits、@Negative、@NegativeOrZero、@Positive、@PositiveOrZero
+
+| 注解 | 作用对象 | 含义 |
+| :--- | :--- | :--- |
+| @DecimalMin | 可以作用于数字类型和字符串 | 表示数字的最小值 |
+| @DecimalMax | 可以作用于数字类型和字符串 | 表示数字的最大值 |
+| @Digits | 可以作用于数字类型和字符串 | 包含两个变量：integer 和 fraction，其中 integer 表示整数位的最大位数；fraction 表示小数位的最大位数 |
+| @Negative | 可以作用于数字类型 | 表示必须为负数 |
+| @NegativeOrZero | 可以作用于数字类型 | 表示必须为负数或零 |
+| @Positive | 可以作用于数字类型 | 表示必须为正数 |
+| @PositiveOrZero | 可以作用于数字类型 | 表示必须为正数或零 |
+
+示例代码：
+
+```java
+@Data
+public class NumberAnnotationRequest {
+
+    @DecimalMin("1.5")
+    @DecimalMax("2.5")
+    private BigDecimal limitedBigDecimal;
+
+    @Digits(integer = 1, fraction = 2)
+    private BigDecimal digits;
+
+    @Negative
+    private short negative;
+
+    @NegativeOrZero
+    private int negativeOrZero;
+
+    @Positive
+    private long positive;
+
+    @PositiveOrZero
+    private BigDecimal positiveOrZero;
+
+}
+```
+
+### @Past、@PastOrPresent、@Future、@FutureOrPresent
+
+| 注解 | 作用对象 | 含义 |
+| :--- | :--- | :--- |
+| @Past | 可以作用于时间类型 | 表示必须为过去的时间 |
+| @PastOrPresent | 可以作用于时间类型 | 表示必须为过去的时间或现在 |
+| @Future | 可以作用于时间类型 | 表示必须为将来的时间 |
+| @FutureOrPresent | 可以作用于时间类型 | 表示必须为将来的时间或现在 |
+
+示例代码：
+
+```java
+@Data
+public class TimeAnnotationRequest {
+
+    @Past
+    private Date past;
+
+    @PastOrPresent
+    private Date pastOrPresent;
+
+    @Future
+    private Date future;
+
+    @FutureOrPresent
+    private Date futureOrPresent;
+
+}
+```
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-mvc)
