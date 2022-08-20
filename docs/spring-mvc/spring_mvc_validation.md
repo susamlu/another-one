@@ -346,7 +346,7 @@ public class EmailAnnotationRequest {
 }
 ```
 
-### @AssertTrue、@AssertFalse
+### 布尔类型注解
 
 | 注解 | 作用对象 | 含义 |
 | :--- | :--- | :--- |
@@ -368,7 +368,7 @@ public class BooleanAnnotationRequest {
 }
 ```
 
-### @DecimalMin、@DecimalMax、@Digits、@Negative、@NegativeOrZero、@Positive、@PositiveOrZero
+### 数字类型注解
 
 | 注解 | 作用对象 | 含义 |
 | :--- | :--- | :--- |
@@ -408,7 +408,7 @@ public class NumberAnnotationRequest {
 }
 ```
 
-### @Past、@PastOrPresent、@Future、@FutureOrPresent
+### 时间类型注解
 
 | 注解 | 作用对象 | 含义 |
 | :--- | :--- | :--- |
