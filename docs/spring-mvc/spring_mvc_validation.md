@@ -11,7 +11,7 @@
 </dependency>
 ```
 
-### 2. 编写校验代码
+### 2. 使用校验注解
 
 > @Data 为 lombok 的注解，在此不做详细说明。
 
@@ -211,7 +211,7 @@ public class UserController {
 
 #### 嵌套校验
 
-编写校验代码：
+使用校验注解：
 
 ```java
 @Data
@@ -271,7 +271,7 @@ public interface UpdateGroup extends Default {
 }
 ```
 
-编写校验代码：
+使用校验注解：
 
 ```java
 @Data
