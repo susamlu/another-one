@@ -32,7 +32,7 @@ public class UserController {
 }
 ```
 
-### 2. 运行结果(1)
+### 2. 运行结果
 
 使用 curl 访问接口：
 
@@ -66,7 +66,7 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 
 ### 3. 使用 HttpMessageConverter 转换数据
 
-> Long.class 只能转换包装类型 Long 的数据，Long.TYPE 只能转换基础类型 long 的数据。
+> Long.class 只能转换包装类型 (Long) 的数据，Long.TYPE 只能转换基础类型 (long) 的数据。
 
 ```java
 @Configuration
@@ -88,7 +88,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 }
 ```
 
-### 4. 运行结果(2)
+### 4. 转换后的运行结果
 
 使用 curl 访问接口：
 
@@ -115,9 +115,146 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 
 ## 进阶学习
 
+### 自定义 Serializer
+
 ### HttpMessageConverter 原理
 
-#### 启动过程
+要理解 HttpMessageConverter 是怎么运作的，需要理解它的组装过程和调用过程。
+
+#### 组装过程
+
+核心的代码流程如下图：
+
+<img src="../images/spring_mvc_http_message_converter_0.png" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+
+下面结合源代码，讲讲具体的加载过程。实际的过程比较繁琐，需要耐心阅读。建议结合源代码阅读，必要时进行本地调试，如此可以更好地理解整个流程。
+
+在 Spring Boot 项目中，会自动加载 WebMvcAutoConfiguration。
+
+```java
+@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
+public class WebMvcAutoConfiguration {
+    // ...
+}
+```
+
+加载 WebMvcAutoConfiguration 的时候，它的内部类 EnableWebMvcConfiguration 也会被加载。
+
+```java
+/**
+ * Configuration equivalent to {@code @EnableWebMvc}.
+ */
+@Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(WebProperties.class)
+public static class EnableWebMvcConfiguration extends DelegatingWebMvcConfiguration implements ResourceLoaderAware {
+    // ...
+}
+```
+
+EnableWebMvcConfiguration 加载，会触发父类 DelegatingWebMvcConfiguration 的加载。
+DelegatingWebMvcConfiguration 加载的时候，会把项目中所有的 WebMvcConfigurer 对象收集起来。
+
+```java
+@Configuration(proxyBeanMethods = false)
+public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
+    
+    @Autowired(required = false)
+    public void setConfigurers(List<WebMvcConfigurer> configurers) {
+        if (!CollectionUtils.isEmpty(configurers)) {
+            this.configurers.addWebMvcConfigurers(configurers);
+        }
+    }
+    
+    // ...
+
+}
+```
+
+并且也会触发父类 WebMvcConfigurationSupport 的加载。
+WebMvcConfigurationSupport 的加载，又触发了 requestMappingHandlerAdapter() 方法的执行。
+requestMappingHandlerAdapter() 方法会调用 getMessageConverters() 方法。
+
+```java
+public class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware {
+
+    // ...
+    
+    @Bean
+    public RequestMappingHandlerAdapter requestMappingHandlerAdapter(/* ... */){
+        // ...
+        adapter.setMessageConverters(getMessageConverters());
+        // ...
+    }
+
+    // ...
+    
+}
+```
+
+getMessageConverters() 是这里面的核心方法。
+
+```java
+public class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware {
+
+    // ...
+
+    protected final List<HttpMessageConverter<?>> getMessageConverters() {
+        if (this.messageConverters == null) {
+            this.messageConverters = new ArrayList<>();
+            configureMessageConverters(this.messageConverters);
+            if (this.messageConverters.isEmpty()) {
+                addDefaultHttpMessageConverters(this.messageConverters);
+            }
+            extendMessageConverters(this.messageConverters);
+        }
+        return this.messageConverters;
+    }
+
+    // ...
+    
+}
+```
+
+getMessageConverters() 先调用 configureMessageConverters()。如果调用完之后，messageConverters 依然为空，
+就调用 addDefaultHttpMessageConverters()。最后再调用 extendMessageConverters()。
+
+调用 addDefaultHttpMessageConverters() 的时候，又会触发 HttpMessageConvertersAutoConfiguration 的加载。
+HttpMessageConvertersAutoConfiguration 会按具体情况选择性添加额外的 HttpMessageConverter。
+
+```java
+@ConditionalOnClass(HttpMessageConverter.class)
+public class HttpMessageConvertersAutoConfiguration {
+    // ...
+}
+```
+
+如果有多个 WebMvcConfigurer，它们的方法会被依次执行。
+
+```java
+class WebMvcConfigurerComposite implements WebMvcConfigurer {
+    
+    // ...
+    
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        for (WebMvcConfigurer delegate : this.delegates) {
+            delegate.configureMessageConverters(converters);
+        }
+    }
+
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        for (WebMvcConfigurer delegate : this.delegates) {
+            delegate.extendMessageConverters(converters);
+        }
+    }
+
+    // ...
+    
+}
+```
+
+上述所有代码执行完，就可以顺利得到所有的 HttpMessageConverter 了。
 
 #### 调用过程
 
@@ -125,8 +262,6 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 
 1. 使用 configureHandlerExceptionResolvers，还是 extendHandlerExceptionResolvers？
 2. converters.add(jackson2HttpMessageConverter) 与 converters.add(0, jackson2HttpMessageConverter) 有何区别？
-
-### 自定义 Serializer
 
 ## 扩展学习
 
