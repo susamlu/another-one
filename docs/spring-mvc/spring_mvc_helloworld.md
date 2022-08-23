@@ -1,5 +1,7 @@
 # 从零搭建 Spring MVC 项目 —— HelloWorld
 
+阅读本文前，你需要掌握 Java 和 Maven 的基础知识。搭建一个简单的 Spring MVC 项目，只需要简单的几步：
+
 ## 1. 继承 Spring Boot 项目
 
 ```xml
