@@ -1,5 +1,7 @@
 # 从零搭建 Spring MVC 项目 —— Validation
 
+通过 Validation 注解，可以非常方便地定义需要校验的参数。
+
 ## 快速开始
 
 ### 1. 引入 Validation 依赖
@@ -14,6 +16,8 @@
 ### 2. 使用校验注解
 
 > @Data 为 lombok 的注解，在此不做详细说明。
+
+在待校验的类中使用校验注解，以定义类中需要校验的字段。
 
 ```java
 @Data
@@ -30,6 +34,8 @@ public class UserRequest {
 ```
 
 ### 3. 声明校验参数
+
+在 Controller 中，声明接口中需要校验的参数。
 
 ```java
 @RestController
