@@ -2,6 +2,8 @@
 
 ## Long 转 String，日期转时间戳
 
+从下面的例子中，可以了解到在什么情况下我们需要进行参数类型的转换，以及如何转换。
+
 ### 1. 初始代码
 
 ```java
@@ -60,9 +62,9 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 目前存在两个问题：
 
 1. 返回的 id 位数过长，前端接收到的结果会发生溢出，后面几位数字会被转成 0；
-2. 返回的时间格式对前端不友好，前端同事希望收到的是时间戳。
+2. 返回的时间格式对前端不友好，前端同事更希望收到的是时间戳。
 
-如何解决？继续往下看。
+这个要如何解决？我们继续往下看。
 
 ### 3. 使用 HttpMessageConverter 转换数据
 
@@ -115,13 +117,11 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 
 ## 进阶学习
 
-### 自定义 Serializer
-
 ### HttpMessageConverter 原理
 
-要理解 HttpMessageConverter 是怎么运作的，需要理解它的组装过程和调用过程。
+要理解 HttpMessageConverter 是怎么运作的，需要理解它的加载过程和调用过程。
 
-#### 组装过程
+#### 加载过程
 
 核心的代码流程如下图：
 
@@ -151,12 +151,14 @@ public static class EnableWebMvcConfiguration extends DelegatingWebMvcConfigurat
 }
 ```
 
-EnableWebMvcConfiguration 加载，会触发父类 DelegatingWebMvcConfiguration 的加载。
+EnableWebMvcConfiguration 的加载，会触发父类 DelegatingWebMvcConfiguration 的加载。
 DelegatingWebMvcConfiguration 加载的时候，会把项目中所有的 WebMvcConfigurer 对象收集起来。
 
 ```java
 @Configuration(proxyBeanMethods = false)
 public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
+
+    private final WebMvcConfigurerComposite configurers = new WebMvcConfigurerComposite();
     
     @Autowired(required = false)
     public void setConfigurers(List<WebMvcConfigurer> configurers) {
@@ -258,10 +260,16 @@ class WebMvcConfigurerComposite implements WebMvcConfigurer {
 
 #### 调用过程
 
+核心的代码流程如下图：
+
+<img src="../images/spring_mvc_http_message_converter_1.png" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+
 #### 思考题：
 
 1. 使用 configureHandlerExceptionResolvers，还是 extendHandlerExceptionResolvers？
 2. converters.add(jackson2HttpMessageConverter) 与 converters.add(0, jackson2HttpMessageConverter) 有何区别？
+
+### 自定义 Serializer
 
 ## 扩展学习
 

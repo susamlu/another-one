@@ -221,7 +221,7 @@ public class UserController {
 
 #### 嵌套校验
 
-可以使用 @Validated + @Valid，或 @Valid + @Valid 的方式共同定义嵌套检验。
+可以使用 @Validated + @Valid，或 @Valid + @Valid 的方式共同定义嵌套校验。
 
 > 使用 @Valid 指定需要校验的接口参数；使用 @Validated 或 @Valid 声明 Controller 的接口方法中，需要校验的参数。
 
