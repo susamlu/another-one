@@ -35,7 +35,7 @@ public class UserRequest {
 
 ### 3. 声明校验参数
 
-在 Controller 中，声明方法中需要校验的参数。
+在 Controller 中，声明接口方法中需要校验的参数。
 
 ```java
 @RestController
@@ -103,6 +103,8 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 ```
 
 ## 常用注解
+
+下面列举了，在日常的开发当中，我们经常需要使用到的 Validation 注解。这些注解，主要定义在 javax.validation 包下。
 
 ### @NotNull、@NotEmpty 与 @NotBlank
 
@@ -203,6 +205,8 @@ public class PatternAnnotationRequest {
 
 #### 使用 @Valid 声明校验参数
 
+除了可以使用 @Validated 声明校验参数，也可以使用 @Valid 对需要校验的参数进行声明。
+
 ```java
 @RestController
 public class UserController {
@@ -217,7 +221,11 @@ public class UserController {
 
 #### 嵌套校验
 
-使用校验注解：
+可以使用 @Validated + @Valid，或 @Valid + @Valid 的方式共同定义嵌套检验。
+
+> 使用 @Valid 指定需要校验的接口参数；使用 @Validated 或 @Valid 声明 Controller 的接口方法中，需要校验的参数。
+
+使用校验注解，指定需要校验的接口参数：
 
 ```java
 @Data
@@ -249,7 +257,7 @@ public class AddressRequest {
 }
 ```
 
-声明校验参数：
+声明 Controller 的接口方法中，需要校验的参数：
 
 ```java
 @RestController
@@ -265,6 +273,8 @@ public class NestValidController {
 
 #### 分组校验
 
+分组校验可以使用在参数定义相同、接口校验不同的场景中。
+
 定义分组：
 
 ```java
@@ -277,7 +287,7 @@ public interface UpdateGroup extends Default {
 }
 ```
 
-使用校验注解：
+使用校验注解，指定需要校验的接口参数：
 
 ```java
 @Data
@@ -293,7 +303,7 @@ public class OrganizationRequest {
 }
 ```
 
-声明校验参数：
+声明 Controller 的接口方法中，需要校验的参数：
 
 ```java
 @RestController
@@ -315,6 +325,8 @@ public class GroupValidController {
 ```
 
 ## 其他注解
+
+除了常用的注解，javax.validation 下还定义了下面这些注解，以供我们在有需要时选择使用。
 
 ### @Null
 
