@@ -125,7 +125,7 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 
 核心的代码流程如下图：
 
-<img src="../images/spring_mvc_http_message_converter_0.png" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="../images/spring_mvc_http_message_converter_0.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 下面结合源代码，讲讲具体的加载过程。实际的过程比较繁琐，需要耐心阅读。建议结合源代码阅读，必要时进行本地调试，如此可以更好地理解整个流程。
 
@@ -159,14 +159,14 @@ DelegatingWebMvcConfiguration 加载的时候，会把项目中所有的 WebMvcC
 public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
 
     private final WebMvcConfigurerComposite configurers = new WebMvcConfigurerComposite();
-    
+
     @Autowired(required = false)
     public void setConfigurers(List<WebMvcConfigurer> configurers) {
         if (!CollectionUtils.isEmpty(configurers)) {
             this.configurers.addWebMvcConfigurers(configurers);
         }
     }
-    
+
     // ...
 
 }
@@ -180,16 +180,16 @@ requestMappingHandlerAdapter() 方法会调用 getMessageConverters() 方法。
 public class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware {
 
     // ...
-    
+
     @Bean
-    public RequestMappingHandlerAdapter requestMappingHandlerAdapter(/* ... */){
+    public RequestMappingHandlerAdapter requestMappingHandlerAdapter(/* ... */) {
         // ...
         adapter.setMessageConverters(getMessageConverters());
         // ...
     }
 
     // ...
-    
+
 }
 ```
 
@@ -213,7 +213,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
     }
 
     // ...
-    
+
 }
 ```
 
@@ -234,9 +234,9 @@ public class HttpMessageConvertersAutoConfiguration {
 
 ```java
 class WebMvcConfigurerComposite implements WebMvcConfigurer {
-    
+
     // ...
-    
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         for (WebMvcConfigurer delegate : this.delegates) {
@@ -252,7 +252,7 @@ class WebMvcConfigurerComposite implements WebMvcConfigurer {
     }
 
     // ...
-    
+
 }
 ```
 
@@ -262,14 +262,16 @@ class WebMvcConfigurerComposite implements WebMvcConfigurer {
 
 核心的代码流程如下图：
 
-<img src="../images/spring_mvc_http_message_converter_1.png" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="../images/spring_mvc_http_message_converter_1.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+
+实际的调用流程会非常复杂，下面选取其中较为核心的代码进行讲解。
 
 #### 思考题：
 
 1. 使用 configureHandlerExceptionResolvers，还是 extendHandlerExceptionResolvers？
 2. converters.add(jackson2HttpMessageConverter) 与 converters.add(0, jackson2HttpMessageConverter) 有何区别？
 
-### 自定义 Serializer
+### 自定义 JsonSerializer
 
 ## 扩展学习
 
