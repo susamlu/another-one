@@ -1,6 +1,6 @@
 # 从零搭建 Spring MVC 项目 —— HelloWorld
 
-本系列文章将从一个简单的 HelloWorld 项目开始，讲述如何一步步搭建企业级的 Spring MVC 项目。笔者将从企业级项目开发的实际需要出发，系统讲述其中涉及的基础知识，并结合笔者工作中所遇到的问题，讲述其中的解决方案和技术背后的原理。
+本系列文章将从一个简单的 HelloWorld 项目开始，讲述如何一步步搭建企业级的 Spring MVC 项目。在这个过程中，笔者将从企业级项目开发的实际需要出发，系统讲述其中涉及的基础知识，并结合笔者工作中所遇到的问题，讲述其中的解决方案和技术背后的原理。
 
 版本说明：
 - 所有的项目代码均构建在 Spring Boot 2.7.2 之上。
@@ -29,21 +29,19 @@
 
 ### pom.xml
 
-以及 pom 文件的关键内容：
+以及 pom 文件的一些内容：
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.susamlu.springmvc</groupId>
-    <artifactId>spring-mvc-helloworld</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <groupId>com.mycompany.app</groupId>
+    <artifactId>my-app</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
-    <name>spring-mvc-helloworld</name>
-    <description>Demo project for Spring MVC</description>
+    <name>my-app</name>
+    <url>http://www.example.com</url>
 
 </project>
 ```
@@ -54,7 +52,7 @@
 
 ### 1. 继承 Spring Boot 项目
 
-`spring-boot-starter-parent` 项目在 pom 文件中预定义了各种 Spring Boot 组件，并且把其中的依赖和版本也定义好了。继承了 `spring-boot-starter-parent` 项目，我们在引入 Spring Boot 组件依赖的时候会非常方便。
+`spring-boot-starter-parent` 在 pom 文件中预定义了各种依赖的版本，继承了该项目，我们在引入 Spring Boot 组件的时候，就不再需要去指定组件的版本。
 
 ```xml
 <parent>
@@ -67,7 +65,7 @@
 
 ### 2. 引入 Spring MVC 依赖
 
-如上面所说，我们现在引入 Spring MVC 依赖，只需要简单的声明，连版本也不用指定了。
+同样的，`spring-boot-starter-web` 也已定义了 Spring MVC 项目所需要的各种依赖。因此，我们在引入 Spring MVC 依赖的时候，只需要简单的声明：
 
 ```xml
 <dependency>
@@ -78,7 +76,7 @@
 
 ### 3. 编写 Controller 代码
 
-通过 @RestController 声明接口类，由此，我们可以在该类中定义 RESTful 风格的接口方法。使用 @GetMapping 指定接口的路径，使用 @RequestParam 指定接收的路径参数。
+通过 @RestController 声明接口类，由此，我们可以在该类中定义 RESTful 风格的接口方法。使用 @GetMapping 指定接口的路径，使用 @RequestParam 指定接口接收的请求参数。
 
 ```java
 @RestController
@@ -109,7 +107,7 @@ public class HelloWorldApplication {
 
 ### 5. 运行启动类
 
-运行启动类，在浏览器中输入：`http://localhost:8080/hello?name=小穆` ，即可看到如下效果。
+运行启动类，在浏览器中输入：`http://localhost:8080/hello?name=小穆` ，即可看到如下效果：
 
 <img src="../images/spring_mvc_helloworld_0.png" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
