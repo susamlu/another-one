@@ -1,10 +1,60 @@
 # 从零搭建 Spring MVC 项目 —— HelloWorld
 
-阅读本文前，你需要掌握 Java 和 Maven 的基础知识。
+本系列文章将从一个简单的 HelloWorld 项目开始，讲述如何一步步搭建企业级的 Spring MVC 项目。笔者将从企业级项目开发的实际需要出发，系统讲述其中涉及的基础知识，并结合笔者工作中所遇到的问题，讲述其中的解决方案和技术背后的原理。
 
-搭建一个 Spring MVC HelloWorld 项目，只需要简单的几步：
+版本说明：
+- 所有的项目代码均构建在 Spring Boot 2.7.2 之上。
 
-## 1. 继承 Spring Boot 项目
+学习前提：
+- 文章中涉及到的代码主要构建在 Java 语言之上，因此阅读之前掌握基本的 Java 语言基础是必须的；
+- 项目代码以 Maven 作为项目管理工具，开始之前你应当对 Maven 的基础知识有所了解。
+
+## Maven 项目
+
+### 项目结构
+
+开始之前，我们先复习一下 Maven 项目的目录结构：
+
+```html
+.
+├── pom.xml
+└── src
+    ├── main
+    │   ├── java
+    │   └── resources
+    └── test
+        ├── java
+        └── resources
+```
+
+### pom.xml
+
+以及 pom 文件的关键内容：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.susamlu.springmvc</groupId>
+    <artifactId>spring-mvc-helloworld</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>spring-mvc-helloworld</name>
+    <description>Demo project for Spring MVC</description>
+
+</project>
+```
+
+## 快速开始
+
+搭建一个 Spring MVC 项目，只需要简单的几步：
+
+### 1. 继承 Spring Boot 项目
+
+`spring-boot-starter-parent` 项目在 pom 文件中预定义了各种 Spring Boot 组件，并且把其中的依赖和版本也定义好了。继承了 `spring-boot-starter-parent` 项目，我们在引入 Spring Boot 组件依赖的时候会非常方便。
 
 ```xml
 <parent>
@@ -15,7 +65,9 @@
 </parent>
 ```
 
-## 2. 引入 Spring MVC 依赖
+### 2. 引入 Spring MVC 依赖
+
+如上面所说，我们现在引入 Spring MVC 依赖，只需要简单的声明，连版本也不用指定了。
 
 ```xml
 <dependency>
@@ -24,7 +76,9 @@
 </dependency>
 ```
 
-## 3. 编写 Controller 代码
+### 3. 编写 Controller 代码
+
+通过 @RestController 声明接口类，由此，我们可以在该类中定义 RESTful 风格的接口方法。使用 @GetMapping 指定接口的路径，使用 @RequestParam 指定接收的路径参数。
 
 ```java
 @RestController
@@ -38,7 +92,9 @@ public class HelloWorldController {
 }
 ```
 
-## 4. 编写启动类
+### 4. 编写启动类
+
+使用 @SpringBootApplication 指定项目的启动类，至此，HelloWorld 项目的代码就全部编写完了。
 
 ```java
 @SpringBootApplication
@@ -51,9 +107,9 @@ public class HelloWorldApplication {
 }
 ```
 
-## 5. 运行启动类
+### 5. 运行启动类
 
-运行启动类，在浏览器中输入：`http://localhost:8080/hello?name=小穆` ，即可看到如下效果：
+运行启动类，在浏览器中输入：`http://localhost:8080/hello?name=小穆` ，即可看到如下效果。
 
 <img src="../images/spring_mvc_helloworld_0.png" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
