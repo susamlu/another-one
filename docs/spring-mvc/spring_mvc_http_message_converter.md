@@ -64,7 +64,7 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 1. 返回的 id 位数过长，前端接收到的结果会发生溢出，后面几位数字会被转成 0；
 2. 返回的时间格式对前端不友好，前端同事更希望收到的是时间戳。
 
-这个要如何解决？我们继续往下看。
+这个问题要如何解决？我们继续往下看。
 
 ### 3. 使用 HttpMessageConverter 转换数据
 
@@ -266,13 +266,147 @@ class WebMvcConfigurerComposite implements WebMvcConfigurer {
 
 实际的调用流程会非常复杂，下面选取其中较为核心的代码进行讲解。
 
+DispatcherServlet 在执行 doDispatch() 的时候，最终会调用到 RequestMappingHandlerAdapter 类的 invokeHandlerMethod() 方法。
+上文笔者已经提到，RequestMappingHandlerAdapter 通过调用 WebMvcConfigurationSupport 的 getMessageConverters() 方法，将 HttpMessageConverter 收集了起来。
+RequestMappingHandlerAdapter 在加载的时候，其实也会将 HttpMessageConverter 设置到 HandlerMethodArgumentResolverComposite 和 HandlerMethodReturnValueHandlerComposite 中。
+
+```java
+public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
+        implements BeanFactoryAware, InitializingBean {
+    
+    // ...
+
+    @Nullable
+    private HandlerMethodArgumentResolverComposite argumentResolvers;
+    // ...
+    @Nullable
+    private HandlerMethodReturnValueHandlerComposite returnValueHandlers;
+    
+    // ...
+
+    @Override
+    public void afterPropertiesSet() {
+        // ...
+        if (this.argumentResolvers == null) {
+            List<HandlerMethodArgumentResolver> resolvers = getDefaultArgumentResolvers();
+            this.argumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
+        }
+        // ...
+        if (this.returnValueHandlers == null) {
+            List<HandlerMethodReturnValueHandler> handlers = getDefaultReturnValueHandlers();
+            this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite().addHandlers(handlers);
+        }
+    }
+    
+    // ...
+
+    private List<HandlerMethodArgumentResolver> getDefaultArgumentResolvers() {
+        // ...
+        resolvers.add(new RequestResponseBodyMethodProcessor(getMessageConverters(), this.requestResponseBodyAdvice));
+        // ...
+        return resolvers;
+    }
+    
+    // ...
+    
+}
+```
+
+最终程序会通过 HandlerMethodArgumentResolverComposite 调用到 AbstractMessageConverterMethodArgumentResolver 的 readWithMessageConverters() 方法，
+并在获取到参数后调用 Controller 的接口方法进行业务处理，得到接口方法的返回参数后，
+又会调用AbstractMessageConverterMethodProcessor 的 writeWithMessageConverters() 方法 ，将参数通过 Response 报文输出到浏览器中。
+
+AbstractMessageConverterMethodArgumentResolver 会遍历所有 HttpMessageConverter，通过 HttpMessageConverter 的 canRead() 方法找到合适的 HttpMessageConverter，
+并调用它的 read() 方法对参数进行解析。
+如果找到了 HttpMessageConverter，并解析完成就会马上返回，也就是只有第一个合适的 HttpMessageConverter 的 read() 方法会被执行。
+如果找不到 HttpMessageConverter，则抛出 HttpMediaTypeNotSupportedException 异常。
+
+```java
+public abstract class AbstractMessageConverterMethodArgumentResolver implements HandlerMethodArgumentResolver {
+    
+    // ...
+
+    @Nullable
+    protected <T> Object readWithMessageConverters(HttpInputMessage inputMessage,
+                                                   MethodParameter parameter,
+                                                   Type targetType) 
+            throws IOException, HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
+        // ...
+        for (HttpMessageConverter<?> converter : this.messageConverters) {
+            // ...
+            if (genericConverter != null ? genericConverter.canRead(targetType, contextClass, contentType) :
+                    (targetClass != null && converter.canRead(targetClass, contentType))) {
+                // ...
+                body = (genericConverter != null ? genericConverter.read(targetType, contextClass, msgToUse) :
+                        ((HttpMessageConverter<T>) converter).read(targetClass, msgToUse));
+                // ...
+                break;
+            }
+            // ...
+            if (body == NO_VALUE) {
+                // ...
+                throw new HttpMediaTypeNotSupportedException(contentType,
+                        getSupportedMediaTypes(targetClass != null ? targetClass : Object.class));
+            }
+            // ...
+        }
+        // ...
+    }
+    
+    // ...
+    
+}
+```
+
+类似的，AbstractMessageConverterMethodProcessor 会遍历所有 HttpMessageConverter，通过 HttpMessageConverter 的 canWrite() 方法找到合适的 HttpMessageConverter，
+并调用它的 write() 方法将返回参数写到 HTPP 返回报文当中。
+如果找到了 HttpMessageConverter，并解析完成就会马上返回，也就是只有第一个合适的 HttpMessageConverter 的 write() 方法会被执行。
+如果找不到 HttpMessageConverter，则抛出 HttpMessageNotWritableException 或 HttpMediaTypeNotAcceptableException 异常。
+
+```java
+public abstract class AbstractMessageConverterMethodProcessor extends AbstractMessageConverterMethodArgumentResolver
+        implements HandlerMethodReturnValueHandler {
+
+    // ...
+
+    protected <T> void writeWithMessageConverters(@Nullable T value, 
+                                                  MethodParameter returnType,
+                                                  ServletServerHttpRequest inputMessage, 
+                                                  ServletServerHttpResponse outputMessage)
+            throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
+        // ...
+        for (HttpMessageConverter<?> converter : this.messageConverters) {
+            // ...
+            if (genericConverter != null ?
+                    ((GenericHttpMessageConverter) converter).canWrite(targetType, valueType, selectedMediaType) :
+                    converter.canWrite(valueType, selectedMediaType)) {
+                // ...
+                genericConverter.write(body, targetType, selectedMediaType, outputMessage);
+                // ...
+                return;
+            }
+        }
+        // ...
+        if (body != null) {
+            Set<MediaType> producibleMediaTypes =
+                    (Set<MediaType>) inputMessage.getServletRequest()
+                            .getAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
+
+            if (isContentTypePreset || !CollectionUtils.isEmpty(producibleMediaTypes)) {
+                throw new HttpMessageNotWritableException(
+                        "No converter for [" + valueType + "] with preset Content-Type '" + contentType + "'");
+            }
+            throw new HttpMediaTypeNotAcceptableException(getSupportedMediaTypes(body.getClass()));
+        }
+    }
+    
+    // ...
+    
+}
+```
+
 #### 思考题：
 
-1. 使用 configureHandlerExceptionResolvers，还是 extendHandlerExceptionResolvers？
+1. 重写 configureHandlerExceptionResolvers()，还是 extendHandlerExceptionResolvers()？
 2. converters.add(jackson2HttpMessageConverter) 与 converters.add(0, jackson2HttpMessageConverter) 有何区别？
-
-### 自定义 JsonSerializer
-
-## 扩展学习
-
-EnableWebMvc, WebMvcAutoConfiguration, WebMvcConfigurationSupport, WebMvcConfigurer, WebMvcConfigurerAdapter
+3. WebMvcConfigurer、WebMvcConfigurerAdapter、WebMvcConfigurationSupport 到底使用哪一个？@EnableWebMvc 在什么时候需要，什么时候不需要？
