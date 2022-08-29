@@ -1,6 +1,6 @@
 # 从零搭建 Spring MVC 项目 —— HelloWorld
 
-本系列文章将从一个简单的 HelloWorld 项目开始，讲述如何一步步搭建企业级的 Spring MVC 项目。在这个过程中，笔者将从企业级项目开发的实际需要出发，系统讲述其中涉及的基础知识，并结合笔者工作中所遇到的问题，讲述其中的解决方案和技术背后的原理。
+本系列文章将从一个简单的 HelloWorld 项目开始，讲述如何一步步搭建企业级的 Spring MVC 项目。在这个过程中，笔者将从企业级项目开发的实际需要出发，系统讲述其中涉及的基础知识，并结合笔者工作中所遇到的问题，讲述其中的解决方案和背后的技术原理。
 
 版本说明：
 - 所有的项目代码均构建在 Spring Boot 2.7.2 之上。
@@ -52,7 +52,7 @@
 
 ### 1. 继承 Spring Boot 项目
 
-`spring-boot-starter-parent` 在 pom 文件中预定义了各种依赖的版本，继承了该项目，我们在引入 Spring Boot 组件的时候，就不再需要去指定组件的版本。
+`spring-boot-starter-parent` 在 pom 文件中预定义了组件依赖的版本，继承了该项目，我们在引入 Spring Boot 组件的时候，就不再需要去指定组件的版本。
 
 ```xml
 <parent>
@@ -65,7 +65,7 @@
 
 ### 2. 引入 Spring MVC 依赖
 
-同样的，`spring-boot-starter-web` 也已定义了 Spring MVC 项目所需要的各种依赖。因此，我们在引入 Spring MVC 依赖的时候，只需要简单的声明：
+`spring-boot-starter-web` 已定义了 Spring MVC 项目所需要的全部依赖。因此，我们在引入 Spring MVC 依赖的时候，只需要简单的声明：
 
 ```xml
 <dependency>
