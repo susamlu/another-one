@@ -1,4 +1,4 @@
-# 从零搭建 Spring MVC 项目 —— Validation
+# 深入浅出 Spring MVC —— Validation
 
 通过 Validation 注解，可以方便地定义需要以何种方式来校验接口参数。
 

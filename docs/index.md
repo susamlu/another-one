@@ -2,8 +2,10 @@
 
 ## Spring MVC
 
-[从零搭建 Spring MVC 项目 —— HelloWorld](./spring-mvc/spring_mvc_helloworld.html)
+[深入浅出 Spring MVC —— HelloWorld —— 基础篇](./spring-mvc/spring_mvc_helloworld_1.html)
 
-[从零搭建 Spring MVC 项目 —— Validation](./spring-mvc/spring_mvc_validation.html)
+[深入浅出 Spring MVC —— HelloWorld —— 进阶篇](./spring-mvc/spring_mvc_helloworld_2.html)
 
-[从零搭建 Spring MVC 项目 —— HttpMessageConverter](./spring-mvc/spring_mvc_http_message_converter.html)
+[深入浅出 Spring MVC —— Validation](./spring-mvc/spring_mvc_validation.html)
+
+[深入浅出 Spring MVC —— HttpMessageConverter](./spring-mvc/spring_mvc_http_message_converter.html)
