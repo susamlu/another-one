@@ -1,4 +1,4 @@
-# 深入浅出 Spring MVC —— HelloWorld —— 进阶篇
+# 深入浅出 Spring MVC —— HelloWorld（进阶篇）
 
 上一篇文章已经介绍了如何快速搭建一个 Spring MVC 项目，本文将对上文中提及的几个技术点，进行深入的讲解。
 
