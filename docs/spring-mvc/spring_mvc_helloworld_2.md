@@ -2,17 +2,22 @@
 
 上一篇文章已经介绍了如何快速搭建一个 Spring MVC 项目，本文将对上文中提及的几个技术点，进行深入的讲解。
 
-我们前面提到，搭建 Spring MVC 项目时，只需要继承 `spring-boot-starter-parent` ，并引入 `spring-boot-starter-web` ，即可把 Spring MVC 项目所需要的全部依赖引进来，并且我们不需要指定依赖的版本，具体是如何做到的呢？
+我们前面提到，搭建 Spring MVC 项目时，只需要继承 `spring-boot-starter-parent` ，并引入 `spring-boot-starter-web` ，即可把 Spring MVC
+项目所需要的全部依赖引进来，并且我们不需要指定依赖的版本，这是如何做到的呢？
 
 这里会涉及到 Maven 的 parent 和 dependencyManagement 标签，我们先讲讲这两个标签的作用。
 
-## Maven parent 标签
+## Maven 标签
+
+### parent
 
 在 Maven 项目中，可以通过继承的方式，让子项目继承父项目所定义的内容，如：groupId、version、properties、dependencies 等。
 
-下面的例子中，`my-app-child` 只需要继承 `my-app-parent` ，即可引入父项目的全部依赖：
+下面的例子中，`my-app-child` 只需要继承 `my-app-parent` ，即可引入父项目的全部依赖。即父项目 `my-app-parent` 引入了 `maven-artifact` 和 `maven-core`
+两个依赖，并指定了它们的版本，子项目只需继承 `my-app-parent` ，就引入了这两个依赖，并且依赖的版本也跟父项目所指定的版本一样。
 
 ```xml
+<!-- my-app-parent -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -45,6 +50,7 @@
 ```
 
 ```xml
+<!-- my-app-child -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -60,13 +66,15 @@
 </project>
 ```
 
-## Maven dependencyManagement 标签
+### dependencyManagement
 
-有时候子项目并不需要引入父项目的全部依赖，只需要引入部分依赖，且希望在父项目中统一定义好依赖的版本，`dependencyManagement` 标签可以帮我们完成这个事情。
+有时候子项目并不需要引入父项目的全部依赖，只需要引入部分依赖，但又希望在父项目中统一定义好依赖的版本，`dependencyManagement` 标签可以帮我们完成这个事情。
 
-下面的例子中，`my-app-child` 引入了 `maven-core` 依赖，父项目仅仅只是预定义了依赖的版本：
+下面的例子中，`my-app-child` 引入了 `maven-core` 依赖，父项目仅仅只是预定义了依赖的版本。也就是说，父项目指定了 `maven-artifact` 和 `maven-core`
+两个依赖的版本，但并没有引入依赖，在子项目中引入了 `maven-core` 依赖，且子项目无需指定该依赖的版本，该依赖的版本就与父项目所指定的版本一样。
 
 ```xml
+<!-- my-app-parent -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -101,6 +109,7 @@
 ```
 
 ```xml
+<!-- my-app-child -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -125,10 +134,10 @@
 
 ## spring-boot-starter-parent
 
-`spring-boot-starter-parent` 通过父项目 `spring-boot-dependencies`，预先指定了 Spring Boot 项目的全部依赖版本：
+`spring-boot-starter-parent` 继承自父项目 `spring-boot-dependencies`，`spring-boot-dependencies` 通过 dependencyManagement 标签预先指定了 Spring Boot 项目的全部依赖版本。尤其是，将 `spring-boot-starter-web` 的版本指定为 2.7.2 。
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- spring-boot-starter-parent -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -143,7 +152,7 @@
 ```
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- spring-boot-dependencie -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -156,43 +165,27 @@
     <description>Spring Boot Dependencies</description>
     <url>https://spring.io/projects/spring-boot</url>
     <!-- ... -->
-    <properties>
-        <activemq.version>5.16.5</activemq.version>
-        <!-- ... -->
-        <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
-        <!-- ... -->
-    </properties>
     <dependencyManagement>
         <dependencies>
+            <!-- ... -->
             <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-amqp</artifactId>
-                <version>${activemq.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>2.7.2</version>
             </dependency>
             <!-- ... -->
         </dependencies>
     </dependencyManagement>
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>${build-helper-maven-plugin.version}</version>
-                </plugin>
-                <!-- ... -->
-            </plugins>
-        </pluginManagement>
-    </build>
+    <!-- ... -->
 </project>
 ```
 
 ## spring-boot-starter-web
 
-`spring-boot-starter-web` 将 `spring-webmvc` 等项目引入了进来，并指定了各依赖的版本：
+2.7.2 版本的 `spring-boot-starter-web` 将 `spring-webmvc` 等项目引入了进来，并指定了各依赖的版本：
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- spring-boot-starter-web -->
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -242,7 +235,7 @@
 </project>
 ```
 
-在 `spring-boot-starter-parent` 和 `spring-boot-starter-web` 的共同作用下，就完成了 Spring MVC 项目全部依赖和版本的定义。
+在 `spring-boot-starter-parent` 和 `spring-boot-starter-web` 的共同作用下，就完成了 Spring MVC 项目全部依赖和依赖版本的定义。
 
 ## @SpringBootApplication 与 SpringApplication
 
