@@ -71,7 +71,7 @@
 有时候子项目并不需要引入父项目的全部依赖，只需要引入部分依赖，但又希望在父项目中统一定义好依赖的版本，`dependencyManagement` 标签可以帮我们完成这个事情。
 
 下面的例子中，`my-app-child` 引入了 `maven-core` 依赖，父项目仅仅只是预定义了依赖的版本。也就是说，父项目指定了 `maven-artifact` 和 `maven-core`
-两个依赖的版本，但并没有引入依赖，在子项目中引入了 `maven-core` 依赖，且子项目无需指定该依赖的版本，该依赖的版本就与父项目所指定的版本一样。
+两个依赖的版本，但并没有引入依赖，在子项目中只引入了 `maven-core` 依赖，即 `maven-artifact` 是没有被引入的，且子项目无需指定 `maven-core` 依赖的版本，该依赖的版本就与父项目所指定的版本一样。
 
 ```xml
 <!-- my-app-parent -->
@@ -239,7 +239,7 @@
 
 ## @SpringBootApplication 与 SpringApplication
 
-不知道读者在编写 Spring Boot 项目的时候，有没有思考过启动类中为何需要同时使用 @SpringBootApplication 和 SpringApplication，它们分别的作用又是什么？下面让我们一起来一探究竟吧。
+不知道读者在编写 Spring Boot 项目的时候，有没有思考过启动类中为何需要同时使用 @SpringBootApplication 和 SpringApplication，它们分别的作用又是什么？下面让我们一起来一探究竟。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-mvc)
