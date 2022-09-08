@@ -66,7 +66,7 @@
 
 ### dependencyManagement
 
-有时候子项目并不需要引入父项目的全部依赖，只需要引入部分依赖，但又希望在父项目中统一定义好依赖的版本，`dependencyManagement` 标签可以帮我们完成这个事情。
+有时候子项目并不需要引入父项目的全部依赖，只需要引入部分依赖，但又希望在父项目中统一定义依赖的版本，`dependencyManagement` 标签可以帮我们完成这个事情。
 
 下面的例子中，`my-app-child` 引入了 `maven-core` 依赖，父项目仅仅只是预定义了依赖的版本。也就是说，父项目指定了 `maven-artifact` 和 `maven-core` 两个依赖的版本，但并没有引入依赖，在子项目中只引入了 `maven-core` 依赖，即 `maven-artifact` 是没有被引入的，且子项目无需指定 `maven-core` 依赖的版本，该依赖的版本就与父项目所指定的版本一样。
 
@@ -149,7 +149,7 @@
 ```
 
 ```xml
-<!-- spring-boot-dependencie -->
+<!-- spring-boot-dependencies -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -272,11 +272,174 @@ public @interface AutoConfigurationPackage {
 }
 ```
 
-总的来说，就是 @SpringBootApplication 通过 @Configuration 注解让启动类同时成为了配置类，通过 @EnableAutoConfiguration 开启自动配置的扫描，通过 @ComponentScan 开启 Spring Bean 的自动扫描。
+总的来说，就是 @SpringBootApplication 通过 @Configuration 注解让启动类 HelloWorldApplication 成为了配置类，通过 @EnableAutoConfiguration 开启了自动配置的扫描，通过 @ComponentScan 开启了 Spring Bean 的自动扫描。
 
 ### SpringApplication
 
 SpringApplication.run() 是整个 Spring Boot 应用的入口。核心的启动流程如下：
+
+### 启动日志
+
+为了让读者对 Spring Boot 应用的启动过程有更清晰的理解，笔者将结合项目的启动日志，对项目启动后的方法调用做个大致的分析。下面是项目其中一次启动的日志：
+
+```html
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.7.2)
+
+2022-09-08 08:28:22.964  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Starting HelloWorldApplication using Java 11.0.12 on luxiaocongdeMac-2.local with PID 54995 (/Users/xiaoconglu/code/java/spring-mvc/spring-mvc-helloworld/target/classes started by xiaoconglu in /Users/xiaoconglu/code/java/spring-mvc)
+2022-09-08 08:28:22.968  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : No active profile set, falling back to 1 default profile: "default"
+2022-09-08 08:28:24.900  INFO 54995 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-09-08 08:28:24.912  INFO 54995 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-09-08 08:28:24.913  INFO 54995 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.65]
+2022-09-08 08:28:25.090  INFO 54995 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-09-08 08:28:25.091  INFO 54995 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1910 ms
+2022-09-08 08:28:25.857  INFO 54995 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-09-08 08:28:25.873  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Started HelloWorldApplication in 3.735 seconds (JVM running for 4.41)
+```
+
+SpringApplication 的静态 run() 方法最终会调用到自身的实例 run() 方法：
+
+```java
+public class SpringApplication {
+    
+    // ...
+
+    public ConfigurableApplicationContext run(String... args) {
+        // ...
+        Banner printedBanner = printBanner(environment);
+        // ...
+        prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
+        refreshContext(context);
+        // ...
+    }
+    
+    // ...
+    
+}
+```
+
+run() 方法的内容会相对比较复杂，为了简化其中的逻辑，我们重点关注 printBanner()、prepareContext()、refreshContext() 几个方法。
+
+#### printBanner
+
+printBanner() 见名知意，是用来打印 Spring 项目的 Banner 的：
+
+```html
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.7.2)
+
+```
+
+SpringApplication 调用 SpringApplicationBannerPrinter 的 print() 方法打印 Banner。
+
+```java
+public class SpringApplication {
+    
+    // ...
+
+    private Banner printBanner(ConfigurableEnvironment environment) {
+        // ...
+        SpringApplicationBannerPrinter bannerPrinter = new SpringApplicationBannerPrinter(resourceLoader, this.banner);
+        // ...
+        return bannerPrinter.print(environment, this.mainApplicationClass, System.out);
+    }
+    
+    // ...
+    
+}
+```
+
+SpringApplicationBannerPrinter 优先打印 ImageBanner 或 TextBanner，如果没有设置 ImageBanner 和 TextBanner，则打印 Spring Boot 默认的 Banner。
+
+```java
+class SpringApplicationBannerPrinter {
+    
+    // ...
+    
+    static final String DEFAULT_BANNER_LOCATION = "banner.txt";
+
+    static final String[] IMAGE_EXTENSION = { "gif", "jpg", "png" };
+
+    private static final Banner DEFAULT_BANNER = new SpringBootBanner();
+    
+    // ...
+
+    Banner print(Environment environment, Class<?> sourceClass, PrintStream out) {
+        Banner banner = getBanner(environment);
+        banner.printBanner(environment, sourceClass, out);
+        return new PrintedBanner(banner, sourceClass);
+    }
+    
+    // ...
+
+    private Banner getBanner(Environment environment) {
+        Banners banners = new Banners();
+        banners.addIfNotNull(getImageBanner(environment));
+        banners.addIfNotNull(getTextBanner(environment));
+        if (banners.hasAtLeastOneBanner()) {
+            return banners;
+        }
+        // ...
+        return DEFAULT_BANNER;
+    }
+    
+    // ...
+    
+}
+```
+
+跟着源码一路往下看，我们可以看到 Spring Boot 默认的 Banner 是写在 SpringBootBanner 里面的。
+
+```java
+class SpringBootBanner implements Banner {
+
+    private static final String[] BANNER = {"", "  .   ____          _            __ _ _",
+            " /\\\\ / ___'_ __ _ _(_)_ __  __ _ \\ \\ \\ \\", "( ( )\\___ | '_ | '_| | '_ \\/ _` | \\ \\ \\ \\",
+            " \\\\/  ___)| |_)| | | | | || (_| |  ) ) ) )", "  '  |____| .__|_| |_|_| |_\\__, | / / / /",
+            " =========|_|==============|___/=/_/_/_/"};
+
+    // ...
+    
+}
+```
+
+如果我们想自定义 Banner，我们可以在项目的 resources 目录下放置 banner.txt 文件，从而改变 Banner 的打印。如我的 banner.txt 文件的内容为：
+
+```html
+                     _    __               
+    ____   ____ _   (_)  / /_   _____  ___ 
+   / __ \ / __ `/  / /  / __/  / ___/ / _ \
+  / /_/ // /_/ /  / /  / /_   (__  ) /  __/
+ / .___/ \__,_/  /_/   \__/  /____/  \___/ 
+/_/                                        
+```
+
+程序启动后打印的 Banner 信息被修改为：
+
+```html
+                     _    __               
+    ____   ____ _   (_)  / /_   _____  ___ 
+   / __ \ / __ `/  / /  / __/  / ___/ / _ \
+  / /_/ // /_/ /  / /  / /_   (__  ) /  __/
+ / .___/ \__,_/  /_/   \__/  /____/  \___/ 
+/_/                                        
+```
+
+#### prepareContext
+
+
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-mvc)
