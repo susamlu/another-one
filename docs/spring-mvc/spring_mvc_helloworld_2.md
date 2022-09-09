@@ -280,7 +280,7 @@ SpringApplication.run() 是整个 Spring Boot 应用的入口。核心的启动�
 
 ### 启动日志
 
-为了让读者对 Spring Boot 应用的启动过程有更清晰的理解，笔者将结合项目的启动日志，对项目启动后的方法调用做个大致的分析。下面是项目其中一次启动的日志：
+为了让读者对 Spring Boot 应用的启动过程有更清晰的理解，笔者将结合项目的启动日志，对项目启动后的调用流程做个大致的分析。下面是项目的一次启动日志：
 
 ```html
 
@@ -303,11 +303,11 @@ SpringApplication.run() 是整个 Spring Boot 应用的入口。核心的启动�
 2022-09-08 08:28:25.873  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Started HelloWorldApplication in 3.735 seconds (JVM running for 4.41)
 ```
 
-SpringApplication 的静态 run() 方法最终会调用到自身的实例 run() 方法：
+SpringApplication 的静态 run() 方法，最终会调用到自身的实例 run() 方法。实例 run() 方法的内容会相对比较复杂，为了简化其中的逻辑，我们重点关注 printBanner()、prepareContext()、refreshContext() 几个方法。
 
 ```java
 public class SpringApplication {
-    
+
     // ...
 
     public ConfigurableApplicationContext run(String... args) {
@@ -318,13 +318,11 @@ public class SpringApplication {
         refreshContext(context);
         // ...
     }
-    
+
     // ...
-    
+
 }
 ```
-
-run() 方法的内容会相对比较复杂，为了简化其中的逻辑，我们重点关注 printBanner()、prepareContext()、refreshContext() 几个方法。
 
 #### printBanner
 
@@ -346,7 +344,7 @@ SpringApplication 调用 SpringApplicationBannerPrinter 的 print() 方法打印
 
 ```java
 public class SpringApplication {
-    
+
     // ...
 
     private Banner printBanner(ConfigurableEnvironment environment) {
@@ -355,9 +353,9 @@ public class SpringApplication {
         // ...
         return bannerPrinter.print(environment, this.mainApplicationClass, System.out);
     }
-    
+
     // ...
-    
+
 }
 ```
 
@@ -365,15 +363,15 @@ SpringApplicationBannerPrinter 优先打印 ImageBanner 或 TextBanner，如果�
 
 ```java
 class SpringApplicationBannerPrinter {
-    
+
     // ...
-    
+
     static final String DEFAULT_BANNER_LOCATION = "banner.txt";
 
-    static final String[] IMAGE_EXTENSION = { "gif", "jpg", "png" };
+    static final String[] IMAGE_EXTENSION = {"gif", "jpg", "png"};
 
     private static final Banner DEFAULT_BANNER = new SpringBootBanner();
-    
+
     // ...
 
     Banner print(Environment environment, Class<?> sourceClass, PrintStream out) {
@@ -381,7 +379,7 @@ class SpringApplicationBannerPrinter {
         banner.printBanner(environment, sourceClass, out);
         return new PrintedBanner(banner, sourceClass);
     }
-    
+
     // ...
 
     private Banner getBanner(Environment environment) {
@@ -394,13 +392,13 @@ class SpringApplicationBannerPrinter {
         // ...
         return DEFAULT_BANNER;
     }
-    
+
     // ...
-    
+
 }
 ```
 
-跟着源码一路往下看，我们可以看到 Spring Boot 默认的 Banner 是写在 SpringBootBanner 里面的。
+默认的 Banner 值由 SpringBootBanner 类的一个常量值定义：
 
 ```java
 class SpringBootBanner implements Banner {
@@ -411,7 +409,7 @@ class SpringBootBanner implements Banner {
             " =========|_|==============|___/=/_/_/_/"};
 
     // ...
-    
+
 }
 ```
 
@@ -439,7 +437,155 @@ class SpringBootBanner implements Banner {
 
 #### prepareContext
 
+```java
+public class SpringApplication {
 
+    // ...
+
+    private void prepareContext(/* ... */) {
+        // ...
+        logStartupInfo(context.getParent() == null);
+        logStartupProfileInfo(context);
+        // ...
+    }
+
+    // ...
+
+}
+```
+
+prepareContext() 通过 logStartupInfo()、logStartupProfileInfo() 两个方法，分别输出下面两句日志：
+
+```html
+2022-09-08 08:28:22.964  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Starting HelloWorldApplication using Java 11.0.12 on luxiaocongdeMac-2.local with PID 54995 (/Users/xiaoconglu/code/java/spring-mvc/spring-mvc-helloworld/target/classes started by xiaoconglu in /Users/xiaoconglu/code/java/spring-mvc)
+2022-09-08 08:28:22.968  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : No active profile set, falling back to 1 default profile: "default"
+```
+
+#### refreshContext
+
+refreshContext() 是其中的核心方法，refreshContext() 最终会调用 AbstractApplicationContext 的refresh() 方法，refresh() 又调用了自身的 onRefresh() 和 finishRefresh()。
+
+```java
+public abstract class AbstractApplicationContext extends DefaultResourceLoader
+        implements ConfigurableApplicationContext {
+
+    // ...
+
+    public void refresh() throws BeansException, IllegalStateException {
+        // ...
+        onRefresh();
+        // ...
+        finishRefresh();
+        // ...
+    }
+
+    // ...
+
+}
+```
+
+其中 onRefresh() 实际调用的是 ServletWebServerApplicationContext 的 onRefresh() 方法，然后再通过 ServletWebServerFactory 获取 WebServer。
+
+```java
+public class ServletWebServerApplicationContext extends GenericWebApplicationContext
+        implements ConfigurableWebServerApplicationContext {
+
+    // ...
+
+    protected void onRefresh() {
+        // ...
+        createWebServer();
+        // ...
+    }
+
+    // ...
+
+    private void createWebServer() {
+        // ...
+        ServletWebServerFactory factory = getWebServerFactory();
+        // ...
+        this.webServer = factory.getWebServer(getSelfInitializer());
+        // ...
+    }
+
+    // ...
+
+}
+```
+
+ServletWebServerFactory 会创建 TomcatWebServer，并调用它的 initialize() 方法。initialize() 会启动 Tomcat 并输出相关日志。
+
+```java
+public class TomcatWebServer implements WebServer {
+
+    // ...
+
+    private void initialize() throws WebServerException {
+        logger.info("Tomcat initialized with port(s): " + getPortsDescription(false));
+        // ...
+        this.tomcat.start();
+        // ...
+    }
+
+    // ...
+
+}
+```
+
+```html
+2022-09-08 08:28:24.900  INFO 54995 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-09-08 08:28:24.912  INFO 54995 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-09-08 08:28:24.913  INFO 54995 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.65]
+2022-09-08 08:28:25.090  INFO 54995 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-09-08 08:28:25.091  INFO 54995 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1910 ms
+```
+
+Tomcat 启动完，onRefresh() 也接着调用完成，再接着 finishRefresh() 会调用 TomcatWebServer 的 start() 方法，输出 Tomcat 启动完成的日志。
+
+```java
+public class TomcatWebServer implements WebServer {
+
+    // ...
+
+    public void start() throws WebServerException {
+        // ...
+        logger.info("Tomcat started on port(s): " + getPortsDescription(true) + " with context path '"
+                + getContextPath() + "'");
+        // ...
+    }
+
+    // ...
+
+}
+```
+
+```html
+2022-09-08 08:28:25.857  INFO 54995 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+```
+
+上面的方法都调用完后，最终又回到了 SpringApplication 的 run() 方法，run() 最后输出应用启动完成的日志。
+
+```java
+public class SpringApplication {
+    
+    // ...
+
+    public ConfigurableApplicationContext run(String... args) {
+        // ...
+        new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), timeTakenToStartup);
+        // ...
+    }
+
+    // ...
+    
+}
+```
+
+```html
+2022-09-08 08:28:25.873  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Started HelloWorldApplication in 3.735 seconds (JVM running for 4.41)
+```
+
+整个流程，可以总结为以下一张图：
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-mvc)
