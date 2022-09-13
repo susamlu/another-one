@@ -326,7 +326,7 @@ public class SpringApplication {
 
 #### printBanner
 
-printBanner() 见名知意，是用来打印 Spring 项目的 Banner 的：
+printBanner() 见名知意，是用来打印 Spring Boot 项目的 Banner 的：
 
 ```html
 
@@ -437,6 +437,8 @@ class SpringBootBanner implements Banner {
 
 #### prepareContext
 
+prepareContext() 是其中非常重要的一个方法，比如 Spring Bean 的加载就发生在这个方法调用的过程中。
+
 ```java
 public class SpringApplication {
 
@@ -463,7 +465,7 @@ prepareContext() 通过 logStartupInfo()、logStartupProfileInfo() 两个方法�
 
 #### refreshContext
 
-refreshContext() 是其中的核心方法，refreshContext() 最终会调用 AbstractApplicationContext 的refresh() 方法，refresh() 又调用了自身的 onRefresh() 和 finishRefresh()。
+refreshContext() 也是其中的核心方法，Tomcat 的启动就发生在该方法的调用过程中。refreshContext() 最终会调用 AbstractApplicationContext 的refresh() 方法，refresh() 又调用了自身的 onRefresh() 和 finishRefresh() 方法。
 
 ```java
 public abstract class AbstractApplicationContext extends DefaultResourceLoader
@@ -586,6 +588,8 @@ public class SpringApplication {
 ```
 
 整个流程，可以总结为以下一张图：
+
+<img src="../images/spring_mvc_helloworld_2_2.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-mvc)
