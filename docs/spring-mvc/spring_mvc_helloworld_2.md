@@ -515,7 +515,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 }
 ```
 
-ServletWebServerFactory 会创建 TomcatWebServer，并调用它的 initialize() 方法。initialize() 会启动 Tomcat 并输出相关日志。
+ServletWebServerFactory 会创建 TomcatWebServer，创建 TomcatWebServer 的时候，它的 initialize() 方法会被自动调用，initialize() 会启动 Tomcat 并输出相关日志。
 
 ```java
 public class TomcatWebServer implements WebServer {
