@@ -6,14 +6,14 @@
 - 所有的项目代码均构建在 Spring Boot 2.7.2 之上。
 
 学习前提：
-- 文章中涉及到的代码主要构建在 Java 语言之上，因此阅读之前掌握基本的 Java 基础是必须的；
+- 文章中涉及到的代码主要构建在 Java 语言之上，因此阅读之前掌握基本的 Java 语言基础是必须的；
 - 项目代码以 Maven 作为项目管理工具，开始之前你应当对 Maven 的基础知识有所了解。
 
 ## Maven 项目
 
 ### 项目结构
 
-开始之前，我们先复习一下 Maven 项目的目录结构：
+开始之前，我们先复习一下 Maven 项目的基本内容，它的目录结构如下：
 
 ```html
 .
@@ -27,9 +27,11 @@
         └── resources
 ```
 
+pom.xml 文件主要用于定义项目的依赖，main 目录主要用于存放项目的代码和配置，test 目录主要用于存放测试的代码和配置。
+
 ### pom.xml
 
-以及 pom 文件的一些内容：
+下面是一个简单的 pom.xml 文件：
 
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -46,13 +48,15 @@
 </project>
 ```
 
+modelVersion 指定 pom 文件符合哪个版本的描述符，groupId、artifactId、version 用来共同标识一个唯一的 jar 包，name 和 url 为描述性内容。
+
 ## 快速开始
 
-搭建一个 Spring MVC 项目，只需要简单的几步：
+搭建一个 Spring Web 项目，只需要简单的几步：
 
 ### 1. 继承 Spring Boot 项目
 
-`spring-boot-starter-parent` 在 pom 文件中预定义了各组件的依赖版本，继承了该项目，我们在引入 Spring MVC 组件的时候，就不再需要去指定它的版本。
+`spring-boot-starter-parent` 在 pom 文件中预定义了各组件的依赖版本，继承了该项目，我们在引入 Spring Web 组件的时候，就不再需要去指定它的版本。
 
 ```xml
 <parent>
@@ -63,9 +67,9 @@
 </parent>
 ```
 
-### 2. 引入 Spring MVC 依赖
+### 2. 引入 Spring Web 依赖
 
-`spring-boot-starter-web` 定义了 Spring MVC 项目所需要的全部依赖。因此，我们在引入 Spring MVC 依赖的时候，只需要简单的声明：
+`spring-boot-starter-web` 定义了 Spring Web 项目所需要的全部依赖。因此，我们在引入 Spring Web 依赖的时候，只需要简单的声明：
 
 ```xml
 <dependency>
