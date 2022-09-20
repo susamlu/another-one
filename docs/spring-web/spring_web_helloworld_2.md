@@ -1,4 +1,4 @@
-# 深入浅出 Spring MVC —— HelloWorld (进阶篇)
+# 从零学习 Spring Web 开发 —— HelloWorld (进阶篇)
 
 上一篇文章已经介绍了如何快速搭建一个 Spring MVC 项目，本文将对上文中提及的几个技术点，进行深入的讲解。
 
@@ -292,7 +292,7 @@ SpringApplication.run() 是整个 Spring Boot 应用的入口。核心的启动�
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v2.7.2)
 
-2022-09-08 08:28:22.964  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Starting HelloWorldApplication using Java 11.0.12 on luxiaocongdeMac-2.local with PID 54995 (/Users/xiaoconglu/code/java/spring-mvc/spring-mvc-helloworld/target/classes started by xiaoconglu in /Users/xiaoconglu/code/java/spring-mvc)
+2022-09-08 08:28:22.964  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Starting HelloWorldApplication using Java 11.0.12 on luxiaocongdeMac-2.local with PID 54995 (/Users/xiaoconglu/code/java/spring-web/spring-web-helloworld/target/classes started by xiaoconglu in /Users/xiaoconglu/code/java/spring-web)
 2022-09-08 08:28:22.968  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : No active profile set, falling back to 1 default profile: "default"
 2022-09-08 08:28:24.900  INFO 54995 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
 2022-09-08 08:28:24.912  INFO 54995 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
@@ -459,7 +459,7 @@ public class SpringApplication {
 prepareContext() 通过 logStartupInfo()、logStartupProfileInfo() 两个方法，分别输出下面两句日志：
 
 ```html
-2022-09-08 08:28:22.964  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Starting HelloWorldApplication using Java 11.0.12 on luxiaocongdeMac-2.local with PID 54995 (/Users/xiaoconglu/code/java/spring-mvc/spring-mvc-helloworld/target/classes started by xiaoconglu in /Users/xiaoconglu/code/java/spring-mvc)
+2022-09-08 08:28:22.964  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Starting HelloWorldApplication using Java 11.0.12 on luxiaocongdeMac-2.local with PID 54995 (/Users/xiaoconglu/code/java/spring-web/spring-web-helloworld/target/classes started by xiaoconglu in /Users/xiaoconglu/code/java/spring-web)
 2022-09-08 08:28:22.968  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : No active profile set, falling back to 1 default profile: "default"
 ```
 
@@ -589,8 +589,8 @@ public class SpringApplication {
 
 整个流程，可以总结为以下一张图：
 
-<img src="../images/spring_mvc_helloworld_2_2.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="../images/spring_web_helloworld_2_2.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 [返回首页](https://susamlu.github.io/paitse)
-[获取源码](https://github.com/susamlu/spring-mvc)
+[获取源码](https://github.com/susamlu/spring-web)
 

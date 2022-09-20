@@ -1,4 +1,4 @@
-# 深入浅出 Spring MVC —— Validation
+# 从零学习 Spring Web 开发 —— Validation
 
 通过 Validation 注解，可以方便地定义需要以何种方式来校验接口参数。
 
@@ -457,4 +457,4 @@ public class TimeAnnotationRequest {
 ```
 
 [返回首页](https://susamlu.github.io/paitse)
-[获取源码](https://github.com/susamlu/spring-mvc)
+[获取源码](https://github.com/susamlu/spring-web)

@@ -1,4 +1,4 @@
-# 深入浅出 Spring MVC —— HttpMessageConverter
+# 从零学习 Spring Web 开发 —— HttpMessageConverter
 
 ## Long 转 String，日期转时间戳
 
@@ -125,7 +125,7 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 
 核心的代码流程如下图：
 
-<img src="../images/spring_mvc_http_message_converter_0.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="../images/spring_web_http_message_converter_0.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 下面结合源代码，讲讲具体的加载过程。实际的过程比较繁琐，需要耐心阅读。建议结合源代码阅读，必要时进行本地调试，如此可以更好地理解整个流程。
 
@@ -262,7 +262,7 @@ class WebMvcConfigurerComposite implements WebMvcConfigurer {
 
 核心的代码流程如下图：
 
-<img src="../images/spring_mvc_http_message_converter_1.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="../images/spring_web_http_message_converter_1.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 实际的调用流程会非常复杂，下面选取其中较为核心的代码进行讲解。
 
@@ -412,4 +412,4 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 3. WebMvcConfigurer、WebMvcConfigurerAdapter、WebMvcConfigurationSupport 到底使用哪一个？@EnableWebMvc 在什么时候需要，什么时候不需要？
    
 [返回首页](https://susamlu.github.io/paitse)
-[获取源码](https://github.com/susamlu/spring-mvc)
+[获取源码](https://github.com/susamlu/spring-web)
