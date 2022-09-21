@@ -1,8 +1,8 @@
 # 从零学习 Spring Web 开发 —— HelloWorld (进阶篇)
 
-上一篇文章已经介绍了如何快速搭建一个 Spring MVC 项目，本文将对上文中提及的几个技术点，进行深入的讲解。
+上一篇文章已经介绍了如何快速搭建一个 Spring Web 项目，本文将对上文中提及的几个技术点，进行深入的讲解。
 
-我们前面提到，搭建 Spring MVC 项目时，只需要继承 `spring-boot-starter-parent` ，并引入 `spring-boot-starter-web` ，即可把 Spring MVC 项目所需要的全部依赖引进来，并且我们不需要指定依赖的版本，这是如何做到的呢？
+我们前面提到，搭建 Spring Web 项目时，只需要继承 `spring-boot-starter-parent` ，并引入 `spring-boot-starter-web` ，即可把 Spring Web 项目所需要的全部依赖引进来，并且我们不需要指定依赖的版本，这是如何做到的呢？
 
 这里会涉及到 Maven 的 parent 和 dependencyManagement 标签，我们先讲讲这两个标签的作用。
 
@@ -177,7 +177,7 @@
 
 ## spring-boot-starter-web
 
-2.7.2 版本的 `spring-boot-starter-web` 将 `spring-webmvc` 等项目引入了进来，并指定了各依赖的版本：
+2.7.2 版本的 `spring-boot-starter-web` 将 `spring-web` 等项目引入了进来，并指定了各依赖的版本：
 
 ```xml
 <!-- spring-boot-starter-web -->
@@ -225,7 +225,7 @@
 </project>
 ```
 
-在 `spring-boot-starter-parent` 和 `spring-boot-starter-web` 的共同作用下，就完成了 Spring MVC 项目全部依赖和依赖版本的声明。
+在 `spring-boot-starter-parent` 和 `spring-boot-starter-web` 的共同作用下，就完成了 Spring Web 项目全部依赖和依赖版本的声明。
 
 ## @SpringBootApplication 与 SpringApplication
 
@@ -292,15 +292,15 @@ SpringApplication.run() 是整个 Spring Boot 应用的入口。核心的启动�
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v2.7.2)
 
-2022-09-08 08:28:22.964  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Starting HelloWorldApplication using Java 11.0.12 on luxiaocongdeMac-2.local with PID 54995 (/Users/xiaoconglu/code/java/spring-web/spring-web-helloworld/target/classes started by xiaoconglu in /Users/xiaoconglu/code/java/spring-web)
-2022-09-08 08:28:22.968  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : No active profile set, falling back to 1 default profile: "default"
+2022-09-08 08:28:22.964  INFO 54995 --- [           main] o.s.springweb.HelloWorldApplication      : Starting HelloWorldApplication using Java 11.0.12 on luxiaocongdeMac-2.local with PID 54995 (/Users/xiaoconglu/code/java/spring-web/spring-web-helloworld/target/classes started by xiaoconglu in /Users/xiaoconglu/code/java/spring-web)
+2022-09-08 08:28:22.968  INFO 54995 --- [           main] o.s.springweb.HelloWorldApplication      : No active profile set, falling back to 1 default profile: "default"
 2022-09-08 08:28:24.900  INFO 54995 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
 2022-09-08 08:28:24.912  INFO 54995 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
 2022-09-08 08:28:24.913  INFO 54995 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.65]
 2022-09-08 08:28:25.090  INFO 54995 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
 2022-09-08 08:28:25.091  INFO 54995 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1910 ms
 2022-09-08 08:28:25.857  INFO 54995 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2022-09-08 08:28:25.873  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Started HelloWorldApplication in 3.735 seconds (JVM running for 4.41)
+2022-09-08 08:28:25.873  INFO 54995 --- [           main] o.s.springweb.HelloWorldApplication      : Started HelloWorldApplication in 3.735 seconds (JVM running for 4.41)
 ```
 
 SpringApplication 的静态 run() 方法，最终会调用到自身的实例 run() 方法。实例 run() 方法的内容会相对比较复杂，为了简化其中的逻辑，我们重点关注 printBanner()、prepareContext()、refreshContext() 几个方法。
@@ -459,8 +459,8 @@ public class SpringApplication {
 prepareContext() 通过 logStartupInfo()、logStartupProfileInfo() 两个方法，分别输出下面两句日志：
 
 ```html
-2022-09-08 08:28:22.964  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Starting HelloWorldApplication using Java 11.0.12 on luxiaocongdeMac-2.local with PID 54995 (/Users/xiaoconglu/code/java/spring-web/spring-web-helloworld/target/classes started by xiaoconglu in /Users/xiaoconglu/code/java/spring-web)
-2022-09-08 08:28:22.968  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : No active profile set, falling back to 1 default profile: "default"
+2022-09-08 08:28:22.964  INFO 54995 --- [           main] o.s.springweb.HelloWorldApplication      : Starting HelloWorldApplication using Java 11.0.12 on luxiaocongdeMac-2.local with PID 54995 (/Users/xiaoconglu/code/java/spring-web/spring-web-helloworld/target/classes started by xiaoconglu in /Users/xiaoconglu/code/java/spring-web)
+2022-09-08 08:28:22.968  INFO 54995 --- [           main] o.s.springweb.HelloWorldApplication      : No active profile set, falling back to 1 default profile: "default"
 ```
 
 #### refreshContext
@@ -584,7 +584,7 @@ public class SpringApplication {
 ```
 
 ```html
-2022-09-08 08:28:25.873  INFO 54995 --- [           main] o.s.springmvc.HelloWorldApplication      : Started HelloWorldApplication in 3.735 seconds (JVM running for 4.41)
+2022-09-08 08:28:25.873  INFO 54995 --- [           main] o.s.springweb.HelloWorldApplication      : Started HelloWorldApplication in 3.735 seconds (JVM running for 4.41)
 ```
 
 整个流程，可以总结为以下一张图：
