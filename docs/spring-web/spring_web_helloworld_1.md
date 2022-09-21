@@ -96,7 +96,7 @@ public class HelloWorldController {
 
 ### 4. 编写启动类
 
-使用 @SpringBootApplication 指定项目的启动类，至此，HelloWorld 项目的代码就全部编写完了。
+使用 @SpringBootApplication 指定项目的启动类，在 main() 方法中执行 SpringApplication.run() 方法，至此，HelloWorld 项目的代码就全部编写完了。
 
 ```java
 @SpringBootApplication
