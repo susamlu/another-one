@@ -278,6 +278,8 @@ public @interface AutoConfigurationPackage {
 
 SpringApplication.run() 是整个 Spring Boot 应用的入口。核心的启动流程如下：
 
+<img src="../images/spring_web_helloworld_2_1.png" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+
 ### 启动日志
 
 为了让读者对 Spring Boot 应用的启动过程有更清晰的理解，笔者将结合项目的启动日志，对项目启动后的调用流程做个大致的分析。下面是项目的一次启动日志：
