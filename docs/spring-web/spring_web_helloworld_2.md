@@ -227,6 +227,8 @@
 
 在 `spring-boot-starter-parent` 和 `spring-boot-starter-web` 的共同作用下，就完成了 Spring Web 项目全部依赖和依赖版本的声明。
 
+> 读到这里，不知道读者有没有这样的疑问：我继承的是 `spring-boot-starter-parent` 项目，为什么却把 `spring-boot-dependencies` 的内容也继承了？这其实是由继承的传递性造成的，即继承的特性导致了子项目除了会继承父项目的内容，同时也会继承所有其它祖先项目的内容。
+
 ## @SpringBootApplication 与 SpringApplication
 
 不知道读者在编写 Spring Boot 项目的时候，有没有思考过启动类中为何需要同时使用 @SpringBootApplication 和 SpringApplication，它们分别的作用又是什么？下面让我们一起来一探究竟。
@@ -245,7 +247,7 @@ public @interface SpringBootApplication {
 }
 ```
 
-其中 @SpringBootConfiguration 又引入了 @Configuration，从而可以在启动类中通过 @Bean 配置容器 Bean。
+其中 @SpringBootConfiguration 又引入了 @Configuration，从而让 HelloWorldApplication 成为了一个配置类。
 
 ```java
 @Configuration
@@ -279,6 +281,16 @@ public @interface AutoConfigurationPackage {
 SpringApplication.run() 是整个 Spring Boot 应用的入口。核心的启动流程如下：
 
 <img src="../images/spring_web_helloworld_2_1.pdf" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+
+#### META-INF/spring.factories
+
+SpringApplication 的静态 run() 方法，会先创建一个 SpringApplication 实例，再执行它的实例 run() 方法。创建 SpringApplication 的时候，会触发对所有 jar 包中的 `META-INF/spring.factories` 文件的加载。如在我们的 HelloWorld 项目中，会加载如下几个文件：
+
+```html
+jar:file:/Users/xiaoconglu/.m2/repository/org/springframework/boot/spring-boot/2.7.2/spring-boot-2.7.2.jar!/META-INF/spring.factories
+jar:file:/Users/xiaoconglu/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/2.7.2/spring-boot-autoconfigure-2.7.2.jar!/META-INF/spring.factories
+jar:file:/Users/xiaoconglu/.m2/repository/org/springframework/spring-beans/5.3.22/spring-beans-5.3.22.jar!/META-INF/spring.factories
+```
 
 ### 启动日志
 
