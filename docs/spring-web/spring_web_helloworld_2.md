@@ -280,7 +280,7 @@ public @interface AutoConfigurationPackage {
 
 SpringApplication.run() 是整个 Spring Boot 应用的入口。核心的启动流程如下：
 
-<img src="../images/spring_web_helloworld_2_1.pdf" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="../images/spring_web_helloworld_2_1.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 #### SpringFactoriesLoader
 
@@ -639,7 +639,7 @@ public class SpringApplication {
 
 整个流程，可以总结为以下一张图：
 
-<img src="../images/spring_web_helloworld_2_2.pdf" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="../images/spring_web_helloworld_2_2.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
