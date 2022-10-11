@@ -282,15 +282,51 @@ SpringApplication.run() 是整个 Spring Boot 应用的入口。核心的启动�
 
 <img src="../images/spring_web_helloworld_2_1.pdf" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
-#### META-INF/spring.factories
+#### SpringFactoriesLoader
 
-SpringApplication 的静态 run() 方法，会先创建一个 SpringApplication 实例，再执行它的实例 run() 方法。创建 SpringApplication 的时候，会触发对所有 jar 包中的 `META-INF/spring.factories` 文件的加载。如在我们的 HelloWorld 项目中，会加载如下几个文件：
+SpringApplication 的静态 run() 方法，会先创建一个 SpringApplication 实例，再执行它的实例 run() 方法。创建 SpringApplication 的时候，会调用 SpringFactoriesLoader 的 loadSpringFactories() 方法，最终会触发对所有类路径的 jar 包中的 `META-INF/spring.factories` 文件的加载。如在我们的 HelloWorld 项目中，会加载如下几个文件：
 
 ```html
 jar:file:/Users/susamlu/.m2/repository/org/springframework/boot/spring-boot/2.7.2/spring-boot-2.7.2.jar!/META-INF/spring.factories
 jar:file:/Users/susamlu/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/2.7.2/spring-boot-autoconfigure-2.7.2.jar!/META-INF/spring.factories
 jar:file:/Users/susamlu/.m2/repository/org/springframework/spring-beans/5.3.22/spring-beans-5.3.22.jar!/META-INF/spring.factories
 ```
+
+上面 `META-INF/spring.factories` 包含的具体内容，在此不作赘述。要了解这些文件的作用，可以通过查看 SpringFactoriesLoader 类的代码和注释进行了解。
+
+SpringFactoriesLoader 类的主要作用是提供 Spring 框架内部一种加载工厂的方式，它可以从多个类路径的 jar 包中的 `META-INF/spring.factories` 文件中加载并实例化给定的工厂。其中，spring.factories 的配置需要遵循 `properties` 配置的格式，并且一般以接口的全限定类名为 key，以具体实现类的全限定类名为 value。例如：
+
+```html
+example.MyService=example.MyServiceImpl1,example.MyServiceImpl2
+```
+
+SpringFactoriesLoader 提供了 loadFactories()、loadFactoryNames() 两个公共静态方法，一个用于获取工厂实例，一个用于获取工厂类的全限定类名。
+
+#### EnableAutoConfiguration
+
+`META-INF/spring.factories` 还有另一个妙用，就是在此文件中通过定义 EnableAutoConfiguration，让我们自定义的 jar 包中的类也可以成为 Spring Boot 的自动配置类，比如我们定义了如下配置类：
+
+```java
+package example;
+
+public class MyAutoConfiguration {
+    
+    @Bean
+    public MyBean() {
+        return new MyBean();
+    }
+    
+}
+```
+
+则只需要在 resources 目录的 `META-INF/spring.factories` 文件中定义如下配置：
+
+```html
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  example.MyAutoConfiguration
+```
+
+那么，在我们将该 jar 包引入到项目时，MyAutoConfiguration 配置类就会被自动当成自动配置类而被 Spring Boot 自动加载。它的具体的工作原理，将在本章后面的小节中进行解析。
 
 ### 启动日志
 
