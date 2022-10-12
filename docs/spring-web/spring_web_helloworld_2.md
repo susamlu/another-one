@@ -292,7 +292,7 @@ jar:file:/Users/susamlu/.m2/repository/org/springframework/boot/spring-boot-auto
 jar:file:/Users/susamlu/.m2/repository/org/springframework/spring-beans/5.3.22/spring-beans-5.3.22.jar!/META-INF/spring.factories
 ```
 
-上面 `META-INF/spring.factories` 包含的具体内容，在此不作赘述。要了解这些文件的作用，可以通过查看 SpringFactoriesLoader 类的代码和注释进行了解。
+上述 `META-INF/spring.factories` 文件包含的具体内容，在此不作赘述。要了解这些文件的作用，可以通过查看 SpringFactoriesLoader 类的代码和注释进行了解。
 
 SpringFactoriesLoader 类的主要作用是提供 Spring 框架内部一种加载工厂的方式，它可以从多个类路径的 jar 包中的 `META-INF/spring.factories` 文件中加载并实例化给定的工厂。其中，spring.factories 的配置需要遵循 `properties` 配置的格式，并且一般以接口的全限定类名为 key，以具体实现类的全限定类名为 value。例如：
 
@@ -326,7 +326,17 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   example.MyAutoConfiguration
 ```
 
-那么，在我们将该 jar 包引入到项目时，MyAutoConfiguration 配置类就会被自动当成自动配置类而被 Spring Boot 自动加载。它的具体的工作原理，将在本章后面的小节中进行解析。
+那么，在我们将该 jar 包引入到项目时，MyAutoConfiguration 配置类就会被当成自动配置类而被 Spring Boot 自动加载。它的具体的工作原理，将在本章后面的小节中进行解析。
+
+#### prepareContext
+
+SpringApplication 的示例 run() 方法会调用两个非常重要的方法：prepareContext() 和 refreshContext()，这两个方法通过它们的名字就可以大概猜出其的作用了，实际上，一个是用来准备在应用启动前需要预先准备的内容的，一个是用来执行在应用启动时需要执行的核心方法的。
+
+通过代码的追踪，我们会发现 prepareContext() 做了一个比较关键的操作，就是执行了自身实例的 load() 方法，该方法会将 HelloWorldApplication 注册到 Spring 全局的 beanDefinitionMap 中，完成了这一步，后面应用启动时进行自动配置、自动扫描等，就可以找到根基了。
+
+#### refreshContext
+
+refreshContext() 最终会调用 AbstractApplicationContext 的 refresh() 方法，refresh() 经过一系列的复杂调用之后，会将前面被注册到 beanDefinitionMap 的 BeanDefinition：HelloWorldApplication 取出来，并从 HelloWorldApplication 开始，进行配置的解析。
 
 ### 启动日志
 
@@ -515,7 +525,7 @@ prepareContext() 通过 logStartupInfo()、logStartupProfileInfo() 两个方法�
 
 #### refreshContext
 
-refreshContext() 也是其中的核心方法，Tomcat 的启动就发生在该方法的调用过程中。refreshContext() 最终会调用 AbstractApplicationContext 的refresh() 方法，refresh() 又调用了自身的 onRefresh() 和 finishRefresh() 方法。
+refreshContext() 也是其中的核心方法，Tomcat 的启动就发生在该方法的调用过程中。refreshContext() 最终会调用 AbstractApplicationContext 的 refresh() 方法，refresh() 又调用了自身的 onRefresh() 和 finishRefresh() 方法。
 
 ```java
 public abstract class AbstractApplicationContext extends DefaultResourceLoader
