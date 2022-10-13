@@ -326,17 +326,114 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   example.MyAutoConfiguration
 ```
 
-那么，在我们将该 jar 包引入到项目时，MyAutoConfiguration 配置类就会被当成自动配置类而被 Spring Boot 自动加载。它的具体的工作原理，将在本章后面的小节中进行解析。
+那么，在我们将该 jar 包引入到项目时，MyAutoConfiguration 类就会被当成自动配置类而被 Spring Boot 自动加载。它的具体的工作原理，将在本章后面的小节中进行解析。
 
 #### prepareContext
 
-SpringApplication 的示例 run() 方法会调用两个非常重要的方法：prepareContext() 和 refreshContext()，这两个方法通过它们的名字就可以大概猜出其的作用了，实际上，一个是用来准备在应用启动前需要预先准备的内容的，一个是用来执行在应用启动时需要执行的核心方法的。
+SpringApplication 的实例 run() 方法会调用两个非常重要的方法：prepareContext() 和 refreshContext()，这两个方法通过它们的名字就可以大概猜出其的作用了，实际上，一个是用来准备在应用启动前需要预先准备的内容的，一个是用来执行在应用启动时需要执行的核心方法的。
 
-通过代码的追踪，我们会发现 prepareContext() 做了一个比较关键的操作，就是执行了自身实例的 load() 方法，该方法会将 HelloWorldApplication 注册到 Spring 全局的 beanDefinitionMap 中，完成了这一步，后面应用启动时进行自动配置、自动扫描等，就可以找到根基了。
+通过代码的追踪，我们会发现 prepareContext() 做了一个比较关键的操作，就是执行了自身实例的 load() 方法，该方法会将 HelloWorldApplication 注册到 Spring 全局的 beanDefinitionMap 中，完成了这一步，后面应用启动时进行自动扫描、自动配置等，就可以找到基类了。
 
 #### refreshContext
 
 refreshContext() 最终会调用 AbstractApplicationContext 的 refresh() 方法，refresh() 经过一系列的复杂调用之后，会将前面被注册到 beanDefinitionMap 的 BeanDefinition：HelloWorldApplication 取出来，并从 HelloWorldApplication 开始，进行配置的解析。
+
+#### doProcessConfigurationClass
+
+配置解析的入口为 ConfigurationClassParser 类的 parse() 方法，parse() 辗转之后，最终会调用到自身实例的 doProcessConfigurationClass() 方法，doProcessConfigurationClass() 是启动阶段当之无愧的核心方法。
+
+```java
+class ConfigurationClassParser {
+    
+    // ...
+
+    protected final SourceClass doProcessConfigurationClass(
+            ConfigurationClass configClass, SourceClass sourceClass, Predicate<String> filter)
+            throws IOException {
+
+        if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
+            // Recursively process any member (nested) classes first （优先递归处理内部类）
+            processMemberClasses(configClass, sourceClass, filter);
+        }
+
+        // Process any @PropertySource annotations （处理 @PropertySources 注解）
+        for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
+                sourceClass.getMetadata(), PropertySources.class,
+                org.springframework.context.annotation.PropertySource.class)) {
+            if (this.environment instanceof ConfigurableEnvironment) {
+                processPropertySource(propertySource);
+            }
+            else {
+                logger.info("Ignoring @PropertySource annotation on [" + sourceClass.getMetadata().getClassName() +
+                        "]. Reason: Environment must implement ConfigurableEnvironment");
+            }
+        }
+
+        // Process any @ComponentScan annotations （处理 @ComponentScan 注解）
+        Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
+                sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
+        if (!componentScans.isEmpty() &&
+                !this.conditionEvaluator.shouldSkip(sourceClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN)) {
+            for (AnnotationAttributes componentScan : componentScans) {
+                // The config class is annotated with @ComponentScan -> perform the scan immediately
+                Set<BeanDefinitionHolder> scannedBeanDefinitions =
+                        this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
+                // Check the set of scanned definitions for any further config classes and parse recursively if needed
+                for (BeanDefinitionHolder holder : scannedBeanDefinitions) {
+                    BeanDefinition bdCand = holder.getBeanDefinition().getOriginatingBeanDefinition();
+                    if (bdCand == null) {
+                        bdCand = holder.getBeanDefinition();
+                    }
+                    if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
+                        parse(bdCand.getBeanClassName(), holder.getBeanName());
+                    }
+                }
+            }
+        }
+
+        // Process any @Import annotations （处理 @Import 注解）
+        processImports(configClass, sourceClass, getImports(sourceClass), filter, true);
+
+        // Process any @ImportResource annotations （处理 @ImportResource 注解）
+        AnnotationAttributes importResource =
+                AnnotationConfigUtils.attributesFor(sourceClass.getMetadata(), ImportResource.class);
+        if (importResource != null) {
+            String[] resources = importResource.getStringArray("locations");
+            Class<? extends BeanDefinitionReader> readerClass = importResource.getClass("reader");
+            for (String resource : resources) {
+                String resolvedResource = this.environment.resolveRequiredPlaceholders(resource);
+                configClass.addImportedResource(resolvedResource, readerClass);
+            }
+        }
+
+        // Process individual @Bean methods （处理带有 @Bean 注解的方法）
+        Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(sourceClass);
+        for (MethodMetadata methodMetadata : beanMethods) {
+            configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
+        }
+
+        // Process default methods on interfaces （处理接口的默认方法）
+        processInterfaces(configClass, sourceClass);
+
+        // Process superclass, if any （如果存在父类，则递归处理父类）
+        if (sourceClass.getMetadata().hasSuperClass()) {
+            String superclass = sourceClass.getMetadata().getSuperClassName();
+            if (superclass != null && !superclass.startsWith("java") &&
+                    !this.knownSuperclasses.containsKey(superclass)) {
+                this.knownSuperclasses.put(superclass, configClass);
+                // Superclass found, return its annotation metadata and recurse
+                return sourceClass.getSuperClass();
+            }
+        }
+
+        // No superclass -> processing is complete
+        return null;
+    }
+    
+    // ...
+    
+}
+```
 
 ### 启动日志
 
@@ -426,8 +523,10 @@ class SpringApplicationBannerPrinter {
 
     // ...
 
+    // TextBanner 的文件名
     static final String DEFAULT_BANNER_LOCATION = "banner.txt";
 
+    // ImageBanner 支持的后缀格式
     static final String[] IMAGE_EXTENSION = {"gif", "jpg", "png"};
 
     private static final Banner DEFAULT_BANNER = new SpringBootBanner();
@@ -444,12 +543,15 @@ class SpringApplicationBannerPrinter {
 
     private Banner getBanner(Environment environment) {
         Banners banners = new Banners();
+      	// 优先打印 ImageBanner
         banners.addIfNotNull(getImageBanner(environment));
+        // 没有设置 ImageBanner，则优先打印 TextBanner
         banners.addIfNotNull(getTextBanner(environment));
         if (banners.hasAtLeastOneBanner()) {
             return banners;
         }
         // ...
+        // ImageBanner、TextBanner 都没有设置，则打印 Spring Boot 默认的 Banner
         return DEFAULT_BANNER;
     }
 
@@ -497,7 +599,7 @@ class SpringBootBanner implements Banner {
 
 #### prepareContext
 
-prepareContext() 是其中非常重要的一个方法，比如 Spring Bean 的加载就发生在这个方法调用的过程中。
+prepareContext() 是其中非常重要的一个方法，该方法的作用在上述内容中就所有描述。
 
 ```java
 public class SpringApplication {
