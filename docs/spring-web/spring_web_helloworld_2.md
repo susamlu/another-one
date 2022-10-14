@@ -352,11 +352,11 @@ class ConfigurationClassParser {
             throws IOException {
 
         if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
-            // Recursively process any member (nested) classes first （优先递归处理内部类）
+            // Recursively process any member (nested) classes first （优先递归解析内部类）
             processMemberClasses(configClass, sourceClass, filter);
         }
 
-        // Process any @PropertySource annotations （处理 @PropertySources 注解）
+        // Process any @PropertySource annotations （解析 @PropertySources 注解）
         for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
                 sourceClass.getMetadata(), PropertySources.class,
                 org.springframework.context.annotation.PropertySource.class)) {
@@ -369,7 +369,7 @@ class ConfigurationClassParser {
             }
         }
 
-        // Process any @ComponentScan annotations （处理 @ComponentScan 注解）
+        // Process any @ComponentScan annotations （解析 @ComponentScan 注解）
         Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
                 sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
         if (!componentScans.isEmpty() &&
@@ -391,10 +391,10 @@ class ConfigurationClassParser {
             }
         }
 
-        // Process any @Import annotations （处理 @Import 注解）
+        // Process any @Import annotations （解析 @Import 注解）
         processImports(configClass, sourceClass, getImports(sourceClass), filter, true);
 
-        // Process any @ImportResource annotations （处理 @ImportResource 注解）
+        // Process any @ImportResource annotations （解析 @ImportResource 注解）
         AnnotationAttributes importResource =
                 AnnotationConfigUtils.attributesFor(sourceClass.getMetadata(), ImportResource.class);
         if (importResource != null) {
@@ -406,16 +406,16 @@ class ConfigurationClassParser {
             }
         }
 
-        // Process individual @Bean methods （处理带有 @Bean 注解的方法）
+        // Process individual @Bean methods （解析带有 @Bean 注解的方法）
         Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(sourceClass);
         for (MethodMetadata methodMetadata : beanMethods) {
             configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
         }
 
-        // Process default methods on interfaces （处理接口的默认方法）
+        // Process default methods on interfaces （解析父接口的默认方法）
         processInterfaces(configClass, sourceClass);
 
-        // Process superclass, if any （如果存在父类，则递归处理父类）
+        // Process superclass, if any （如果存在父类，则解析父类）
         if (sourceClass.getMetadata().hasSuperClass()) {
             String superclass = sourceClass.getMetadata().getSuperClassName();
             if (superclass != null && !superclass.startsWith("java") &&
@@ -426,7 +426,7 @@ class ConfigurationClassParser {
             }
         }
 
-        // No superclass -> processing is complete
+        // No superclass -> processing is complete （不存在父类，则解析完毕）
         return null;
     }
     
@@ -434,6 +434,19 @@ class ConfigurationClassParser {
     
 }
 ```
+
+解析配置类的时候，会进行如下处理：
+
+- 解析内部类
+- 解析 @PropertySources 注解
+- 解析 @ComponentScan 注解
+- 解析 @Import 注解
+- 解析 @ImportResource 注解
+- 解析带有 @Bean 注解的方法
+- 解析父接口的默认方法
+- 解析父类
+
+配置类的解析涉及到的内容比较多，这里只对 `解析 @ComponentScan 注解` 这一步进行分析，其他部分后面会有一个专门的专题进行讲解。
 
 ### 启动日志
 
