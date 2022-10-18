@@ -278,7 +278,7 @@ public @interface AutoConfigurationPackage {
 
 ### SpringApplication
 
-SpringApplication.run() 是整个 Spring Boot 应用的入口。核心的启动流程如下：
+SpringApplication.run() 是整个 Spring Boot 应用的入口。其核心的启动流程如下：
 
 <img src="../images/spring_web_helloworld_2_1.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
@@ -451,6 +451,12 @@ class ConfigurationClassParser {
 #### @ComponentScan
 
 如果配置类带有 @ComponentScan 注解（毫无疑问，HelloWorldApplication 类是带有 @ComponentScan 注解的），就会触发自动扫描，调用 ComponentScanAnnotationParser 类的 parse() 方法。parse() 方法先获取 @ComponentScan 注解指定的 basePackages，如果没有指定，则以当前类所在包的包路径作为 basePackage。接着，再通过 ClassPathScanningCandidateComponentProvider 的 scanCandidateComponents() 方法，扫描 basePackage 下的所有 class 文件，并将符合要求的候选类添加到 beanDefinitionMap 中。如果这个过程中，扫描到了配置类，则又重新回到上面解析配置类的步骤中，不断递归，直到将全部类加载完成。
+
+#### AutoConfigurationImportSelector
+
+自动扫描逻辑执行完毕，调用又重新回到 ConfigurationClassParser 类的 parse() 方法，接着会触发 AutoConfigurationImportSelector 类 process() 方法的执行。process() 方法最终又会触发 ImportCandidates 的 load() 方法，load() 方法会将文件 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 的配置加载到配置类中，从而触发自动配置的解析。
+
+`META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 文件记录了 Spring Boot 项目中能够被自动加载的全部自动配置类，Spring Boot 执行一定的过滤逻辑后，得到最终需要自动加载的配置类，然后又重新回到 ConfigurationClassParser 类的 doProcessConfigurationClass() 方法，对这些配置类进行逐一解析。配置解析完成之后，整个项目的启动流程就执行完毕了。
 
 ### 启动日志
 
