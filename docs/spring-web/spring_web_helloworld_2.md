@@ -1,6 +1,6 @@
 # 从零学习 Spring Web 开发 —— HelloWorld (进阶篇)
 
-上一篇文章已经介绍了如何快速搭建一个 Spring Web 项目，本文将对上文中提及的几个技术点，进行深入的讲解。
+上一篇文章已经介绍了如何快速搭建一个 Spring Web 项目，本文将通过分析源码的方式，一步步了解项目是如何运行起来的。
 
 我们前面提到，搭建 Spring Web 项目时，只需要继承 `spring-boot-starter-parent` ，并引入 `spring-boot-starter-web` ，即可把 Spring Web 项目所需要的全部依赖引进来，并且我们不需要指定依赖的版本，这是如何做到的呢？
 
@@ -456,11 +456,20 @@ class ConfigurationClassParser {
 
 自动扫描逻辑执行完毕，调用又重新回到 ConfigurationClassParser 类的 parse() 方法，接着会触发 AutoConfigurationImportSelector 类 process() 方法的执行。process() 方法最终又会触发 ImportCandidates 的 load() 方法，load() 方法会将文件 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 的配置加载到配置类中，从而触发自动配置的解析。
 
-`META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 文件记录了 Spring Boot 项目中能够被自动加载的全部自动配置类，Spring Boot 执行一定的过滤逻辑后，得到最终需要自动加载的配置类，然后又重新回到 ConfigurationClassParser 类的 doProcessConfigurationClass() 方法，对这些配置类进行逐一解析。配置解析完成之后，整个项目的启动流程就执行完毕了。
+`META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 文件记录了 Spring Boot 项目中能够被自动加载的全部自动配置类，Spring Boot 执行一定的过滤逻辑后，得到最终需要自动加载的配置类，然后又重新回到 ConfigurationClassParser 类的 doProcessConfigurationClass() 方法，对这些配置类进行逐一解析。配置解析完成之后，整个项目就启动起来了。
+
+`META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 文件的内容如下，处于文章篇幅的考虑，只列出了少部分内容：
+
+```html
+org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
+org.springframework.boot.autoconfigure.aop.AopAutoConfiguration
+org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+......
+```
 
 ### 启动日志
 
-为了让读者对 Spring Boot 应用的启动过程有更清晰的理解，笔者将结合项目的启动日志，对项目启动后的调用流程做个大致的分析。下面是项目的一次启动日志：
+为了让读者对 Spring Boot 应用的启动过程有更清晰的理解，笔者将结合项目的启动日志，对项目启动的调用流程再次做一次类似但不完全一样的分析。下面是项目的一次启动日志：
 
 ```html
 
