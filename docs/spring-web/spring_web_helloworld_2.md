@@ -452,9 +452,57 @@ class ConfigurationClassParser {
 
 配置类的解析涉及到的内容比较多，这里只对 `解析 @ComponentScan 注解` 这一步进行分析，其他部分后面会有一个专门的专题进行讲解。
 
-#### @ComponentScan
+#### ComponentScan
 
-如果配置类带有 @ComponentScan 注解（毫无疑问，HelloWorldApplication 类是带有 @ComponentScan 注解的），就会触发自动扫描，调用 ComponentScanAnnotationParser 类的 parse() 方法。parse() 方法先获取 @ComponentScan 注解指定的 basePackages，如果没有指定，则以当前类所在包的包路径作为 basePackage。接着，再通过 ClassPathScanningCandidateComponentProvider 的 scanCandidateComponents() 方法，扫描 basePackage 下的所有 class 文件，并将符合要求的候选类添加到 beanDefinitionMap 中。如果这个过程中，扫描到了配置类，则又重新回到上面解析配置类的步骤中，不断递归，直到将全部类加载完成。
+如果配置类带有 @ComponentScan 注解（毫无疑问，HelloWorldApplication 类是带有 @ComponentScan 注解的），就会触发自动扫描，调用 ComponentScanAnnotationParser 类的 parse() 方法。
+
+parse() 方法会创建一个 ClassPathBeanDefinitionScanner 实例，并设置 scanner 的 includeFilters 和 excludeFilters：
+
+```java
+class ComponentScanAnnotationParser {
+    
+    // ...
+
+    public Set<BeanDefinitionHolder> parse(AnnotationAttributes componentScan, String declaringClass) {
+        ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(this.registry,
+                componentScan.getBoolean("useDefaultFilters"), this.environment, this.resourceLoader);
+
+        // ...
+
+        for (AnnotationAttributes includeFilterAttributes : componentScan.getAnnotationArray("includeFilters")) {
+            List<TypeFilter> typeFilters = TypeFilterUtils.createTypeFiltersFor(includeFilterAttributes, this.environment,
+                    this.resourceLoader, this.registry);
+            for (TypeFilter typeFilter : typeFilters) {
+                scanner.addIncludeFilter(typeFilter);
+            }
+        }
+        for (AnnotationAttributes excludeFilterAttributes : componentScan.getAnnotationArray("excludeFilters")) {
+            List<TypeFilter> typeFilters = TypeFilterUtils.createTypeFiltersFor(excludeFilterAttributes, this.environment,
+                    this.resourceLoader, this.registry);
+            for (TypeFilter typeFilter : typeFilters) {
+                scanner.addExcludeFilter(typeFilter);
+            }
+        }
+
+        // ...
+
+        scanner.addExcludeFilter(new AbstractTypeHierarchyTraversingFilter(false, false) {
+            @Override
+            protected boolean matchClassName(String className) {
+                return declaringClass.equals(className);
+            }
+        });
+        return scanner.doScan(StringUtils.toStringArray(basePackages));
+    }
+    
+    // ...
+    
+}
+```
+
+filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的 useDefaultFilters 属性默认为 true，因此默认会使用 Spring 框架的默认 filter，最终得到两个 includeFilter，这两个 includeFilter 都是 AnnotationTypeFilter，其中一个的 annotationType 为 org.springframework.stereotype.Component，另一个的 annotationType 为 javax.annotation.ManagedBean。接着，会将 @ComponentScan 注解指定的 includeFilters 和 excludeFilters 设置到 scanner 中，由上文可知，@ComponentScan 设置了两个 excludeFilters：TypeExcludeFilter 和 AutoConfigurationExcludeFilter。最后，再将自定义的 excludeFilters：AbstractTypeHierarchyTraversingFilter 添加到 scanner 中。最终，scanner 会得到 2 个 includeFilter 和 3 个 excludeFilters。
+
+再接着，parse() 方法获取 @ComponentScan 注解指定的 basePackages，如果没有指定，则以当前类所在包的包路径作为 basePackage。再接着，再通过 ClassPathScanningCandidateComponentProvider 的 scanCandidateComponents() 方法，扫描 basePackage 下的所有 class 文件，并将符合要求的候选类添加到 beanDefinitionMap 中。如果这个过程中，扫描到了配置类，则又重新回到上面解析配置类的步骤中，不断递归，直到将全部类加载完成。
 
 #### AutoConfigurationImportSelector
 
