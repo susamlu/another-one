@@ -500,9 +500,19 @@ class ComponentScanAnnotationParser {
 }
 ```
 
-filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的 useDefaultFilters 属性默认为 true，因此默认会使用 Spring 框架的默认 filter，最终得到两个 includeFilter，这两个 includeFilter 都是 AnnotationTypeFilter，其中一个的 annotationType 为 org.springframework.stereotype.Component，另一个的 annotationType 为 javax.annotation.ManagedBean。接着，会将 @ComponentScan 注解指定的 includeFilters 和 excludeFilters 设置到 scanner 中，由上文可知，@ComponentScan 设置了两个 excludeFilters：TypeExcludeFilter 和 AutoConfigurationExcludeFilter。最后，再将自定义的 excludeFilters：AbstractTypeHierarchyTraversingFilter 添加到 scanner 中。最终，scanner 会得到 2 个 includeFilter 和 3 个 excludeFilters。
+filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的 useDefaultFilters 属性默认为 true，因此默认会使用 Spring 框架的默认 filter，最终得到两个 includeFilter，这两个 includeFilter 都是 AnnotationTypeFilter，其中一个的 annotationType 为 org.springframework.stereotype.Component，另一个的 annotationType 为 javax.annotation.ManagedBean。接着，会将 @ComponentScan 注解指定的 includeFilters 和 excludeFilters 设置到 scanner 中，由上文可知，@ComponentScan 设置了两个 excludeFilters：TypeExcludeFilter 和 AutoConfigurationExcludeFilter。最后，再将自定义的 excludeFilters：AbstractTypeHierarchyTraversingFilter 添加到 scanner 中。最终，scanner 会得到 2 个 includeFilter 和 3 个 excludeFilter。即：
 
-再接着，parse() 方法获取 @ComponentScan 注解指定的 basePackages，如果没有指定，则以当前类所在包的包路径作为 basePackage。再接着，再通过 ClassPathScanningCandidateComponentProvider 的 scanCandidateComponents() 方法，扫描 basePackage 下的所有 class 文件，并将符合要求的候选类添加到 beanDefinitionMap 中。如果这个过程中，扫描到了配置类，则又重新回到上面解析配置类的步骤中，不断递归，直到将全部类加载完成。
+- includeFilters：
+  - AnnotationTypeFilter(org.springframework.stereotype.Component)
+  - AnnotationTypeFilter(javax.annotation.ManagedBean)
+- excludeFilters：
+  - TypeExcludeFilter
+  - AutoConfigurationExcludeFilter
+  - AbstractTypeHierarchyTraversingFilter
+
+其中，AnnotationTypeFilter 的作用是过滤包含有指定注解的类，两个 AnnotationTypeFilter 都是 includeFilter，因此，只要类包含 @Component 或 @ManagedBean 注解，就会被扫描到。
+
+另外，parse() 方法会获取 @ComponentScan 注解指定的 basePackages，如果没有指定，则以当前类所在包的包路径作为 basePackage。接着，再通过 ClassPathScanningCandidateComponentProvider 的 scanCandidateComponents() 方法，扫描 basePackage 下的所有 class 文件，并将符合要求的候选类添加到 beanDefinitionMap 中。如果这个过程中，扫描到了配置类，则又重新回到上面解析配置类的步骤中，不断递归，直到将全部类加载完成。
 
 #### AutoConfigurationImportSelector
 
