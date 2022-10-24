@@ -304,7 +304,7 @@ SpringFactoriesLoader 类的主要作用是提供 Spring 框架内部一种加�
 example.MyService=example.MyServiceImpl1,example.MyServiceImpl2
 ```
 
-SpringFactoriesLoader 提供了 loadFactories()、loadFactoryNames() 两个公共静态方法，一个用于获取工厂实例，一个用于获取工厂类的全限定类名。
+SpringFactoriesLoader 提供了 loadFactories()、loadFactoryNames() 两个公共静态方法，一个用于获取工厂实例，一个用于获取工厂类的全限定类名。因此， `META-INF/spring.factories` 实际上是将一些工厂类（或者是接口的具体实现类）事先配置在文件中，以供应用在需要时获取，通过这种方式，可以绕开获取实例必须从 Spring 的 BeanFactory 获取的限制（在全部 BeanDefinition 加载完成之前，通过这种方式获取实例是很必要的）。
 
 #### EnableAutoConfiguration
 
@@ -323,7 +323,7 @@ public class MyAutoConfiguration {
 }
 ```
 
-则只需要在 resources 目录的 `META-INF/spring.factories` 文件中定义如下配置：
+只要在 resources 目录的 `META-INF/spring.factories` 文件中定义如下配置：
 
 ```html
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
@@ -500,7 +500,7 @@ class ComponentScanAnnotationParser {
 }
 ```
 
-filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的 useDefaultFilters 属性默认为 true，因此默认会使用 Spring 框架的默认 filter，最终得到两个 includeFilter，这两个 includeFilter 都是 AnnotationTypeFilter，其中一个的 annotationType 为 org.springframework.stereotype.Component，另一个的 annotationType 为 javax.annotation.ManagedBean。接着，会将 @ComponentScan 注解指定的 includeFilters 和 excludeFilters 设置到 scanner 中，由上文可知，@ComponentScan 设置了两个 excludeFilters：TypeExcludeFilter 和 AutoConfigurationExcludeFilter。最后，再将自定义的 excludeFilters：AbstractTypeHierarchyTraversingFilter 添加到 scanner 中。最终，scanner 会得到 2 个 includeFilter 和 3 个 excludeFilter。即：
+filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的 useDefaultFilters 属性默认为 true，因此默认会采用 Spring 框架的默认定义 filter，最终得到两个 includeFilter，这两个 includeFilter 都是 AnnotationTypeFilter，其中一个的 annotationType 为 org.springframework.stereotype.Component，另一个的 annotationType 为 javax.annotation.ManagedBean。接着，会将 @ComponentScan 注解指定的 includeFilters 和 excludeFilters 设置到 scanner 中，由上文可知，@ComponentScan 设置了两个 excludeFilters：TypeExcludeFilter 和 AutoConfigurationExcludeFilter，即 TypeExcludeFilter 和 AutoConfigurationExcludeFilter 都会被加入到 scanner 的 excludeFilters 中。最后，再将自定义的 excludeFilter：AbstractTypeHierarchyTraversingFilter 添加到 scanner 的 excludeFilters 中。最终，scanner 会得到 2 个 includeFilter 和 3 个 excludeFilter。即：
 
 - includeFilters：
   - AnnotationTypeFilter(org.springframework.stereotype.Component)
@@ -510,9 +510,9 @@ filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的
   - AutoConfigurationExcludeFilter
   - AbstractTypeHierarchyTraversingFilter
 
-其中，AnnotationTypeFilter 的作用是过滤包含有指定注解的类，两个 AnnotationTypeFilter 都是 includeFilter，因此，只要类包含 @Component 或 @ManagedBean 注解，就会被扫描到。
+其中，AnnotationTypeFilter 的作用是过滤包含有指定注解的类，两个 AnnotationTypeFilter 都是 includeFilter，因此，只要类包含 @Component 或 @ManagedBean 注解，就会被扫描到。TypeExcludeFilter 主要是预留于扩展之用，即通过 TypeExcludeFilter 可以自定义排除扫描的规则，AutoConfigurationExcludeFilter 主要用于排除对自动配置类的扫描，自定义的 AbstractTypeHierarchyTraversingFilter 主要是用来排除扫描的基类（即 HelloWorldApplication），以避免陷入死循环之中。因此，总的来说，默认情况下，@ComponentScan 注解的解析过程中，会将基类和自动配置类排除，将包含有 @Component 注解的类扫描并添加到 beanDefinitionMap 中。
 
-另外，parse() 方法会获取 @ComponentScan 注解指定的 basePackages，如果没有指定，则以当前类所在包的包路径作为 basePackage。接着，再通过 ClassPathScanningCandidateComponentProvider 的 scanCandidateComponents() 方法，扫描 basePackage 下的所有 class 文件，并将符合要求的候选类添加到 beanDefinitionMap 中。如果这个过程中，扫描到了配置类，则又重新回到上面解析配置类的步骤中，不断递归，直到将全部类加载完成。
+另外，parse() 方法会获取 @ComponentScan 注解指定的 basePackages，如果没有指定，则以当前类所在包的包路径作为 basePackage。接着，再通过 ClassPathScanningCandidateComponentProvider 的 scanCandidateComponents() 方法，扫描 basePackage 下的所有 class 文件，并将符合要求（通过 scanner 的 includeFilters 和 excludeFilters 进行筛选）的候选类添加到 beanDefinitionMap 中。如果这个过程中，扫描到了配置类，则又重新回到上面解析配置类的步骤中，不断递归，直到将全部类加载完成。
 
 #### AutoConfigurationImportSelector
 
