@@ -516,18 +516,48 @@ filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的
 
 #### AutoConfigurationImportSelector
 
-自动扫描逻辑执行完毕，调用又重新回到 ConfigurationClassParser 类的 parse() 方法，接着会触发 AutoConfigurationImportSelector 类 process() 方法的执行。process() 方法最终又会触发 ImportCandidates 的 load() 方法，load() 方法会将文件 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 的配置加载到配置类中，从而触发自动配置的解析。
+自动扫描逻辑执行完毕，调用又重新回到 ConfigurationClassParser 类的 parse() 方法，接着会触发 AutoConfigurationImportSelector 类 process() 方法的执行。process() 方法会将全部自动配置类加载到内存中，并按照一定规则进行筛选。其中，加载的核心代码如下：
 
-`META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 文件记录了 Spring Boot 项目中能够被自动加载的全部自动配置类，Spring Boot 执行一定的过滤逻辑后，得到最终需要自动加载的配置类，然后又重新回到 ConfigurationClassParser 类的 doProcessConfigurationClass() 方法，对这些配置类进行逐一解析。配置解析完，并且执行了相关核心操作之后，整个项目就启动起来了。
+```java
+public class AutoConfigurationImportSelector /* ... */ {
+    
+    // ...
 
-`META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 文件的内容如下，出于文章篇幅的考虑，只列出了少部分内容：
+    protected List<String> getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) {
+		List<String> configurations = new ArrayList<>(
+				SpringFactoriesLoader.loadFactoryNames(getSpringFactoriesLoaderFactoryClass(), getBeanClassLoader()));
+		ImportCandidates.load(AutoConfiguration.class, getBeanClassLoader()).forEach(configurations::add);
+		Assert.notEmpty(configurations,
+				"No auto configuration classes found in META-INF/spring.factories nor in META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports. If you "
+						+ "are using a custom packaging, make sure that file is correct.");
+		return configurations;
+	}
+
+	// ...
+	protected Class<?> getSpringFactoriesLoaderFactoryClass() {
+		return EnableAutoConfiguration.class;
+	}
+
+    // ...
+    
+}
+```
+
+加载的内容包含两部分，一部分是从 `META-INF/spring.factories` 加载来的，一部分是从 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 加载来的。从 `META-INF/spring.factories` 加载的，正是 key 为 EnableAutoConfiguration 的配置类，这就是上述所讲的 EnableAutoConfiguration 为何起作用的原因。而文件 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 记录的是 Spring Boot 全部的自动配置类。加载阶段获取到的配置类，还需要经过一定规则的筛选，最终筛选出来配置类，才会被真正解析。
+
+`spring-boot-2.7.2.jar` 的 `META-INF/spring.factories` 文件中定义了如下几个 filter，自动配置类正是根据这几个 filter 进行过滤的。
 
 ```html
-org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
-org.springframework.boot.autoconfigure.aop.AopAutoConfiguration
-org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
-......
+# Auto Configuration Import Filters
+org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
+org.springframework.boot.autoconfigure.condition.OnBeanCondition,\
+org.springframework.boot.autoconfigure.condition.OnClassCondition,\
+org.springframework.boot.autoconfigure.condition.OnWebApplicationCondition
 ```
+
+这三个类分别对应注解：@ConditionalOnBean、@ConditionalOnClass、@ConditionalOnWebApplication。其中，@ConditionalOnBean 表示当 Spring 容器中存在某个 bean 时，配置才会生效，它通常会跟 @ConditionalOnSingleCandidate 注解一起起作用，@ConditionalOnSingleCandidate 的作用是表示容器中的 bean 为单例时，配置类才起作用。@ConditionalOnClass 表示配置类在应用中存在某个指定的类时才生效。@ConditionalOnWebApplication 表示项目是 web 项目时，配置才生效，它有一个 type 参数，可以指定当项目是基于 servlet 的项目（type=SERVLET）或者是基于 reactive 的项目（type=REACTIVE）时才生效，默认为只要是其中一种项目就生效。
+
+通过层层筛选后，最终得到的自动配置类，就会被当做配置类通过 doProcessConfigurationClass() 方法逐个进行解析。
 
 ## 启动日志
 
