@@ -1,4 +1,4 @@
-# 从零学习 Spring Web 开发 —— HelloWorld (进阶篇)
+# Spring Web 开发：从入门到精通 —— HelloWorld (进阶篇)
 
 [TOC]
 

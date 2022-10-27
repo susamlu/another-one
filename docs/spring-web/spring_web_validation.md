@@ -1,4 +1,4 @@
-# 从零学习 Spring Web 开发 —— Validation
+# Spring Web 开发：从入门到精通 —— Validation
 
 通过 Validation 注解，可以方便地定义需要以何种方式来校验接口参数。
 
