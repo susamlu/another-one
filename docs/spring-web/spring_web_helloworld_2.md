@@ -559,9 +559,11 @@ org.springframework.boot.autoconfigure.condition.OnWebApplicationCondition
 
 通过层层筛选后，最终得到的自动配置类，就会被当做配置类通过 doProcessConfigurationClass() 方法逐个进行解析。
 
+到了这里，我们对 Spring Boot 项目是如何启动的，就有了一个基本的认识，我们回忆下前文提到的几个注解： @Configuration、@EnableAutoConfiguration、@ComponentScan，以及 import 进来的类：AutoConfigurationImportSelector、AutoConfigurationPackages.Registrar，除了 AutoConfigurationPackages.Registrar，上文中都已经有相关的解析了，而 AutoConfigurationPackages.Registrar 又是用来做什么的呢？在了解完想相关的代码之后，可以从这个类的注释中得到答案：它主要是用于记录自动配置类的包路径的，以便于后面有需要的时候使用，如 JPA 的实体扫描等。
+
 ## 启动日志
 
-为了让读者对 Spring Boot 应用的启动过程有更清晰的理解，笔者将从项目启动日志的角度出发，重新进行一次不一样的梳理分析。下面是项目的一次启动日志：
+通过上面的学习，相信读者对 Spring Boot 项目的启动过程已经有了相当程度的理解，为了让读者在实际开发的时候能更好地进行对应，笔者以项目的启动日志为参照，再次对项目的启动过程做了一次分析。下面是项目的一次启动日志：
 
 ```html
 
