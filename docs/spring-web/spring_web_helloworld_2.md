@@ -14,20 +14,14 @@
 
 在 Maven 项目中，可以通过继承的方式，让子项目继承父项目所定义的内容，如：groupId、version、properties、dependencies 等。
 
-下面的例子中，`my-app-child` 只需要继承 `my-app-parent` ，即可引入父项目的全部依赖。即父项目 `my-app-parent` 引入了 `maven-artifact` 和 `maven-core` 两个依赖，并指定了它们的版本，子项目只需继承 `my-app-parent` ，就引入了这两个依赖，并且依赖的版本也跟父项目所指定的版本一样。
+下面的例子中，`my-app-child` 只需要继承 `my-app-parent` ，即可引入父项目的全部依赖。即父项目 `my-app-parent` 引入了 `maven-artifact` 和 `maven-core` 两个依赖，并指定了它们的版本。
 
 ```xml
 <!-- my-app-parent -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
+<project ...>
     <groupId>com.mycompany.app</groupId>
     <artifactId>my-app-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-    <name>my-app-parent</name>
-    <url>http://www.example.com</url>
 
     <properties>
         <mavenVersion>3.0</mavenVersion>
@@ -45,16 +39,14 @@
             <version>${mavenVersion}</version>
         </dependency>
     </dependencies>
-
 </project>
 ```
 
+子项目只需继承 `my-app-parent` ，就引入了这两个依赖，并且依赖的版本也跟父项目所指定的版本一样。
+
 ```xml
 <!-- my-app-child -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
+<project ...>
     <parent>
         <groupId>com.mycompany.app</groupId>
         <artifactId>my-app-parent</artifactId>
@@ -62,7 +54,6 @@
     </parent>
 
     <artifactId>my-app-child</artifactId>
-
 </project>
 ```
 
@@ -70,20 +61,14 @@
 
 有时候子项目并不需要引入父项目的全部依赖，只需要引入部分依赖，但又希望在父项目中统一定义依赖的版本，`dependencyManagement` 标签可以帮我们完成这个事情。
 
-下面的例子中，`my-app-child` 引入了 `maven-core` 依赖，父项目仅仅只是预定义了依赖的版本。也就是说，父项目指定了 `maven-artifact` 和 `maven-core` 两个依赖的版本，但并没有引入依赖，在子项目中只引入了 `maven-core` 依赖，即 `maven-artifact` 是没有被引入的，且子项目无需指定 `maven-core` 依赖的版本，该依赖的版本就与父项目所指定的版本一样。
+下面的例子中，`my-app-child` 引入了 `maven-core` 依赖，父项目仅仅只是预定义了依赖的版本。也就是说，父项目指定了 `maven-artifact` 和 `maven-core` 两个依赖的版本，但并没有引入依赖。
 
 ```xml
 <!-- my-app-parent -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
+<project ...>
     <groupId>com.mycompany.app</groupId>
     <artifactId>my-app-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-    <name>my-app-parent</name>
-    <url>http://www.example.com</url>
 
     <properties>
         <mavenVersion>3.0</mavenVersion>
@@ -103,16 +88,14 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 </project>
 ```
 
+在子项目中只引入了 `maven-core` 依赖，即 `maven-artifact` 是没有被引入的，且子项目无需指定 `maven-core` 依赖的版本，该依赖的版本就与父项目所指定的版本一样。
+
 ```xml
 <!-- my-app-child -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
+<project ...>
     <parent>
         <groupId>com.mycompany.app</groupId>
         <artifactId>my-app-parent</artifactId>
@@ -127,7 +110,6 @@
             <artifactId>maven-core</artifactId>
         </dependency>
     </dependencies>
-
 </project>
 ```
 
@@ -135,14 +117,11 @@
 
 ### spring-boot-starter-parent
 
-`spring-boot-starter-parent` （2.7.2版本）继承自父项目 `spring-boot-dependencies`，`spring-boot-dependencies` 通过 dependencyManagement 标签预先指定了 Spring Boot 项目全部组件的依赖版本。尤其是，将 `spring-boot-starter-web` 的版本指定为 2.7.2 。
+`spring-boot-starter-parent` （2.7.2版本）继承自父项目 `spring-boot-dependencies`。
 
 ```xml
 <!-- spring-boot-starter-parent -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <modelVersion>4.0.0</modelVersion>
+<project ...>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
@@ -152,12 +131,11 @@
 </project>
 ```
 
+`spring-boot-dependencies` 通过 dependencyManagement 标签预先指定了 Spring Boot 项目全部组件的依赖版本。尤其是，将 `spring-boot-starter-web` 的版本指定为 2.7.2 。
+
 ```xml
 <!-- spring-boot-dependencies -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <modelVersion>4.0.0</modelVersion>
+<project ...>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-dependencies</artifactId>
     <version>2.7.2</version>
@@ -185,45 +163,23 @@
 
 ```xml
 <!-- spring-boot-starter-web -->
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <modelVersion>4.0.0</modelVersion>
+<project ...>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-web</artifactId>
     <version>2.7.2</version>
     <name>spring-boot-starter-web</name>
     <!-- ... -->
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <version>2.7.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-json</artifactId>
-            <version>2.7.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <version>2.7.2</version>
-            <scope>compile</scope>
-        </dependency>
+        <!-- ... -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>5.3.22</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>5.3.22</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
@@ -364,13 +320,7 @@ class ConfigurationClassParser {
         for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
                 sourceClass.getMetadata(), PropertySources.class,
                 org.springframework.context.annotation.PropertySource.class)) {
-            if (this.environment instanceof ConfigurableEnvironment) {
-                processPropertySource(propertySource);
-            }
-            else {
-                logger.info("Ignoring @PropertySource annotation on [" + sourceClass.getMetadata().getClassName() +
-                        "]. Reason: Environment must implement ConfigurableEnvironment");
-            }
+            // ...
         }
 
         // Process any @ComponentScan annotations （解析 @ComponentScan 注解）
@@ -378,21 +328,7 @@ class ConfigurationClassParser {
                 sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
         if (!componentScans.isEmpty() &&
                 !this.conditionEvaluator.shouldSkip(sourceClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN)) {
-            for (AnnotationAttributes componentScan : componentScans) {
-                // The config class is annotated with @ComponentScan -> perform the scan immediately
-                Set<BeanDefinitionHolder> scannedBeanDefinitions =
-                        this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
-                // Check the set of scanned definitions for any further config classes and parse recursively if needed
-                for (BeanDefinitionHolder holder : scannedBeanDefinitions) {
-                    BeanDefinition bdCand = holder.getBeanDefinition().getOriginatingBeanDefinition();
-                    if (bdCand == null) {
-                        bdCand = holder.getBeanDefinition();
-                    }
-                    if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
-                        parse(bdCand.getBeanClassName(), holder.getBeanName());
-                    }
-                }
-            }
+            // ...
         }
 
         // Process any @Import annotations （解析 @Import 注解）
@@ -402,12 +338,7 @@ class ConfigurationClassParser {
         AnnotationAttributes importResource =
                 AnnotationConfigUtils.attributesFor(sourceClass.getMetadata(), ImportResource.class);
         if (importResource != null) {
-            String[] resources = importResource.getStringArray("locations");
-            Class<? extends BeanDefinitionReader> readerClass = importResource.getClass("reader");
-            for (String resource : resources) {
-                String resolvedResource = this.environment.resolveRequiredPlaceholders(resource);
-                configClass.addImportedResource(resolvedResource, readerClass);
-            }
+            // ...
         }
 
         // Process individual @Bean methods （解析带有 @Bean 注解的方法）
@@ -421,13 +352,7 @@ class ConfigurationClassParser {
 
         // Process superclass, if any （如果存在父类，则解析父类）
         if (sourceClass.getMetadata().hasSuperClass()) {
-            String superclass = sourceClass.getMetadata().getSuperClassName();
-            if (superclass != null && !superclass.startsWith("java") &&
-                    !this.knownSuperclasses.containsKey(superclass)) {
-                this.knownSuperclasses.put(superclass, configClass);
-                // Superclass found, return its annotation metadata and recurse
-                return sourceClass.getSuperClass();
-            }
+            // ...
         }
 
         // No superclass -> processing is complete （不存在父类，则解析完毕）
