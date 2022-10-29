@@ -139,8 +139,6 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-dependencies</artifactId>
     <version>2.7.2</version>
-    <packaging>pom</packaging>
-    <name>spring-boot-dependencies</name>
     <!-- ... -->
     <dependencyManagement>
         <dependencies>
@@ -167,7 +165,6 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-web</artifactId>
     <version>2.7.2</version>
-    <name>spring-boot-starter-web</name>
     <!-- ... -->
     <dependencies>
         <!-- ... -->
@@ -240,7 +237,7 @@ public @interface AutoConfigurationPackage {
 
 SpringApplication.run() 是整个 Spring Boot 应用的入口。其核心的启动流程如下：
 
-<img src="../images/spring_web_helloworld_2_1.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="./images/spring_web_helloworld_2_1.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 #### SpringFactoriesLoader
 
@@ -292,11 +289,11 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 
 SpringApplication 的实例 run() 方法会调用两个非常重要的方法：prepareContext() 和 refreshContext()，这两个方法通过它们的名字就可以大概猜出其的作用了，实际上，一个是用来准备在应用启动前需要预先准备的内容的，一个是用来执行在应用启动时需要执行的核心方法的。
 
-通过代码的追踪，我们会发现 prepareContext() 做了一个比较关键的操作，就是执行了自身实例的 load() 方法，该方法会将 HelloWorldApplication 注册到 Spring 全局的 beanDefinitionMap 中，完成了这一步，后面应用启动时进行自动扫描、自动配置等，就可以找到基类了。
+通过代码的追踪，我们会发现 prepareContext() 做了一个比较关键的操作，就是执行了自身实例的 load() 方法，该方法会将 HelloWorldApplication 注册到 Spring IoC 容器中，完成了这一步，后面应用启动时进行自动扫描、自动配置等，就可以找到基类了。
 
 #### refreshContext
 
-refreshContext() 最终会调用 AbstractApplicationContext 的 refresh() 方法，refresh() 经过一系列的复杂调用之后，会将前面被注册到 beanDefinitionMap 的 BeanDefinition：HelloWorldApplication 取出来，并从 HelloWorldApplication 开始，进行配置的解析。
+refreshContext() 最终会调用 AbstractApplicationContext 的 refresh() 方法，refresh() 经过一系列的复杂调用之后，会将前面被注册到 Spring IoC 容器中的 HelloWorldApplication 取出来，并从 HelloWorldApplication 开始，进行配置的解析。
 
 #### doProcessConfigurationClass
 
@@ -435,9 +432,9 @@ filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的
   - AutoConfigurationExcludeFilter
   - AbstractTypeHierarchyTraversingFilter
 
-其中，AnnotationTypeFilter 的作用是过滤包含有指定注解的类，两个 AnnotationTypeFilter 都是 includeFilter，因此，只要类包含 @Component 或 @ManagedBean 注解，就会被扫描到。TypeExcludeFilter 主要是预留于扩展之用，即通过 TypeExcludeFilter 可以自定义排除扫描的规则，AutoConfigurationExcludeFilter 主要用于排除对自动配置类的扫描，自定义的 AbstractTypeHierarchyTraversingFilter 主要是用来排除扫描的基类（即 HelloWorldApplication），以避免陷入死循环之中。因此，总的来说，默认情况下，@ComponentScan 注解的解析过程中，会将基类和自动配置类排除，将包含有 @Component 注解的类扫描并添加到 beanDefinitionMap 中。
+其中，AnnotationTypeFilter 的作用是过滤包含有指定注解的类，两个 AnnotationTypeFilter 都是 includeFilter，因此，只要类包含 @Component 或 @ManagedBean 注解，就会被扫描到。TypeExcludeFilter 主要是预留于扩展之用，即通过 TypeExcludeFilter 可以自定义排除扫描的规则，AutoConfigurationExcludeFilter 主要用于排除对自动配置类的扫描，自定义的 AbstractTypeHierarchyTraversingFilter 主要是用来排除扫描的基类（即 HelloWorldApplication），以避免陷入死循环之中。因此，总的来说，默认情况下，@ComponentScan 注解的解析过程中，会将基类和自动配置类排除，将包含有 @Component 注解的类扫描并添加到 Spring IoC 容器中。
 
-另外，parse() 方法会获取 @ComponentScan 注解指定的 basePackages，如果没有指定，则以当前类所在包的包路径作为 basePackage。接着，再通过 ClassPathScanningCandidateComponentProvider 的 scanCandidateComponents() 方法，扫描 basePackage 下的所有 class 文件，并将符合要求（通过 scanner 的 includeFilters 和 excludeFilters 进行筛选）的候选类添加到 beanDefinitionMap 中。如果这个过程中，扫描到了配置类，则又重新回到上面解析配置类的步骤中，不断递归，直到将全部类加载完成。
+另外，parse() 方法会获取 @ComponentScan 注解指定的 basePackages，如果没有指定，则以当前类所在包的包路径作为 basePackage。接着，再通过 ClassPathScanningCandidateComponentProvider 的 scanCandidateComponents() 方法，扫描 basePackage 下的所有 class 文件，并将符合要求（通过 scanner 的 includeFilters 和 excludeFilters 进行筛选）的候选类添加到 Spring IoC 容器中。如果这个过程中，扫描到了配置类，则又重新回到上面解析配置类的步骤中，不断递归，直到将全部类加载完成。
 
 #### AutoConfigurationImportSelector
 
@@ -802,7 +799,7 @@ public class SpringApplication {
 
 整个流程，可以总结为以下一张图：
 
-<img src="../images/spring_web_helloworld_2_2.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="./images/spring_web_helloworld_2_2.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)

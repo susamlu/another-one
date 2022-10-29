@@ -125,7 +125,7 @@ curl --location --request POST 'http://localhost:8080/api/users' \
 
 核心的代码流程如下图：
 
-<img src="../images/spring_web_http_message_converter_0.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="./images/spring_web_http_message_converter_0.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 下面结合源代码，讲讲具体的加载过程。实际的过程比较繁琐，需要耐心阅读。建议结合源代码阅读，必要时进行本地调试，如此可以更好地理解整个流程。
 
@@ -262,7 +262,7 @@ class WebMvcConfigurerComposite implements WebMvcConfigurer {
 
 核心的代码流程如下图：
 
-<img src="../images/spring_web_http_message_converter_1.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="./images/spring_web_http_message_converter_1.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 实际的调用流程会非常复杂，下面选取其中较为核心的代码进行讲解。
 
