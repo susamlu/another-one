@@ -2,7 +2,7 @@
 
 [TOC]
 
-上一篇文章已经介绍了如何快速搭建一个 Spring Web 项目，本文将通过分析源码的方式，一步步了解项目是如何运行起来的。
+上一篇文章已经介绍了如何快速搭建一个 Spring Web 项目，本文将通过源码分析的方式，一步步了解该项目是如何运行起来的。
 
 我们前面提到，搭建 Spring Web 项目时，只需要继承 `spring-boot-starter-parent` ，并引入 `spring-boot-starter-web` ，即可把 Spring Web 项目所需要的全部依赖引进来，并且我们不需要指定依赖的版本，这是如何做到的呢？
 
@@ -12,7 +12,7 @@
 
 ### parent
 
-在 Maven 项目中，可以通过继承的方式，让子项目继承父项目所定义的内容，如：groupId、version、properties、dependencies 等。
+在 Maven 项目中，可以通过继承的方式，让子项目继承父项目所定义的内容，如：继承 groupId、version、properties、dependencies 等。
 
 下面的例子中，`my-app-child` 只需要继承 `my-app-parent` ，即可引入父项目的全部依赖。即父项目 `my-app-parent` 引入了 `maven-artifact` 和 `maven-core` 两个依赖，并指定了它们的版本。
 
@@ -61,7 +61,7 @@
 
 有时候子项目并不需要引入父项目的全部依赖，只需要引入部分依赖，但又希望在父项目中统一定义依赖的版本，`dependencyManagement` 标签可以帮我们完成这个事情。
 
-下面的例子中，`my-app-child` 引入了 `maven-core` 依赖，父项目仅仅只是预定义了依赖的版本。也就是说，父项目指定了 `maven-artifact` 和 `maven-core` 两个依赖的版本，但并没有引入依赖。
+下面的例子中，`my-app-child` 引入了 `maven-core` 依赖，父项目仅仅只是预定义了依赖的版本。也就是说，父项目指定了 `maven-artifact` 和 `maven-core` 两个依赖的版本，但并没有引入这两个依赖。
 
 ```xml
 <!-- my-app-parent -->
@@ -188,7 +188,7 @@
 
 ## 应用的启动
 
-不知道读者在编写 Spring Boot 项目的时候，有没有思考过启动类中为何需要同时使用 @SpringBootApplication 和 SpringApplication，它们分别的作用又是什么？下面让我们一起来一探究竟。
+不知道读者在编写 Spring Boot 项目的时候，有没有思考过启动类中为何需要同时使用 @SpringBootApplication 和 SpringApplication，它们的作用分别又是什么？下面让我们一起来一探究竟。
 
 ### @SpringBootApplication
 
@@ -241,7 +241,7 @@ SpringApplication.run() 是整个 Spring Boot 应用的入口。其核心的启�
 
 #### SpringFactoriesLoader
 
-SpringApplication 的静态 run() 方法，会先创建一个 SpringApplication 实例，再执行它的实例 run() 方法。创建 SpringApplication 的时候，会调用 SpringFactoriesLoader 的 loadSpringFactories() 方法，最终会触发对所有类路径的 jar 包中的 `META-INF/spring.factories` 文件的加载。如在我们的 HelloWorld 项目中，会加载如下几个文件：
+SpringApplication 的静态 run() 方法，会先创建一个 SpringApplication 实例，再执行它的实例 run() 方法。创建 SpringApplication 的时候，会调用 SpringFactoriesLoader 的 loadSpringFactories() 方法，最终会触发对所有类路径的 jar 包中的 `META-INF/spring.factories` 文件的加载。如在我的 HelloWorld 项目中，会加载如下几个文件：
 
 ```html
 jar:file:/Users/susamlu/.m2/repository/org/springframework/boot/spring-boot/2.7.2/spring-boot-2.7.2.jar!/META-INF/spring.factories
@@ -276,14 +276,14 @@ public class MyAutoConfiguration {
 }
 ```
 
-只要在 resources 目录的 `META-INF/spring.factories` 文件中定义如下配置：
+那么，只要在 resources 目录的 `META-INF/spring.factories` 文件中定义如下配置：
 
 ```html
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   example.MyAutoConfiguration
 ```
 
-那么，在我们将该 jar 包引入到项目时，MyAutoConfiguration 类就会被当成自动配置类而被 Spring Boot 自动加载。它的具体的工作原理，将在本章后面的小节中进行解析。
+接着，将该项目打包成 jar 包，在我们将该 jar 包引入到某个项目时，MyAutoConfiguration 类就会被当成自动配置类而被 Spring Boot 自动加载。它的具体的工作原理，将在本章后面的小节中进行解析。
 
 #### prepareContext
 
@@ -293,7 +293,7 @@ SpringApplication 的实例 run() 方法会调用两个非常重要的方法：p
 
 #### refreshContext
 
-refreshContext() 最终会调用 AbstractApplicationContext 的 refresh() 方法，refresh() 经过一系列的复杂调用之后，会将前面被注册到 Spring IoC 容器中的 HelloWorldApplication 取出来，并从 HelloWorldApplication 开始，进行配置的解析。
+refreshContext() 最终会调用 AbstractApplicationContext 的 refresh() 方法，refresh() 经过一系列复杂的调用之后，会将前面被注册到 Spring IoC 容器中的 HelloWorldApplication 取出来，并从 HelloWorldApplication 开始，进行配置类的解析。
 
 #### doProcessConfigurationClass
 
@@ -422,7 +422,7 @@ class ComponentScanAnnotationParser {
 }
 ```
 
-filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的 useDefaultFilters 属性默认为 true，因此默认会采用 Spring 框架的默认定义 filter，最终得到两个 includeFilter，这两个 includeFilter 都是 AnnotationTypeFilter，其中一个的 annotationType 为 org.springframework.stereotype.Component，另一个的 annotationType 为 javax.annotation.ManagedBean。接着，会将 @ComponentScan 注解指定的 includeFilters 和 excludeFilters 设置到 scanner 中，由上文可知，@ComponentScan 设置了两个 excludeFilters：TypeExcludeFilter 和 AutoConfigurationExcludeFilter，即 TypeExcludeFilter 和 AutoConfigurationExcludeFilter 都会被加入到 scanner 的 excludeFilters 中。最后，再将自定义的 excludeFilter：AbstractTypeHierarchyTraversingFilter 添加到 scanner 的 excludeFilters 中。最终，scanner 会得到 2 个 includeFilter 和 3 个 excludeFilter。即：
+filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的 useDefaultFilters 属性默认为 true，因此默认会采用 Spring 框架默认定义的 filter，最终得到两个 includeFilter，这两个 includeFilter 都是 AnnotationTypeFilter，其中一个的 annotationType 为 org.springframework.stereotype.Component，另一个的 annotationType 为 javax.annotation.ManagedBean。接着，会将 @ComponentScan 注解指定的 includeFilters 和 excludeFilters 添加到 scanner 中，由上文可知，@ComponentScan 设置了两个 excludeFilters：TypeExcludeFilter 和 AutoConfigurationExcludeFilter，即 TypeExcludeFilter 和 AutoConfigurationExcludeFilter 都会被加入到 scanner 的 excludeFilters 中。最后，再将自定义的 excludeFilter：AbstractTypeHierarchyTraversingFilter 添加到 scanner 的 excludeFilters 中。最终，scanner 会得到 2 个 includeFilter 和 3 个 excludeFilter。即：
 
 - includeFilters：
   - AnnotationTypeFilter(org.springframework.stereotype.Component)
@@ -438,34 +438,41 @@ filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的
 
 #### AutoConfigurationImportSelector
 
-自动扫描逻辑执行完毕，调用又重新回到 ConfigurationClassParser 类的 parse() 方法，接着会触发 AutoConfigurationImportSelector 类 process() 方法的执行。process() 方法会将全部自动配置类加载到内存中，并按照一定规则进行筛选。其中，加载的核心代码如下：
+自动扫描逻辑执行完毕，调用又重新回到 ConfigurationClassParser 类的 parse() 方法，接着会触发 AutoConfigurationImportSelector 的内部类 AutoConfigurationGroup 的 process() 方法的执行。process() 方法会将全部自动配置类加载到内存中，并按照一定规则进行筛选。其中，加载的核心代码如下：
 
 ```java
 public class AutoConfigurationImportSelector /* ... */ {
     
     // ...
 
-    protected List<String> getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) {
-		List<String> configurations = new ArrayList<>(
-				SpringFactoriesLoader.loadFactoryNames(getSpringFactoriesLoaderFactoryClass(), getBeanClassLoader()));
-		ImportCandidates.load(AutoConfiguration.class, getBeanClassLoader()).forEach(configurations::add);
-		Assert.notEmpty(configurations,
-				"No auto configuration classes found in META-INF/spring.factories nor in META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports. If you "
-						+ "are using a custom packaging, make sure that file is correct.");
-		return configurations;
-	}
+    private static class AutoConfigurationGroup /* ... */ {
 
-	// ...
-	protected Class<?> getSpringFactoriesLoaderFactoryClass() {
-		return EnableAutoConfiguration.class;
-	}
+        protected List<String> getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) {
+            List<String> configurations = new ArrayList<>(
+                    SpringFactoriesLoader.loadFactoryNames(getSpringFactoriesLoaderFactoryClass(), getBeanClassLoader()));
+            ImportCandidates.load(AutoConfiguration.class, getBeanClassLoader()).forEach(configurations::add);
+            Assert.notEmpty(configurations,
+                    "No auto configuration classes found in META-INF/spring.factories nor in META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports. If you "
+                            + "are using a custom packaging, make sure that file is correct.");
+            return configurations;
+        }
+
+        // ...
+
+        protected Class<?> getSpringFactoriesLoaderFactoryClass() {
+            return EnableAutoConfiguration.class;
+        }
+
+        // ...
+
+    }
 
     // ...
     
 }
 ```
 
-加载的内容包含两部分，一部分是从 `META-INF/spring.factories` 加载来的，一部分是从 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 加载来的。从 `META-INF/spring.factories` 加载的，正是 key 为 EnableAutoConfiguration 的配置类，这就是上述所讲的 EnableAutoConfiguration 为何起作用的原因。而文件 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 记录的是 Spring Boot 全部的自动配置类。加载阶段获取到的配置类，还需要经过一定规则的筛选，最终筛选出来配置类，才会被真正解析。
+加载的内容包含两部分，一部分是从 `META-INF/spring.factories` 加载来的，一部分是从 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 加载来的。从 `META-INF/spring.factories` 加载的，正是 key 为 EnableAutoConfiguration 的配置类，这就是上述所讲的 EnableAutoConfiguration 为何起作用的原因。而文件 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 记录的是 Spring Boot 全部的自动配置类。加载阶段获取到的配置类，还需要经过一定规则的筛选，最终筛选出来的配置类，才会被真正解析。
 
 `spring-boot-2.7.2.jar` 的 `META-INF/spring.factories` 文件中定义了如下几个 filter，自动配置类正是根据这几个 filter 进行过滤的。
 
@@ -481,9 +488,9 @@ org.springframework.boot.autoconfigure.condition.OnWebApplicationCondition
 
 通过层层筛选后，最终得到的自动配置类，就会被当做配置类通过 doProcessConfigurationClass() 方法逐个进行解析。
 
-到了这里，我们对 Spring Boot 项目是如何启动的，就有了一个基本的认识，我们回忆下前文提到的几个注解： @Configuration、@EnableAutoConfiguration、@ComponentScan，以及 import 进来的类：AutoConfigurationImportSelector、AutoConfigurationPackages.Registrar，除了 AutoConfigurationPackages.Registrar，上文中都已经有相关的解析了，而 AutoConfigurationPackages.Registrar 又是用来做什么的呢？在了解完想相关的代码之后，可以从这个类的注释中得到答案：它主要是用于记录自动配置类的包路径的，以便于后面有需要的时候使用，如 JPA 的实体扫描等。
+到了这里，我们对 Spring Boot 项目是如何启动的，就有了一个基本的认识，我们回忆下前文提到的几个注解： @Configuration、@EnableAutoConfiguration、@ComponentScan，以及 import 进来的类：AutoConfigurationImportSelector、AutoConfigurationPackages.Registrar，除了 AutoConfigurationPackages.Registrar，上文中都已经有相关的解析了，而 AutoConfigurationPackages.Registrar 又是用来做什么的呢？在了解完相关的代码之后，可以从这个类的注释中得到答案：它主要是用于记录自动配置类的包路径的，以便于后面有需要的时候使用，如 JPA 的实体扫描等。
 
-自动配置类解析完成之后，还有一个问题尚未谈及，即自动配置类自身是在什么时候被加载到 Spring IoC 容器中的。其实，当自动扫描和自动配置的逻辑执行完之后，方法调用又重新回到了 ConfigurationClassPostProcessor 类的 processConfigBeanDefinitions() 方法，该方法会将自动配置类统一加载到 Spring IoC 容器中，至此，所有的 Bean 就加载完成了。
+自动配置类解析完成之后，还有一个问题尚未谈及，即自动配置类自身是在什么时候被加载到 Spring IoC 容器中的。其实，当自动扫描和自动配置的逻辑执行完之后，方法调用又重新回到了 ConfigurationClassPostProcessor 类的 processConfigBeanDefinitions() 方法，该方法会将自动配置类统一加载到 Spring IoC 容器中，至此，所有的 bean 就加载完成了。
 
 ## 启动日志
 
@@ -802,6 +809,10 @@ public class SpringApplication {
 整个流程，可以总结为以下一张图：
 
 <img src="./images/spring_web_helloworld_2_2.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+
+## 小结
+
+本文，我们从 HelloWorld 项目入手，开启了 Spring 源码的阅读之旅，当我们刚开始鼓足勇气去翻阅 Spring 源码的时候，我们会发现这其实很难，源码非常复杂，我们会变得无从下手。但当我们沉下心来，紧紧围绕几个关键的注解，慢慢梳理，删繁去简，代码的脉络就渐渐浮现出来了。最终，我们发现了一条清晰的路线，从应用启动、到加载配置类、到加载自动配置类、到应用启动完成，这一整个过程，我们已有了清晰的认识。当然，比起 Spring Web 项目启动所做的全部事情，我们现在了解到的只是冰山一角。但，这已足以成为我们继续往下探索的坚实基础。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
