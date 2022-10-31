@@ -483,6 +483,8 @@ org.springframework.boot.autoconfigure.condition.OnWebApplicationCondition
 
 到了这里，我们对 Spring Boot 项目是如何启动的，就有了一个基本的认识，我们回忆下前文提到的几个注解： @Configuration、@EnableAutoConfiguration、@ComponentScan，以及 import 进来的类：AutoConfigurationImportSelector、AutoConfigurationPackages.Registrar，除了 AutoConfigurationPackages.Registrar，上文中都已经有相关的解析了，而 AutoConfigurationPackages.Registrar 又是用来做什么的呢？在了解完想相关的代码之后，可以从这个类的注释中得到答案：它主要是用于记录自动配置类的包路径的，以便于后面有需要的时候使用，如 JPA 的实体扫描等。
 
+自动配置类解析完成之后，还有一个问题尚未谈及，即自动配置类自身是在什么时候被加载到 Spring IoC 容器中的。其实，当自动扫描和自动配置的逻辑执行完之后，方法调用又重新回到了 ConfigurationClassPostProcessor 类的 processConfigBeanDefinitions() 方法，该方法会将自动配置类统一加载到 Spring IoC 容器中，至此，所有的 Bean 就加载完成了。
+
 ## 启动日志
 
 通过上面的学习，相信读者对 Spring Boot 项目的启动过程已经有了相当程度的理解，为了让读者在实际开发的时候能更好地进行对应，笔者以项目的启动日志为参照，再次对项目的启动过程做了一次分析。下面是项目的一次启动日志：
