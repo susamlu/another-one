@@ -18,10 +18,16 @@
 
 ```xml
 <!-- my-app-parent -->
-<project ...>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <groupId>com.mycompany.app</groupId>
     <artifactId>my-app-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <name>my-app-parent</name>
+    <url>http://www.example.com</url>
 
     <properties>
         <mavenVersion>3.0</mavenVersion>
@@ -39,6 +45,7 @@
             <version>${mavenVersion}</version>
         </dependency>
     </dependencies>
+
 </project>
 ```
 
@@ -46,7 +53,10 @@
 
 ```xml
 <!-- my-app-child -->
-<project ...>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.mycompany.app</groupId>
         <artifactId>my-app-parent</artifactId>
@@ -54,6 +64,7 @@
     </parent>
 
     <artifactId>my-app-child</artifactId>
+
 </project>
 ```
 
@@ -65,10 +76,16 @@
 
 ```xml
 <!-- my-app-parent -->
-<project ...>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <groupId>com.mycompany.app</groupId>
     <artifactId>my-app-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <name>my-app-parent</name>
+    <url>http://www.example.com</url>
 
     <properties>
         <mavenVersion>3.0</mavenVersion>
@@ -88,6 +105,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 </project>
 ```
 
@@ -95,7 +113,10 @@
 
 ```xml
 <!-- my-app-child -->
-<project ...>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.mycompany.app</groupId>
         <artifactId>my-app-parent</artifactId>
@@ -110,6 +131,7 @@
             <artifactId>maven-core</artifactId>
         </dependency>
     </dependencies>
+
 </project>
 ```
 
@@ -121,7 +143,10 @@
 
 ```xml
 <!-- spring-boot-starter-parent -->
-<project ...>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
@@ -135,10 +160,15 @@
 
 ```xml
 <!-- spring-boot-dependencies -->
-<project ...>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-dependencies</artifactId>
     <version>2.7.2</version>
+    <packaging>pom</packaging>
+    <name>spring-boot-dependencies</name>
     <!-- ... -->
     <dependencyManagement>
         <dependencies>
@@ -161,22 +191,45 @@
 
 ```xml
 <!-- spring-boot-starter-web -->
-<project ...>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-web</artifactId>
     <version>2.7.2</version>
+    <name>spring-boot-starter-web</name>
     <!-- ... -->
     <dependencies>
-        <!-- ... -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>2.7.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+            <version>2.7.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <version>2.7.2</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>5.3.22</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>5.3.22</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
