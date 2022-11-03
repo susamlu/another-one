@@ -1,4 +1,4 @@
-# Spring Web 开发：从入门到精通 —— HelloWorld (基础篇)
+# Spring Web 开发：从入门到精通 —— HelloWorld
 
 [TOC]
 
@@ -115,7 +115,7 @@ public class HelloWorldApplication {
 
 运行启动类，在浏览器中输入：`http://localhost:8080/hello?name=小穆` ，即可看到如下效果：
 
-<img src="./images/spring_web_helloworld_1_1.png" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="./images/spring_web_helloworld_1.png" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
