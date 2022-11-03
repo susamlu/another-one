@@ -2,7 +2,7 @@
 
 [TOC]
 
-为了更清晰地理解 Spring Web 项目的启动过程，笔者从项目的启动日志入手，对照 Spring 源码，对项目的启动过程做了一次分析。下面是项目的一次启动日志：
+为了更清晰地理解 Spring Web 项目的启动过程，笔者将从项目的启动日志入手，对照 Spring 源码，对项目的启动过程再做一次分析。下面是项目的一次启动日志：
 
 ```html
 
@@ -164,7 +164,7 @@ class SpringBootBanner implements Banner {
 
 ## prepareContext
 
-prepareContext() 是其中非常重要的一个方法，该方法的作用在上述内容中就所有描述。
+prepareContext() 是其中非常重要的一个方法，该方法的作用在前面的文章中就所有描述。
 
 ```java
 public class SpringApplication {

@@ -97,11 +97,11 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   example.MyAutoConfiguration
 ```
 
-接着，将该项目打包成 jar 包，在我们将该 jar 包引入到某个项目时，MyAutoConfiguration 类就会被当成自动配置类而被 Spring Boot 自动加载。它的具体的工作原理，将在本章后面的小节中进行解析。
+接着，将该项目打包成 jar 包，在我们将该 jar 包引入到某个项目时，MyAutoConfiguration 类就会被当成自动配置类而被 Spring Boot 自动加载。它的具体的工作原理，将在本文后面的小节中进行解析。
 
 ### prepareContext
 
-SpringApplication 的实例 run() 方法会调用两个非常重要的方法：prepareContext() 和 refreshContext()，这两个方法通过它们的名字就可以大概猜出其的作用了，实际上，一个是用来准备在应用启动前需要预先准备的内容的，一个是用来执行在应用启动时需要执行的核心方法的。
+SpringApplication 的实例 run() 方法会调用两个非常重要的方法：prepareContext() 和 refreshContext()，这两个方法通过它们的名字就可以大概猜出其作用了，实际上，一个是用来准备在应用启动前需要预先准备的内容的，一个是用来执行在应用启动时需要执行的核心方法的。
 
 通过代码的追踪，我们会发现 prepareContext() 做了一个比较关键的操作，就是执行了自身实例的 load() 方法，该方法会将 HelloWorldApplication 注册到 Spring IoC 容器中，完成了这一步，后面应用启动时进行自动扫描、自动配置等，就可以找到基类了。
 
@@ -186,7 +186,7 @@ class ConfigurationClassParser {
 - 解析父接口的默认方法
 - 解析父类
 
-配置类的解析涉及到的内容比较多，这里只对 `解析 @ComponentScan 注解` 这一步进行分析，其他部分后面会有一个专门的专题进行讲解。
+配置类的解析涉及到的内容比较多，这里只对 `解析 @ComponentScan 注解` 这一步进行分析，其他部分后面会有一篇单独的文章进行讲解。
 
 ### ComponentScan
 
@@ -298,13 +298,15 @@ org.springframework.boot.autoconfigure.condition.OnClassCondition,\
 org.springframework.boot.autoconfigure.condition.OnWebApplicationCondition
 ```
 
-这三个类分别对应注解：@ConditionalOnBean、@ConditionalOnClass、@ConditionalOnWebApplication。其中，@ConditionalOnBean 表示当 Spring 容器中存在某个 bean 时，配置才会生效，它通常会跟 @ConditionalOnSingleCandidate 注解一起起作用，@ConditionalOnSingleCandidate 的作用是表示容器中的 bean 为单例时，配置类才起作用。@ConditionalOnClass 表示配置类在应用中存在某个指定的类时才生效。@ConditionalOnWebApplication 表示项目是 web 项目时，配置才生效，它有一个 type 参数，可以指定当项目是基于 servlet 的项目（type=SERVLET）或者是基于 reactive 的项目（type=REACTIVE）时才生效，默认为只要是其中一种项目就生效。
+这三个类分别对应注解：@ConditionalOnBean、@ConditionalOnClass、@ConditionalOnWebApplication。其中，@ConditionalOnBean 表示当 Spring 容器中存在某个 bean 时，配置类才会生效，它通常会跟 @ConditionalOnSingleCandidate 注解一起起作用，@ConditionalOnSingleCandidate 的作用是表示容器中的 bean 为单例时，配置类才起作用。@ConditionalOnClass 表示配置类在应用中存在某个指定的类时才生效。@ConditionalOnWebApplication 表示项目是 web 项目时，配置类才生效，它有一个 type 参数，可以指定当项目是基于 servlet 的项目（type=SERVLET）或者是基于 reactive 的项目（type=REACTIVE）时才生效，默认为只要是其中一种项目就生效。
 
 通过层层筛选后，最终得到的自动配置类，就会被当做配置类通过 doProcessConfigurationClass() 方法逐个进行解析。
 
 到了这里，我们对 Spring Boot 项目是如何启动的，就有了一个基本的认识，我们回忆下前文提到的几个注解： @Configuration、@EnableAutoConfiguration、@ComponentScan，以及 import 进来的类：AutoConfigurationImportSelector、AutoConfigurationPackages.Registrar，除了 AutoConfigurationPackages.Registrar，上文中都已经有相关的解析了，而 AutoConfigurationPackages.Registrar 又是用来做什么的呢？在了解完相关的代码之后，可以从这个类的注释中得到答案：它主要是用于记录自动配置类的包路径的，以便于后面有需要的时候使用，如 JPA 的实体扫描等。
 
 自动配置类解析完成之后，还有一个问题尚未谈及，即自动配置类自身是在什么时候被加载到 Spring IoC 容器中的。其实，当自动扫描和自动配置的逻辑执行完之后，方法调用又重新回到了 ConfigurationClassPostProcessor 类的 processConfigBeanDefinitions() 方法，该方法会将自动配置类统一加载到 Spring IoC 容器中，至此，所有的 bean 就加载完成了。
+
+通过上面的讲解，相信读者对 @SpringBootApplication 和 SpringApplication 是如何起作用、如何相互协作就有了比较清晰的了解了。下一篇文章，我们将从启动日志的角度出发，再探应用之启动过程。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
