@@ -2,7 +2,7 @@
 
 [TOC]
 
-上一篇文章已经介绍了如何快速搭建一个 Spring Web 项目，本文将通过源码分析的方式，一步步了解该项目是如何运行起来的。
+上一篇文章介绍了如何快速搭建一个 Spring Web 项目，本文先聊聊项目的依赖是如何引入的。
 
 我们前面提到，搭建 Spring Web 项目时，只需要继承 `spring-boot-starter-parent` ，并引入 `spring-boot-starter-web` ，即可把 Spring Web 项目所需要的全部依赖引进来，并且我们不需要指定依赖的版本，这是如何做到的呢？
 
