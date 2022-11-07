@@ -80,11 +80,50 @@ modelVersion 指定 pom 文件符合哪个版本的描述符，groupId、artifac
 </dependency>
 ```
 
+最终的 `pom.xml` 文件内容如下：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.2</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>org.susamlu.springweb</groupId>
+    <artifactId>spring-web-helloworld</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>spring-web-helloworld</name>
+    <description>Demo project for Spring Web</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
+```
+
 ### 3. 编写 Controller 代码
 
 通过 @RestController 声明接口类，由此，我们可以在该类中定义 RESTful 风格的接口方法。使用 @GetMapping 指定接口的路径，使用 @RequestParam 指定接口接收的请求参数。
 
 ```java
+package org.susamlu.springweb.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 @RestController
 public class HelloWorldController {
 
@@ -101,6 +140,11 @@ public class HelloWorldController {
 使用 @SpringBootApplication 指定项目的启动类，在 main() 方法中执行 SpringApplication.run() 方法，至此，HelloWorld 项目的代码就全部编写完了。
 
 ```java
+package org.susamlu.springweb;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 @SpringBootApplication
 public class HelloWorldApplication {
 
