@@ -58,7 +58,7 @@ modelVersion 指定 pom 文件符合哪个版本的描述符，groupId、artifac
 
 ### 1. 继承 Spring Boot 项目
 
-`spring-boot-starter-parent` 在 pom 文件中预定义了各组件的依赖版本，继承了该项目，我们在引入 Spring Web 组件的时候，就不再需要去指定它的版本。
+`spring-boot-starter-parent` 预定义了各种 `starter` 的版本，继承并指定了该项目的版本，我们在引入 `spring-boot-starter-web` 的时候，就不需要去指定它的版本了。
 
 ```xml
 <parent>
@@ -71,7 +71,7 @@ modelVersion 指定 pom 文件符合哪个版本的描述符，groupId、artifac
 
 ### 2. 引入 Spring Web 依赖
 
-`spring-boot-starter-web` 定义了 Spring Web 项目所需要的全部依赖。因此，我们在引入 Spring Web 依赖的时候，只需要简单的声明：
+`spring-boot-starter-web` 引入了 Spring Web 项目所需要的全部依赖。因此，我们在引入 Spring Web 依赖的时候，只需要简单的声明：
 
 ```xml
 <dependency>
