@@ -2,7 +2,7 @@
 
 [TOC]
 
-本系列文章将从一个简单的 HelloWorld 项目开始，讲述如何一步步搭建一个完整的 Spring Web 项目。必要时，将翻阅相关的源代码，剖析其中的实现细节。
+本系列文章将从一个简单的 HelloWorld 项目开始，讲述如何一步步搭建一个完整的 Spring Web 项目。必要时，将翻阅相关的源代码，分析其中的实现细节。
 
 版本说明：
 - 所有的项目代码均构建在 Spring Boot 2.7.2 之上。
@@ -80,7 +80,7 @@ modelVersion 指定 pom 文件符合哪个版本的描述符，groupId、artifac
 </dependency>
 ```
 
-最终的 `pom.xml` 文件内容如下：
+最终 `pom.xml` 文件的内容如下：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
