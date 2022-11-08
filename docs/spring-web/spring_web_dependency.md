@@ -4,7 +4,7 @@
 
 上一篇文章介绍了如何快速搭建一个 Spring Web 项目，本文重点聊聊项目的依赖是如何引入的。
 
-我们前面提到，搭建 Spring Web 项目时，只需要继承 `spring-boot-starter-parent` 并指定它的版本，接着引入 `spring-boot-starter-web` ，即可把 Spring Web 项目所需要的全部依赖引进来，并且我们不需要指定 `spring-boot-starter-web` 的版本，具体如何做到的呢？
+我们前面提到，搭建 Spring Web 项目时，只需要继承 `spring-boot-starter-parent` 并指定它的版本，接着引入 `spring-boot-starter-web` ，且无需指定 `spring-boot-starter-web` 的版本，即可把 Spring Web 项目所需要的全部依赖引进来，具体是如何做到的呢？
 
 这里会涉及到 Maven 的 parent 和 dependencyManagement 标签，我们先讲讲这两个标签的作用。
 
@@ -139,7 +139,7 @@
 
 ### spring-boot-starter-parent
 
-2.7.2版本的 `spring-boot-starter-parent` 继承自父项目 `spring-boot-dependencies`。
+2.7.2 版本的 `spring-boot-starter-parent` 继承自父项目 `spring-boot-dependencies`。
 
 ```xml
 <!-- spring-boot-starter-parent -->
@@ -156,7 +156,7 @@
 </project>
 ```
 
-`spring-boot-dependencies` 通过 dependencyManagement 标签预先指定了各种 `starter` 及其它依赖的版本。尤其是，将 `spring-boot-starter-web` 的版本指定为 2.7.2 。
+`spring-boot-dependencies` 通过 dependencyManagement 标签预先指定了各个 `starter` 和其它各个依赖的版本。尤其是，将 `spring-boot-starter-web` 的版本指定为 2.7.2 。
 
 ```xml
 <!-- spring-boot-dependencies -->
@@ -172,6 +172,16 @@
     <!-- ... -->
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-amqp</artifactId>
+                <version>${activemq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-blueprint</artifactId>
+                <version>${activemq.version}</version>
+            </dependency>
             <!-- ... -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -245,7 +255,7 @@
 </project>
 ```
 
-在 `spring-boot-starter-parent` 和 `spring-boot-starter-web` 的共同作用下，就完成了 Spring Web 项目全部依赖和依赖版本的声明。
+因此，在我们继承 `spring-boot-starter-parent` ，并引入 `spring-boot-starter-web` 之后，Spring Web 项目的依赖和依赖版本就被全部定义好了。
 
 > 读到这里，不知道读者有没有这样的疑问：我继承的是 `spring-boot-starter-parent` 项目，为什么却把 `spring-boot-dependencies` 的内容也继承了？这其实是由继承的传递性造成的，即继承的特性导致了子项目除了会继承父项目的内容，同时也会继承所有其它祖先项目的内容。
 
