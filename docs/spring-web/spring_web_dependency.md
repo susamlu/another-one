@@ -4,7 +4,7 @@
 
 上一篇文章介绍了如何快速搭建一个 Spring Web 项目，本文重点聊聊项目的依赖是如何引入的。
 
-我们前面提到，搭建 Spring Web 项目时，只需要继承 `spring-boot-starter-parent` ，并引入 `spring-boot-starter-web` ，即可把 Spring Web 项目所需要的全部依赖引进来，并且我们不需要指定依赖的版本，这是如何做到的呢？
+我们前面提到，搭建 Spring Web 项目时，只需要继承 `spring-boot-starter-parent` 并指定它的版本，接着引入 `spring-boot-starter-web` ，即可把 Spring Web 项目所需要的全部依赖引进来，并且我们不需要指定 `spring-boot-starter-web` 的版本，具体如何做到的呢？
 
 这里会涉及到 Maven 的 parent 和 dependencyManagement 标签，我们先讲讲这两个标签的作用。
 
@@ -49,7 +49,7 @@
 </project>
 ```
 
-子项目只需继承 `my-app-parent` ，就引入了这两个依赖，并且依赖的版本也跟父项目所指定的版本一样。
+子项目只需继承 `my-app-parent` 并指定它的版本，就引入了这两个依赖，并且依赖的版本也跟父项目所指定的版本一样。
 
 ```xml
 <!-- my-app-child -->
@@ -139,7 +139,7 @@
 
 ### spring-boot-starter-parent
 
-`spring-boot-starter-parent` （2.7.2版本）继承自父项目 `spring-boot-dependencies`。
+2.7.2版本的 `spring-boot-starter-parent` 继承自父项目 `spring-boot-dependencies`。
 
 ```xml
 <!-- spring-boot-starter-parent -->
@@ -156,7 +156,7 @@
 </project>
 ```
 
-`spring-boot-dependencies` 通过 dependencyManagement 标签预先指定了 Spring Boot 项目全部组件的依赖版本。尤其是，将 `spring-boot-starter-web` 的版本指定为 2.7.2 。
+`spring-boot-dependencies` 通过 dependencyManagement 标签预先指定了各种 `starter` 及其它依赖的版本。尤其是，将 `spring-boot-starter-web` 的版本指定为 2.7.2 。
 
 ```xml
 <!-- spring-boot-dependencies -->
@@ -178,6 +178,16 @@
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>2.7.2</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webflux</artifactId>
+                <version>2.7.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-websocket</artifactId>
+                <version>2.7.2</version>
+            </dependency>
             <!-- ... -->
         </dependencies>
     </dependencyManagement>
@@ -187,7 +197,7 @@
 
 ### spring-boot-starter-web
 
-2.7.2 版本的 `spring-boot-starter-web` 将 `spring-web` 等项目引入了进来，并指定了各依赖的版本：
+2.7.2 版本的 `spring-boot-starter-web` 将 Spring Web 项目需要的全部依赖，如 `spring-web` 等引入了进来，并指定了它们的版本：
 
 ```xml
 <!-- spring-boot-starter-web -->
