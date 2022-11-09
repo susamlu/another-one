@@ -255,7 +255,7 @@
 </project>
 ```
 
-因此，在我们继承 2.7.2 版本的 `spring-boot-starter-parent` ，并引入 `spring-boot-starter-web` 之后，就相当于引入了 2.7.2 版本的 `spring-boot-starter-web` ，2.7.2 版本的 `spring-boot-starter-web` 又将该版本所需要的特定版本的依赖引入了进来，从而 Spring Web 项目就能够在 `spring-boot-starter-parent` 和 `spring-boot-starter-web` 的共同作用下，将项目所需的依赖和依赖版本全部定义好。
+因此，在我们继承 2.7.2 版本的 `spring-boot-starter-parent` ，并引入 `spring-boot-starter-web` 之后，就相当于引入了 2.7.2 版本的 `spring-boot-starter-web` ，2.7.2 版本的 `spring-boot-starter-web` 又将该版本所需要的特定版本的依赖引入了进来，从而 Spring Web 项目就能够在 `spring-boot-starter-parent` 和 `spring-boot-starter-web` 的共同作用下，将项目所需要的依赖和依赖版本全部定义好。并且，在这个过程中，我们不需要的依赖，如 `spring-boot-starter-webflux` 等，是没有被引入进来的，这样就达到了既方便又灵活的效果。
 
 > 读到这里，不知道读者有没有这样的疑问：我继承的是 `spring-boot-starter-parent` 项目，为什么却把 `spring-boot-dependencies` 的内容也继承了？这其实是由继承的传递性造成的，即继承的特性导致了子项目除了会继承父项目的内容，同时也会继承所有其它祖先项目的内容。
 
