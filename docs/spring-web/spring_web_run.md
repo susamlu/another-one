@@ -45,11 +45,11 @@ public @interface AutoConfigurationPackage {
 }
 ```
 
-总的来说，就是 @SpringBootApplication 通过 @Configuration 注解让启动类 HelloWorldApplication 成为了配置类，通过 @EnableAutoConfiguration 开启了自动配置的扫描，通过 @ComponentScan 开启了 Spring Bean 的自动扫描。
+总的来说，就是 @SpringBootApplication 通过 @Configuration 注解让启动类 HelloWorldApplication 成为了配置类，通过 @EnableAutoConfiguration 开启了自动配置的扫描，通过 @ComponentScan 开启了 Spring bean 的自动扫描。
 
 ## SpringApplication
 
-SpringApplication.run() 是整个 Spring Boot 应用的入口。其核心的启动流程如下：
+SpringApplication.run() 是整个 Spring Boot 应用的入口。围绕上述提到的注解类，可以梳理出，其核心的启动流程如下：
 
 <img src="./images/spring_web_run_1.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
@@ -71,7 +71,7 @@ SpringFactoriesLoader 类的主要作用是提供 Spring 框架内部一种加�
 example.MyService=example.MyServiceImpl1,example.MyServiceImpl2
 ```
 
-SpringFactoriesLoader 提供了 loadFactories()、loadFactoryNames() 两个公共静态方法，一个用于获取工厂实例，一个用于获取工厂类的全限定类名。因此， `META-INF/spring.factories` 实际上是将一些工厂类（或者是接口的具体实现类）事先配置在文件中，以供应用在需要时获取，通过这种方式，可以绕开获取实例必须从 Spring IoC 容器获取的限制（在全部 Spring Bean 加载完成之前，通过这种方式获取实例是很必要的）。
+SpringFactoriesLoader 提供了 loadFactories()、loadFactoryNames() 两个公共静态方法，一个用于获取工厂实例，一个用于获取工厂类的全限定类名。因此， `META-INF/spring.factories` 实际上是将一些工厂类（或者是接口的具体实现类）事先配置在文件中，以供应用在需要时获取，通过这种方式，可以绕开获取实例必须从 Spring IoC 容器获取的限制（在全部 Spring bean 加载完成之前，通过这种方式获取实例是很有必要的）。
 
 ### EnableAutoConfiguration
 
@@ -111,7 +111,7 @@ refreshContext() 最终会调用 AbstractApplicationContext 的 refresh() 方法
 
 ### doProcessConfigurationClass
 
-配置解析经由 ConfigurationClassPostProcessor 类的 processConfigBeanDefinitions() 方法，调起配置解析的入口： ConfigurationClassParser 类的 parse() 方法，parse() 辗转之后，最终会调用到自身实例的 doProcessConfigurationClass() 方法，doProcessConfigurationClass() 是启动阶段当之无愧的核心方法。
+配置解析经由 ConfigurationClassPostProcessor 类的 processConfigBeanDefinitions() 方法，调起配置解析的入口： ConfigurationClassParser 类的 parse() 方法，parse() 辗转之后，最终会调用到自身实例的 doProcessConfigurationClass() 方法，doProcessConfigurationClass() 是 Spring bean 加载阶段当之无愧的核心方法。
 
 ```java
 class ConfigurationClassParser {
@@ -236,7 +236,7 @@ class ComponentScanAnnotationParser {
 }
 ```
 
-filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的 useDefaultFilters 属性默认为 true，因此默认会采用 Spring 框架默认定义的 filter，最终得到两个 includeFilter，这两个 includeFilter 都是 AnnotationTypeFilter，其中一个的 annotationType 为 org.springframework.stereotype.Component，另一个的 annotationType 为 javax.annotation.ManagedBean。接着，会将 @ComponentScan 注解指定的 includeFilters 和 excludeFilters 添加到 scanner 中，由上文可知，@ComponentScan 设置了两个 excludeFilters：TypeExcludeFilter 和 AutoConfigurationExcludeFilter，即 TypeExcludeFilter 和 AutoConfigurationExcludeFilter 都会被加入到 scanner 的 excludeFilters 中。最后，再将自定义的 excludeFilter：AbstractTypeHierarchyTraversingFilter 添加到 scanner 的 excludeFilters 中。最终，scanner 会得到 2 个 includeFilter 和 3 个 excludeFilter。即：
+filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的 useDefaultFilters 属性默认为 true，因此默认会采用 Spring 框架默认定义的 filter，最终得到两个 includeFilter，这两个 includeFilter 都是 AnnotationTypeFilter，其中一个的 annotationType 为 org.springframework.stereotype.Component，另一个的 annotationType 为 javax.annotation.ManagedBean。接着，会将 @ComponentScan 注解指定的 includeFilters 和 excludeFilters 添加到 scanner 中，由上文可知，@ComponentScan 设置了两个 excludeFilters：TypeExcludeFilter 和 AutoConfigurationExcludeFilter，即 TypeExcludeFilter 和 AutoConfigurationExcludeFilter 都会被加入到 scanner 的 excludeFilters 中。最后，再将自定义的 excludeFilter：匿名 AbstractTypeHierarchyTraversingFilter 添加到 scanner 的 excludeFilters 中。最终，scanner 会得到 2 个 includeFilter 和 3 个 excludeFilter。即：
 
 - includeFilters：
   - AnnotationTypeFilter(org.springframework.stereotype.Component)
@@ -246,7 +246,7 @@ filter 的设置策略取决于 @ComponentScan 注解，@ComponentScan 注解的
   - AutoConfigurationExcludeFilter
   - AbstractTypeHierarchyTraversingFilter
 
-其中，AnnotationTypeFilter 的作用是过滤包含有指定注解的类，两个 AnnotationTypeFilter 都是 includeFilter，因此，只要类包含 @Component 或 @ManagedBean 注解，就会被扫描到。TypeExcludeFilter 主要是预留于扩展之用，即通过 TypeExcludeFilter 可以自定义排除扫描的规则，AutoConfigurationExcludeFilter 主要用于排除对自动配置类的扫描，自定义的 AbstractTypeHierarchyTraversingFilter 主要是用来排除扫描的基类（即 HelloWorldApplication），以避免陷入死循环之中。因此，总的来说，默认情况下，@ComponentScan 注解的解析过程中，会将基类和自动配置类排除，将包含有 @Component 注解的类扫描并添加到 Spring IoC 容器中。
+其中，AnnotationTypeFilter 的作用是过滤包含有指定注解的类，两个 AnnotationTypeFilter 都是 includeFilter，因此，只要类包含 @Component 或 @ManagedBean 注解，就会被扫描到。TypeExcludeFilter 主要是预留于扩展之用，即通过 TypeExcludeFilter 可以自定义排除扫描的规则，AutoConfigurationExcludeFilter 主要用于排除对自动配置类的扫描，自定义的匿名 AbstractTypeHierarchyTraversingFilter 主要是用来排除扫描的基类（即 HelloWorldApplication），以避免扫描陷入死循环之中。因此，总的来说，默认情况下，@ComponentScan 注解的解析过程中，会将基类和自动配置类排除，将包含有 @Component 注解的类扫描并添加到 Spring IoC 容器中。
 
 另外，parse() 方法会获取 @ComponentScan 注解指定的 basePackages，如果没有指定，则以当前类所在包的包路径作为 basePackage。接着，再通过 ClassPathScanningCandidateComponentProvider 的 scanCandidateComponents() 方法，扫描 basePackage 下的所有 class 文件，并将符合要求（通过 scanner 的 includeFilters 和 excludeFilters 进行筛选）的候选类添加到 Spring IoC 容器中。如果这个过程中，扫描到了配置类，则又重新回到上面解析配置类的步骤中，不断递归，直到将全部类加载完成。
 
