@@ -71,7 +71,7 @@ SpringFactoriesLoader 类的主要作用是提供 Spring 框架内部一种加�
 example.MyService=example.MyServiceImpl1,example.MyServiceImpl2
 ```
 
-SpringFactoriesLoader 提供了 loadFactories()、loadFactoryNames() 两个公共静态方法，一个用于获取工厂实例，一个用于获取工厂类的全限定类名。因此， `META-INF/spring.factories` 实际上是将一些工厂类（或者是接口的具体实现类）事先配置在文件中，以供应用在需要时获取，通过这种方式，可以绕开获取实例必须从 Spring IoC 容器获取的限制（在全部 Spring bean 加载完成之前，通过这种方式获取实例是很有必要的）。
+SpringFactoriesLoader 提供了 loadFactories()、loadFactoryNames() 两个公共静态方法，一个用于获取工厂实例，一个用于获取工厂类的全限定类名。因此，`META-INF/spring.factories` 实际上是将一些工厂类（或者是接口的具体实现类）事先配置在文件中，以供应用在需要时获取，通过这种方式，可以绕开获取实例必须从 Spring IoC 容器获取的限制（在全部 Spring bean 加载完成之前，通过这种方式获取实例是很有必要的）。
 
 ### EnableAutoConfiguration
 
