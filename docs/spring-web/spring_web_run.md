@@ -49,7 +49,7 @@ public @interface AutoConfigurationPackage {
 
 ## SpringApplication
 
-SpringApplication.run() 是整个 Spring Boot 应用的入口。围绕上述提到的注解类，可以梳理出，其核心的启动流程如下：
+SpringApplication.run() 是整个 Spring Boot 应用的入口。围绕上述提到的注解，可以梳理出，其核心的启动流程如下：
 
 <img src="./images/spring_web_run_1.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
