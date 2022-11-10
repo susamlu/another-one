@@ -2,7 +2,7 @@
 
 [TOC]
 
-不知道读者在编写 Spring Boot 项目的时候，有没有思考过启动类中为何需要同时使用 @SpringBootApplication 和 SpringApplication，它们的作用分别又是什么？下面让我们一起来一探究竟。
+不知道读者在编写项目的时候，有没有思考过启动类中为何需要同时使用 @SpringBootApplication 和 SpringApplication，它们的作用分别又是什么？下面让我们一起来一探究竟。
 
 ## @SpringBootApplication
 
@@ -306,7 +306,21 @@ org.springframework.boot.autoconfigure.condition.OnWebApplicationCondition
 
 自动配置类解析完成之后，还有一个问题尚未谈及，即自动配置类自身是在什么时候被加载到 Spring IoC 容器中的。其实，当自动扫描和自动配置的逻辑执行完之后，方法调用又重新回到了 ConfigurationClassPostProcessor 类的 processConfigBeanDefinitions() 方法，该方法会将自动配置类统一加载到 Spring IoC 容器中，至此，所有的 bean 就加载完成了。
 
-通过上面的讲解，相信读者对 @SpringBootApplication 和 SpringApplication 是如何起作用、如何相互协作就有了比较清晰的了解了。下一篇文章，我们将从启动日志的角度出发，再探应用之启动过程。
+## 小结
+
+聊了那么多之后，让我们回到文章开始提到的问题：启动类中为何需要同时使用 @SpringBootApplication 和 SpringApplication，它们的作用分别又是什么？
+
+显然，SpringApplication.run() 作为整个 Spring 应用的入口，是必须被执行的，否则接下来的一些列操作都无从执行。我们将 HelloWorldApplication 作为 SpringApplication.run() 的参数传递给了 SpringApplication，SpringApplication 也以此作为配置解析的入口。
+
+同时，我们也知道了 @SpringBootApplication 最重要的是引入了 @Configuration、@EnableAutoConfiguration、@ComponentScan 这三个注解，这是否也是必须的呢？这个问题其实我们在上文中并没有明确提及，我们可以将 HelloWorldApplication 的 @SpringBootApplication 注解去除，然后启动应用，以试验这是否是可行的。事实上，应用会启动失败，并且我们会得到下面这个错误提示：
+
+```html
+Web application could not be started as there was no org.springframework.boot.web.servlet.server.ServletWebServerFactory bean defined in the context.
+```
+
+这其实是由于自动配置没有加载而导致的，于是我们给 HelloWorldApplication 加上 @EnableAutoConfiguration 注解，再启动应用，会发现应用可以启动了。为什么会这样？其实是由于 @EnableAutoConfiguration 对 AutoConfigurationImportSelector 的引入导致的，如果应用没有引入 AutoConfigurationImportSelector 类，就不会触发在其中定义的一系列的自动配置解析逻辑。这个时候，我们的接口访问不到了，于是接着给 HelloWorldApplication 加上 @ComponentScan 注解，再次启动应用，接口也正常了。这时候我们会发现，没有 @Configuration 注解似乎也是可行的，有没有 @Configuration 的区别有事什么？这里我们先不回答，等我们了解完 Spring 配置类的特性后，相信这个问题也会迎刃而解。
+
+最后，我们再来一个总结：@SpringBootApplication 和 SpringApplication 再启动类中都是必须的，SpringApplication.run() 作为应用的最初入口，@SpringBootApplication 标识了应用需要进行自动配置和 Spring bean 的自动加载。它们在应用的启动过程中，相互起作用，缺一不可。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
