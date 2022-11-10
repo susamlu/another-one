@@ -310,17 +310,15 @@ org.springframework.boot.autoconfigure.condition.OnWebApplicationCondition
 
 聊了那么多之后，让我们回到文章开始提到的问题：启动类中为何需要同时使用 @SpringBootApplication 和 SpringApplication，它们的作用分别又是什么？
 
-显然，SpringApplication.run() 作为整个 Spring 应用的入口，是必须被执行的，否则接下来的一些列操作都无从执行。我们将 HelloWorldApplication 作为 SpringApplication.run() 的参数传递给了 SpringApplication，SpringApplication 也以此作为配置解析的入口。
-
-同时，我们也知道了 @SpringBootApplication 最重要的是引入了 @Configuration、@EnableAutoConfiguration、@ComponentScan 这三个注解，这是否也是必须的呢？这个问题其实我们在上文中并没有明确提及，我们可以将 HelloWorldApplication 的 @SpringBootApplication 注解去除，然后启动应用，以试验这是否是可行的。事实上，应用会启动失败，并且我们会得到下面这个错误提示：
+显然，SpringApplication.run() 作为整个 Spring 应用的入口，是必须要执行的，否则接下来的一系列操作都无从执行。因此，SpringApplication 是必不可少的，而 @SpringBootApplication 呢？为了验证 @SpringBootApplication 是否也是必须的，我们可以做一些实验。我们可以将启动类的 @SpringBootApplication 注解去掉，然后启动应用，看看这是否是可行的。事实上，应用会启动失败，并且我们会得到下面这个错误提示：
 
 ```html
 Web application could not be started as there was no org.springframework.boot.web.servlet.server.ServletWebServerFactory bean defined in the context.
 ```
 
-这其实是由于自动配置没有加载而导致的，于是我们给 HelloWorldApplication 加上 @EnableAutoConfiguration 注解，再启动应用，会发现应用可以启动了。为什么会这样？其实是由于 @EnableAutoConfiguration 对 AutoConfigurationImportSelector 的引入导致的，如果应用没有引入 AutoConfigurationImportSelector 类，就不会触发在其中定义的一系列的自动配置解析逻辑。这个时候，我们的接口访问不到了，于是接着给 HelloWorldApplication 加上 @ComponentScan 注解，再次启动应用，接口也正常了。这时候我们会发现，没有 @Configuration 注解似乎也是可行的，有没有 @Configuration 的区别有事什么？这里我们先不回答，等我们了解完 Spring 配置类的特性后，相信这个问题也会迎刃而解。
+这其实是由于自动配置没有加载而导致的，于是我们给启动类加上 @EnableAutoConfiguration 注解，再启动应用，会发现应用可以启动了。（为什么会这样？其实是由于 @EnableAutoConfiguration 对 AutoConfigurationImportSelector 的引入导致的，如果应用没有引入 AutoConfigurationImportSelector 类，就不会触发在其中定义的一系列的自动配置解析逻辑。）但是这个时候，我们会发现接口访问不了了，于是接着给启动类加上 @ComponentScan 注解，再次启动应用，接口就可以正常访问了。这时候似乎一切都正常了：应用可以正常启动，接口可以正常访问。我们会发现，没有 @Configuration 注解似乎也是可行的。有没有 @Configuration 的区别是什么呢？这里我们先不回答，等我们了解完 Spring 配置类的特性后，相信这个问题也会迎刃而解。
 
-最后，我们再来一个总结：@SpringBootApplication 和 SpringApplication 再启动类中都是必须的，SpringApplication.run() 作为应用的最初入口，@SpringBootApplication 标识了应用需要进行自动配置和 Spring bean 的自动加载。它们在应用的启动过程中，相互起作用，缺一不可。
+最后，我们再总结一下：@SpringBootApplication 和 SpringApplication 在启动类中都是必须的，@SpringBootApplication 标识了应用需要进行自动配置类和 Spring bean 的自动加载，SpringApplication.run() 作为应用的最初入口，它们在应用的启动过程中，相互起作用，缺一不可。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
