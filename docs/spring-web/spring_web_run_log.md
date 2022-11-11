@@ -2,7 +2,9 @@
 
 [TOC]
 
-为了更清晰地理解 Spring Web 项目的启动过程，笔者将从项目的启动日志入手，对照 Spring 源码，对项目的启动过程再做一次分析。下面是项目的一次启动日志：
+上一篇文章中，我们紧紧围绕 @SpringBootApplication 引入的注解和类，对 Spring Boot 项目的启动过程做了一次分析。在实际的开发过程中，项目的代码毫无疑问是与我们最为相关的，另外，我们也不可忽视项目日志在我们日常开发中所起的作用。因此，本文将围绕项目的启动日志，对项目的启动过程再做一次分析，以便于我们更好地理解整个项目的运行逻辑。本系列文章中，笔者将会使用较多的笔墨展示代码与日志的相互关联，希望通过这样的方式，可以慢慢让读者培养起一种代码与日志彼此贯穿的思路，以帮助读者在实际开发过程中，更好地解决所遇到的问题。
+
+下面是项目的一次启动日志：
 
 ```html
 
@@ -94,6 +96,7 @@ class SpringApplicationBannerPrinter {
     // ImageBanner 支持的后缀格式
     static final String[] IMAGE_EXTENSION = {"gif", "jpg", "png"};
 
+    // 默认的 Banner
     private static final Banner DEFAULT_BANNER = new SpringBootBanner();
 
     // ...
@@ -125,7 +128,7 @@ class SpringApplicationBannerPrinter {
 }
 ```
 
-默认的 Banner 值由 SpringBootBanner 类的一个常量值定义：
+默认的 Banner 值的主要内容由 SpringBootBanner 类的一个常量值定义：
 
 ```java
 class SpringBootBanner implements Banner {
@@ -164,7 +167,7 @@ class SpringBootBanner implements Banner {
 
 ## prepareContext
 
-prepareContext() 是其中非常重要的一个方法，该方法的作用在前面的文章中就所有描述。
+prepareContext() 是其中非常重要的一个方法，该方法的作用在上一篇文章中就所有提及。
 
 ```java
 public class SpringApplication {
