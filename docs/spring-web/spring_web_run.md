@@ -1,4 +1,4 @@
-# Spring Web 开发：从入门到精通 —— 应用启动
+# 深入学习 Spring Web 开发 —— 应用启动
 
 [TOC]
 

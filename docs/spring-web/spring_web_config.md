@@ -1,4 +1,4 @@
-# Spring Web 开发：从入门到精通 —— 配置类
+# 深入学习 Spring Web 开发 —— 配置类
 
 [TOC]
 
