@@ -45,7 +45,7 @@ public @interface AutoConfigurationPackage {
 }
 ```
 
-总的来说，就是 @SpringBootApplication 通过 @Configuration 注解让启动类 HelloWorldApplication 成为了配置类，通过 @EnableAutoConfiguration 开启了自动配置的扫描，通过 @ComponentScan 开启了 Spring bean 的自动扫描。
+总的来说，就是 @SpringBootApplication 通过 @Configuration 注解让启动类 HelloWorldApplication 成为了配置类，通过 @EnableAutoConfiguration 开启了自动配置的扫描，通过 @ComponentScan 开启了 Spring Bean 的自动扫描。
 
 ## SpringApplication
 
@@ -71,7 +71,7 @@ SpringFactoriesLoader 类的主要作用是提供 Spring 框架内部一种加�
 example.MyService=example.MyServiceImpl1,example.MyServiceImpl2
 ```
 
-SpringFactoriesLoader 提供了 loadFactories()、loadFactoryNames() 两个公共静态方法，一个用于获取工厂实例，一个用于获取工厂类的全限定类名。因此，`META-INF/spring.factories` 实际上是将一些工厂类（或者是接口的具体实现类）事先配置在文件中，以供应用在需要时获取，通过这种方式，可以绕开获取实例必须从 Spring IoC 容器获取的限制（在全部 Spring bean 加载完成之前，通过这种方式获取实例是很有必要的）。
+SpringFactoriesLoader 提供了 loadFactories()、loadFactoryNames() 两个公共静态方法，一个用于获取工厂实例，一个用于获取工厂类的全限定类名。因此，`META-INF/spring.factories` 实际上是将一些工厂类（或者是接口的具体实现类）事先配置在文件中，以供应用在需要时获取，通过这种方式，可以绕开获取实例必须从 Spring IoC 容器获取的限制（在全部 Spring Bean 加载完成之前，通过这种方式获取实例是很有必要的）。
 
 ### EnableAutoConfiguration
 
@@ -111,7 +111,7 @@ refreshContext() 最终会调用 AbstractApplicationContext 的 refresh() 方法
 
 ### doProcessConfigurationClass
 
-配置解析经由 ConfigurationClassPostProcessor 类的 processConfigBeanDefinitions() 方法，调起配置解析的入口： ConfigurationClassParser 类的 parse() 方法，parse() 辗转之后，最终会调用到自身实例的 doProcessConfigurationClass() 方法，doProcessConfigurationClass() 是 Spring bean 加载阶段当之无愧的核心方法。
+配置解析经由 ConfigurationClassPostProcessor 类的 processConfigBeanDefinitions() 方法，调起配置解析的入口： ConfigurationClassParser 类的 parse() 方法，parse() 辗转之后，最终会调用到自身实例的 doProcessConfigurationClass() 方法，doProcessConfigurationClass() 是 Spring Bean 加载阶段当之无愧的核心方法。
 
 ```java
 class ConfigurationClassParser {
@@ -298,13 +298,13 @@ org.springframework.boot.autoconfigure.condition.OnClassCondition,\
 org.springframework.boot.autoconfigure.condition.OnWebApplicationCondition
 ```
 
-这三个类分别对应注解：@ConditionalOnBean、@ConditionalOnClass、@ConditionalOnWebApplication。其中，@ConditionalOnBean 表示当 Spring 容器中存在某个 bean 时，配置类才会生效，它通常会跟 @ConditionalOnSingleCandidate 注解一起起作用，@ConditionalOnSingleCandidate 的作用是表示容器中的 bean 为单例时，配置类才起作用。@ConditionalOnClass 表示配置类在应用中存在某个指定的类时才生效。@ConditionalOnWebApplication 表示项目是 web 项目时，配置类才生效，它有一个 type 参数，可以指定当项目是基于 servlet 的项目（type=SERVLET）或者是基于 reactive 的项目（type=REACTIVE）时才生效，默认为只要是其中一种项目就生效。
+这三个类分别对应注解：@ConditionalOnBean、@ConditionalOnClass、@ConditionalOnWebApplication。其中，@ConditionalOnBean 表示当 Spring 容器中存在某个 Bean 时，配置类才会生效，它通常会跟 @ConditionalOnSingleCandidate 注解一起起作用，@ConditionalOnSingleCandidate 的作用是表示容器中的 Bean 为单例时，配置类才起作用。@ConditionalOnClass 表示配置类在应用中存在某个指定的类时才生效。@ConditionalOnWebApplication 表示项目是 web 项目时，配置类才生效，它有一个 type 参数，可以指定当项目是基于 servlet 的项目（type=SERVLET）或者是基于 reactive 的项目（type=REACTIVE）时才生效，默认为只要是其中一种项目就生效。
 
 通过层层筛选后，最终得到的自动配置类，就会被当做配置类通过 doProcessConfigurationClass() 方法逐个进行解析。
 
 到了这里，我们对 Spring Boot 项目是如何启动的，就有了一个基本的认识，我们回忆下前文提到的几个注解： @Configuration、@EnableAutoConfiguration、@ComponentScan，以及 import 进来的类：AutoConfigurationImportSelector、AutoConfigurationPackages.Registrar，除了 AutoConfigurationPackages.Registrar，上文中都已经有相关的解析了，而 AutoConfigurationPackages.Registrar 又是用来做什么的呢？在了解完相关的代码之后，可以从这个类的注释中得到答案：它主要是用于记录自动配置类的包路径的，以便于后面有需要的时候使用，如 JPA 的实体扫描等。
 
-自动配置类解析完成之后，还有一个问题尚未谈及，即自动配置类自身是在什么时候被加载到 Spring IoC 容器中的。其实，当自动扫描和自动配置的逻辑执行完之后，方法调用又重新回到了 ConfigurationClassPostProcessor 类的 processConfigBeanDefinitions() 方法，该方法会将自动配置类统一加载到 Spring IoC 容器中，至此，所有的 bean 就加载完成了。
+自动配置类解析完成之后，还有一个问题尚未谈及，即自动配置类自身是在什么时候被加载到 Spring IoC 容器中的。其实，当自动扫描和自动配置的逻辑执行完之后，方法调用又重新回到了 ConfigurationClassPostProcessor 类的 processConfigBeanDefinitions() 方法，该方法会将自动配置类统一加载到 Spring IoC 容器中，至此，所有的 Bean 就加载完成了。
 
 ## 小结
 
@@ -318,7 +318,7 @@ Web application could not be started as there was no org.springframework.boot.we
 
 这其实是由于自动配置没有加载而导致的，于是我们给启动类加上 @EnableAutoConfiguration 注解，再启动应用，会发现应用可以启动了。（为什么会这样？其实是由于 @EnableAutoConfiguration 对 AutoConfigurationImportSelector 的引入导致的，如果应用没有引入 AutoConfigurationImportSelector 类，就不会触发在其中定义的一系列的自动配置解析逻辑。）但是这个时候，我们会发现接口访问不了了，于是接着给启动类加上 @ComponentScan 注解，再次启动应用，接口就可以正常访问了。这时候似乎一切都正常了：应用可以正常启动，接口可以正常访问。我们会发现，没有 @Configuration 注解似乎也是可行的。有没有 @Configuration 的区别是什么呢？这里我们先不回答，等我们了解完 Spring 配置类的特性后，相信这个问题也会迎刃而解。
 
-最后，我们再总结一下：@SpringBootApplication 和 SpringApplication 在启动类中都是必须的，@SpringBootApplication 标识了应用需要进行自动配置类和 Spring bean 的自动加载，SpringApplication.run() 作为应用的最初入口，它们在应用的启动过程中，相互起作用，缺一不可。
+最后，我们再总结一下：@SpringBootApplication 和 SpringApplication 在启动类中都是必须的，@SpringBootApplication 标识了应用需要进行自动配置类和 Spring Bean 的自动加载，SpringApplication.run() 作为应用的最初入口，它们在应用的启动过程中，相互起作用，缺一不可。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)

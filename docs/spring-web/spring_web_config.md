@@ -6,7 +6,7 @@
 
 ## @Configuration
 
-配置类一般需要附带 @Configuration 注解。@Configuration 注解有两个属性，一个是 value，用来指定 Spring bean 的名称，一个是 proxyBeanMethods，用来指定是否需要为配置类的实例生成代理，从而使在应用中直接调用 @Bean 方法时也只返回单例对象，它的值默认为 true。
+配置类一般需要附带 @Configuration 注解。@Configuration 注解有两个属性，一个是 value，用来指定 Spring Bean 的名称，一个是 proxyBeanMethods，用来指定是否需要为配置类的实例生成代理，从而使在应用中直接调用 @Bean 方法时也只返回单例对象，它的值默认为 true。
 
 如下面两个类，默认情况下，restTemplate1 和 restTemplate2 是同一个对象，如果将 @Configuration 注解的 proxyBeanMethods 属性改为 false （@Configuration(proxyBeanMethods = false)），那么，restTemplate1 和 restTemplate2 就是不同的对象。
 
