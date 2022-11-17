@@ -1,5 +1,7 @@
 # 深入学习 Spring Web 开发 —— Bean 的声明与注入
 
+[TOC]
+
 IoC 是 Spring 框架的最重要特性之一，而对于 Spring IoC，我们能够最直观感受到的可能就是 Bean 的声明与注入，本文，我们将围绕该主题进行讲解。
 
 ## Bean 的声明
