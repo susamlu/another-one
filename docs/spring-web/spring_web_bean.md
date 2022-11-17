@@ -1,6 +1,6 @@
 # 深入学习 Spring Web 开发 —— Bean 的声明与注入
 
-IoC 是 Spring 框架的最重要特性之一，而对于 IoC 容器，其中最核心的事情就是 Bean 的声明与注入。
+IoC 是 Spring 框架的最重要特性之一，而对于 Spring IoC，我们能够最直观感受到的可能就是 Bean 的声明与注入，本文，我们将围绕该主题进行讲解。
 
 ## Bean 的声明
 
@@ -38,7 +38,6 @@ public class UserController {
 如果这个类是一个 service 类，那么一般使用 @Service 注解：
 
 ```java
-@Controller
 @Service
 public class UserService {
 
@@ -64,6 +63,22 @@ public class UserRepository {
 
 }
 ```
+
+这几个注解有一个相同的属性：value，它是用来定义 Bean 的名字的。默认情况下，value 值为空字符串，此时，Bean 以类的全限定类名作为名字，如果 value 值不为空，则 Bean 以 value 值作为名字。
+
+### @Bean
+
+@Bean 一般与 @Configuration 一起使用，：
+
+### @Import
+
+### @ImportResource
+
+### 手动注册
+
+> BeanDefinitionRegistry
+
+### 一切引入了 @Component 的注解
 
 ## Bean 的注入
 
