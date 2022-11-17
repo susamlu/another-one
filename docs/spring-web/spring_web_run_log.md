@@ -325,7 +325,7 @@ public class SpringApplication {
 
 上一篇文章，我们以一张图展示了项目启动的流程，本文也同样总结成了一张图，对于这两张图所涉及到的过程，它们相互之间的顺序是怎么样的呢？
 
-当我们把这两张图拿来对比，并对照相关的源代码，不难发现，SpringFactoriesLoader 的 loadSpringFactories() 方法是最先被触发的，接着，开始输出 Spring Banner，再接着，开始执行 logStartupInfo()、logStartupProfileInfo() 两个方法。上面方法都执行完之后，接着，SpringApplication 的 load() 方法开始执行，再接着就是配置类和自动配置类的加载。这些都执行完了之后，就开始启动 Tomcat，一直到整个项目启动完成。这当中的顺序，可以用下面一张图来表示：
+当我们把这两张图拿来对比，并对照相关的源代码，不难发现，SpringFactoriesLoader 的 loadSpringFactories() 方法是最先被触发的，接着，开始输出 Spring Banner，再接着，开始执行 logStartupInfo()、logStartupProfileInfo() 两个方法。上面方法都执行完之后，接着，SpringApplication 的 load() 方法开始执行，再接着就是配置类和自动配置类的解析。这些都执行完了之后，就开始启动 Tomcat，一直到整个项目启动完成。这当中的顺序，可以用下面一张图来表示：
 
 <img src="./images/spring_web_run_log_2.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
