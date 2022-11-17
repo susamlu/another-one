@@ -288,6 +288,8 @@ public class AutoConfigurationImportSelector /* ... */ {
 
 加载的内容包含两部分，一部分是从 `META-INF/spring.factories` 加载来的，一部分是从 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 加载来的。从 `META-INF/spring.factories` 加载的，正是 key 为 EnableAutoConfiguration 的配置类，这就是上述所讲的 EnableAutoConfiguration 为何起作用的原因。而文件 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 记录的是 Spring Boot 全部的自动配置类。加载阶段获取到的配置类，还需要经过一定规则的筛选，最终筛选出来的配置类，才会被真正解析。
 
+> `META-INF/spring.factories` 中定义的配置类到此时才进行收集、解析，为何该文件早早就被加载了？其实，当 loadFactories()、loadFactoryNames() 两个方法中的一个被调用时，loadSpringFactories() 方法接着就会执行，loadSpringFactories() 方法会加载 `META-INF/spring.factories` 文件，且只会加载一次，加载得到的内容会被缓存起来。在应用启动之始，loadFactoryNames() 就会被执行，以初始化一些默认的 Bean。因此，在这个时候，`META-INF/spring.factories` 文件就被加载了，且后面也无需再次加载了。
+
 `spring-boot-2.7.2.jar` 的 `META-INF/spring.factories` 文件中定义了如下几个 filter，自动配置类正是根据这几个 filter 进行过滤的。
 
 ```html
