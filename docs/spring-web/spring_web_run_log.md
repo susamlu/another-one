@@ -327,7 +327,7 @@ public class SpringApplication {
 
 当我们把这两张图拿来对比，并对照相关的源代码，不难发现，SpringFactoriesLoader 的 loadSpringFactories() 方法是最先被触发的，接着，开始输出 Spring Banner，再接着，开始执行 logStartupInfo()、logStartupProfileInfo() 两个方法。上面方法都执行完之后，接着，SpringApplication 的 load() 方法开始执行，再接着就是 Spring Bean 的自动扫描和自动配置的扫描。这些都执行完了之后，就开始启动 Tomcat，一直到整个项目启动完成。这当中的顺序，可以用下面一张图来表示：
 
-<img src="./images/spring_web_run_log_2.svg" width="100%">
+<img src="./images/spring_web_run_log_2.svg" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
