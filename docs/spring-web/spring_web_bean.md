@@ -116,12 +116,12 @@ import org.susamlu.springweb.component.MyRestTemplate;
 public class BeanConfig {
 
     @Bean
-    public MyRestTemplate getMyRestTemplate() {
+    public MyRestTemplate myRestTemplate() {
         return new MyRestTemplate();
     }
 
     @Bean
-    public RestTemplate getRestTemplate() {
+    public RestTemplate restTemplate() {
         return new RestTemplate();
     }
 
@@ -145,6 +145,47 @@ public class BeanConfig2 {
 ```
 
 #### 与 @Component 一起使用
+
+@Bean 也可以与 @Component 一起使用，不过与上述方式不同的是，当直接调用该方法获取实例时，上述方式每次获取到的对象是相同的一个单例对象，而此处每次获取到的对象都是新建的对象：
+
+```java
+@Component
+public class BeanConfig3 {
+
+    @Bean
+    public RestTemplate restTemplate2() {
+        return new RestTemplate();
+    }
+
+}
+```
+
+```java
+public class Test {
+
+    @Autowired
+    private BeanConfig beanConfig;
+    @Autowired
+    private BeanConfig3 beanConfig3;
+
+    private void testGetBean() {
+        RestTemplate restTemplate1 = beanConfig.restTemplate();
+        RestTemplate restTemplate2 = beanConfig.restTemplate();
+        RestTemplate restTemplate3 = beanConfig3.restTemplate2();
+        RestTemplate restTemplate4 = beanConfig3.restTemplate2();
+        log.info("restTemplate1 equals restTemplate2: {}", restTemplate1.equals(restTemplate2));
+        log.info("restTemplate3 equals restTemplate4: {}", restTemplate3.equals(restTemplate4));
+    }
+
+}
+```
+
+上述代码输出的结果将是：
+
+```html
+restTemplate1 equals restTemplate2: true
+restTemplate3 equals restTemplate4: false
+```
 
 #### @Bean 的属性
 
