@@ -154,7 +154,7 @@ class SpringBootBanner implements Banner {
 /_/                                        
 ```
 
-程序启动后打印的 Banner 信息被修改为：
+应用启动后打印的 Banner 信息被修改为：
 
 ```html
                      _    __               
