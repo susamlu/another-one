@@ -128,7 +128,7 @@ public class BeanConfig {
 }
 ```
 
-@Bean 的灵活之处也在于，这种方式可以灵活配置我们将要创建的 Bean：
+另外，通过 @Bean 也可以灵活配置我们将要创建的 Bean：
 
 ```java
 @Configuration
@@ -146,7 +146,7 @@ public class BeanConfig2 {
 
 #### 与 @Component 一起使用
 
-@Bean 也可以与 @Component 一起使用，不过与上述方式不同的是，当直接调用该方法获取实例时，上述方式每次获取到的对象是相同的一个单例对象，而此处每次获取到的对象都是新建的对象：
+@Bean 也可以与 @Component 一起使用，不过与上述方式不同的是，当直接调用该方法获取实例时，上述方式每次获取到的对象是相同的一个单例对象，而这种方式每次获取到的对象都是新建的对象：
 
 ```java
 @Component
@@ -161,20 +161,22 @@ public class BeanConfig3 {
 ```
 
 ```java
-public class Test {
+@Component
+public class GenBeanTest {
 
     @Autowired
     private BeanConfig beanConfig;
     @Autowired
     private BeanConfig3 beanConfig3;
 
-    private void testGetBean() {
+    @EventListener
+    private void testGetBean(ApplicationReadyEvent event) {
         RestTemplate restTemplate1 = beanConfig.restTemplate();
         RestTemplate restTemplate2 = beanConfig.restTemplate();
         RestTemplate restTemplate3 = beanConfig3.restTemplate2();
         RestTemplate restTemplate4 = beanConfig3.restTemplate2();
-        log.info("restTemplate1 equals restTemplate2: {}", restTemplate1.equals(restTemplate2));
-        log.info("restTemplate3 equals restTemplate4: {}", restTemplate3.equals(restTemplate4));
+        System.out.println("restTemplate1 equals restTemplate2: " + restTemplate1.equals(restTemplate2));
+        System.out.println("restTemplate3 equals restTemplate4: " + restTemplate3.equals(restTemplate4));
     }
 
 }
@@ -195,7 +197,7 @@ restTemplate3 equals restTemplate4: false
 
 ```java
 @Configuration
-public class BeanConfig3 {
+public class BeanConfig4 {
 
     @Bean(name = {"restTemplateA", "restTemplateB"})
     public MyRestTemplate myRestTemplate() {
@@ -203,6 +205,59 @@ public class BeanConfig3 {
     }
 
 }
+```
+
+通过 @Bean 定义的 Bean 同样也遵循 `项目中不能存在两个名字一样的 Bean` 的规则，但在细节上，与通过 @Component 定义 Bean 有一些区别。
+
+例如，在同一个类中，可以有多个 @Bean name 属性相同的方法，但只会有一个生效，比如下面的代码中，只有第一个方法定义的 Bean 被注册到了 Spring IoC 容器中，第二个方法定义的 Bean 被忽略了。
+
+```java
+@Configuration
+public class BeanConfig5 {
+
+    @Bean("restTemplateC")
+    public MyRestTemplate myRestTemplate() {
+        return new MyRestTemplate();
+    }
+
+    @Bean("restTemplateC")
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+}
+```
+
+但，如果多个 @Bean name 属性相同的方法定义在不同的类中，那么在应用启动的时候就会抛出异常。如有下面两个类：
+
+```java
+@Configuration
+public class BeanConfig6 {
+
+    @Bean("restTemplateD")
+    public MyRestTemplate myRestTemplate() {
+        return new MyRestTemplate();
+    }
+
+}
+```
+
+```java
+@Configuration
+public class BeanConfig7 {
+
+    @Bean("restTemplateD")
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+}
+```
+
+应用启动时将抛出如下的异常信息：
+
+```html
+The bean 'restTemplateD', defined in class path resource [org/susamlu/springweb/config/BeanConfig7.class], could not be registered. A bean with that name has already been defined in class path resource [org/susamlu/springweb/config/BeanConfig6.class] and overriding is disabled.
 ```
 
 ### @Import
