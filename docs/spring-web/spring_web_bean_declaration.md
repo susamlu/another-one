@@ -160,7 +160,7 @@ public class BeanConfig3 {
 
 ```java
 @Component
-public class GenBeanTest {
+public class GetBeanTest {
 
     @Autowired
     private BeanConfig beanConfig;
@@ -168,7 +168,7 @@ public class GenBeanTest {
     private BeanConfig3 beanConfig3;
 
     @EventListener
-    private void testGetBean(ApplicationReadyEvent event) {
+    private void getBeans(ApplicationReadyEvent event) {
         RestTemplate restTemplate1 = beanConfig.restTemplate();
         RestTemplate restTemplate2 = beanConfig.restTemplate();
         RestTemplate restTemplate3 = beanConfig3.restTemplate2();
@@ -339,7 +339,7 @@ Parameter 0 of method customRestTemplate2 in org.susamlu.springweb.config.BeanCo
 
 #### initMethod
 
-initMethod 可以指定在 Bean 初始化前需要执行的方法，该方法必须定义在 Bean 所在的类中，且该方法必须是无参的。下面的代码展示了 initMethod 的使用方式：
+initMethod 可以指定在 Bean 初始化完成前需要执行的方法，该方法必须定义在 Bean 的类中，且该方法必须是无参的。下面的代码展示了 initMethod 的使用方式：
 
 ```java
 public class MyRestTemplate3 {
@@ -364,6 +364,87 @@ public class BeanConfig10 {
 ```
 
 #### destroyMethod
+
+destroyMethod 可以指定在 Bean 销毁前需要执行的方法，该方法必须定义在 Bean 的类中，且该方法必须是公共且无参的。
+
+默认情况下，destroyMethod 的值为 (inferred)，表示会自动推断 Bean 销毁前需要执行的方法，即如果 Bean 中存在公共无参方法 close() 或 shutdown() 时，Bean 销毁前将会自动执行它。如果 Bean 中同时存在 close() 和 shutdown() 方法，则只会执行 close() 方法。
+
+```java
+public class MyRestTemplate4 {
+
+    public void close() {
+        System.out.println("call MyRestTemplate4#close()");
+    }
+
+}
+```
+
+```java
+public class MyRestTemplate5 {
+
+    public void shutdown() {
+        System.out.println("call MyRestTemplate5#shutdown()");
+    }
+
+}
+```
+
+```java
+@Configuration
+public class BeanConfig11 {
+
+    @Bean
+    public MyRestTemplate4 myRestTemplate4() {
+        return new MyRestTemplate4();
+    }
+
+    @Bean
+    public MyRestTemplate5 myRestTemplate5() {
+        return new MyRestTemplate5();
+    }
+
+}
+```
+
+也可以显式指定该方法：
+
+```java
+public class MyRestTemplate6 {
+
+    public void destroy() {
+        System.out.println("call MyRestTemplate6#destroy()");
+    }
+
+}
+```
+
+```java
+@Configuration
+public class BeanConfig11 {
+
+    @Bean(destroyMethod = "destroy")
+    public MyRestTemplate6 myRestTemplate6() {
+        return new MyRestTemplate6();
+    }
+
+}
+```
+
+如果需要取消应用的默认推断行为，需要将 destroyMethod 的值设置为空字符串：
+
+```java
+@Configuration
+public class BeanConfig11 {
+
+    @Bean(destroyMethod = "")
+    public MyRestTemplate7 myRestTemplate7() {
+        return new MyRestTemplate7();
+    }
+
+}
+```
+
+这种方式不会影响 DisposableBean 的 destroy() 方法的执行。
 
 ## @Import
 
