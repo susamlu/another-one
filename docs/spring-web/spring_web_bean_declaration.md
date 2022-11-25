@@ -448,6 +448,21 @@ public class BeanConfig11 {
 
 ## @Import
 
+@Import 可以引入配置类、ImportSelector 和 ImportBeanDefinitionRegistrar 的实现类，也可以引入常规的其他组件类。通过它既可以引入自己编写的类，也可以引入第三方的类。通过 @Import 引入的类的实例会被自动注册到 Spring IoC 中。
+
+@Import 有一个数组类型的 value 属性，我们可以向这个属性传递一个或多个 class：
+
+```java
+@Configuration
+@Import({JdbcProperties.class, MyRestTemplate7.class})
+public class BeanConfig12 {
+}
+```
+
+@Import 可以重复多次引入同一个类（当然这是没有必要的），这个类对应的实例最终只会被注册一次。
+
+> ImportSelector 和 ImportBeanDefinitionRegistrar 是用来做什么的？它们都是接口，ImportSelector 有一个 selectImports() 方法，ImportBeanDefinitionRegistrar 有一个 registerBeanDefinitions() 方法，这两个方法一个是用来筛选类，一个是用来注册实例的，我们可以通过实现这两个接口，从而自定义类和实例的加载和注册逻辑。
+
 ## @ImportResource
 
 ## 手动注册
