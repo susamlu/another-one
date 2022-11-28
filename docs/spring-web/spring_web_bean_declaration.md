@@ -2,7 +2,7 @@
 
 [TOC]
 
-IoC 是 Spring 框架的最重要特性之一，而对于 Spring IoC，我们能够最直观感受到的可能就是 Bean 的声明与注入，本文，我们将先讲讲 Bean 的声明相关的内容。
+IoC 是 Spring 框架的最重要特性之一，对于 Spring IoC，我们能够最直观感受到的可能就是 Bean 的声明与注入，本文，我们将先讲讲 Bean 的声明相关的内容。
 
 有多种方式可以声明 Spring Bean。
 
@@ -448,7 +448,7 @@ public class BeanConfig11 {
 
 ## @Import
 
-@Import 可以引入配置类、ImportSelector 和 ImportBeanDefinitionRegistrar 的实现类，也可以引入常规的其他组件类。通过它既可以引入自己编写的类，也可以引入第三方的类。通过 @Import 引入的类的实例会被自动注册到 Spring IoC 中。
+@Import 可以引入配置类、ImportSelector 和 ImportBeanDefinitionRegistrar 的实现类，也可以引入常规的其他组件类。通过它既可以引入自己编写的类，也可以引入第三方类。通过 @Import 引入的类的实例会被自动注册到 Spring IoC 中。
 
 @Import 有一个数组类型的 value 属性，我们可以向这个属性传递一个或多个 class：
 
@@ -464,6 +464,41 @@ public class BeanConfig12 {
 > ImportSelector 和 ImportBeanDefinitionRegistrar 是用来做什么的？它们都是接口，ImportSelector 有一个 selectImports() 方法，ImportBeanDefinitionRegistrar 有一个 registerBeanDefinitions() 方法，这两个方法一个是用来筛选类，一个是用来注册实例的，我们可以通过实现这两个接口，从而自定义类和实例的加载和注册逻辑。
 
 ## @ImportResource
+
+@ImportResource 与 @Import 类似，都是为了引入 Spring Bean，@Import 可以直接声明引入的类，而 @ImportResource 引入的是外部文件，如 xml 文件或 groovy 文件。@ImportResource 有三个属性，其中两个是 value 和 locations，这两个属性的作用都是一样的，都是用来指定引入的资源的位置的。另外一个属性是 reader，如果我们还希望 @ImportResource 能解析 xml 和 groovy 以外的文件，那么可以自定义 BeanDefinitionReader 并将自定义的类传值给 reader 属性即可，具体如何自定义，在此不做详细讲解。下面是一个 @ImportResource 的使用例子：
+
+```java
+public class MyComponent3 {
+
+    private String field;
+
+    public void setField(String field) {
+        this.field = field;
+    }
+
+}
+```
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean class="org.susamlu.springweb.component.MyComponent3">
+        <property name="field" value="sample-value"></property>
+    </bean>
+</beans>
+```
+
+```java
+@Configuration
+@ImportResource("classpath:bean.xml")
+public class BeanConfig13 {
+}
+```
 
 ## 手动注册
 
