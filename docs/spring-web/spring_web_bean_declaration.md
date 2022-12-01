@@ -621,7 +621,7 @@ public class BeanConfig15 implements BeanDefinitionRegistryPostProcessor {
 
 ## 小结
 
-本文系统介绍了声明 Spring Bean 的各种方式，相信读者在了解完这些内容后，对于在什么场景下使用什么方式进行 Bean 的声明，就再也不用范迷糊了。
+本文系统介绍了声明 Spring Bean 的各种方式，相信读者在了解完这些内容后，对于在什么场景下使用什么方式以及如何进行 Bean 的声明，就再也不用范迷糊了。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
