@@ -508,7 +508,7 @@ public class BeanConfig13 {
 
 ## 手动注册
 
-注册 BeanDefinition，一般可以使用 DefaultListableBeanFactory 的 registerBeanDefinition() 方法进行注册，注册的时候通常可以借助 GenericBeanDefinition 或 BeanDefinitionBuilder 接口来完成。
+注册 BeanDefinition，一般可以使用 DefaultListableBeanFactory 的 registerBeanDefinition() 方法进行注册，注册的时候通常可以借助 GenericBeanDefinition 或 BeanDefinitionBuilder 来完成。
 
 ### GenericBeanDefinition
 
@@ -567,7 +567,7 @@ public class BeanDefinitionBuilderExample {
 }
 ```
 
-为了在 Spring Boot 应用启动的过程中注册 BeanDefinition，可以通过实现 BeanFactoryPostProcessor 或 BeanDefinitionRegistryPostProcessor 来完成。
+为了在 Spring Boot 应用启动的过程中注册 BeanDefinition，可以通过实现 BeanFactoryPostProcessor 或 BeanDefinitionRegistryPostProcessor 接口来完成。
 
 ### BeanFactoryPostProcessor
 
