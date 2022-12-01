@@ -508,7 +508,7 @@ public class BeanConfig13 {
 
 ## 手动注册
 
-注册 BeanDefinition，一般可以使用 DefaultListableBeanFactory 的 registerBeanDefinition() 方法进行注册，注册的时候通常可以借助 GenericBeanDefinition 或 BeanDefinitionBuilder 来完成。
+注册 BeanDefinition，一般可以使用 DefaultListableBeanFactory 的 registerBeanDefinition() 方法进行注册，注册的时候通常可以借助 GenericBeanDefinition 或 BeanDefinitionBuilder 接口来完成。
 
 ### GenericBeanDefinition
 
@@ -615,7 +615,7 @@ public class BeanConfig15 implements BeanDefinitionRegistryPostProcessor {
 
 除了上面的方式可以注册 Spring Bean，还有其他方式吗？
 
-在前面的文章中，我们分析过 Spring 应用在启动的时候，会将含有 @Component 注解的全部类注册到 Spring IoC 容器中。而 Spring 框架的特性是，只要某个注解 `注解B` 引入了另一个注解 `注解A`，那么类在使用了 `注解B` 的时候其实也引入了 `注解A`，因此，只要一个类使用了一切引入了 @Component 的注解，它就会被注册到 Spring IoC 容器中。
+在前面的文章中，我们分析过 Spring Boot 应用在启动的时候，会将含有 @Component 注解的全部类注册到 Spring IoC 容器中。而 Spring 框架的特性是，只要某个注解 `注解B` 引入了另一个注解 `注解A`，那么某个类在使用了 `注解B` 的时候其实也引入了 `注解A`，因此，只要一个类使用了 `一切引入了 @Component 的注解`，它就会被注册到 Spring IoC 容器中。
 
 而这些注解就包括了：@ControllerAdvice、@RestControllerAdvice、@JsonComponent 等。
 
