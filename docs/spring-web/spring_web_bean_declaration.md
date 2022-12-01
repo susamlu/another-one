@@ -266,7 +266,7 @@ The bean 'restTemplateD', defined in class path resource [org/susamlu/springweb/
 
 #### autowire
 
-autowire 属性在 Spring 5.1 版本已置为弃用（本文使用的 Spring 版本为 5.3.22），所以在此不打算详细讲解。至于为何弃用，代码注释的说法是：1. 可以通过方法参数的解析进行实例变量的注入，2. 可以通过 @Autowired 进行实例变量的注入，因此，不建议再使用该属性。
+autowire 属性是用来定义实例变量的注入的，在 Spring 5.1 版本已置为弃用（本文使用的 Spring 版本为 5.3.22），所以在此不打算详细讲解。至于为何弃用，代码注释的说法是：1. 可以通过方法参数的解析进行实例变量的注入，2. 可以通过 @Autowired 进行实例变量的注入，因此，不建议再使用该属性。
 
 对于第三方类，我们可以通过定义方法参数的方式，处理变量的注入问题，如：
 
