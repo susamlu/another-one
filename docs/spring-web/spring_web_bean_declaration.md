@@ -2,7 +2,7 @@
 
 [TOC]
 
-IoC 是 Spring 框架的最重要特性之一，对于 Spring IoC，我们能够最直观感受到的可能就是 Bean 的声明与注入，本文，我们将先讲讲 Bean 的声明相关的内容。
+IoC 是 Spring 框架的最重要特性之一，对于 Spring IoC，我们能够最直观感受到的可能就是 Bean 的声明与注入，本文，我们先讲讲与 Bean 的声明相关的内容。
 
 有多种方式可以声明 Spring Bean。
 
@@ -17,6 +17,8 @@ public class MyComponent {
 ```
 
 @Controller、@Service、@Repository 是类似的，它们之间概念上的区别大于实际上的区别，通常不同作用的类使用不同的注解。
+
+### @Controller
 
 如果这个类是一个 controller 类，那么一般使用 @Controller 注解（或者 @RestController 注解）：
 
@@ -35,6 +37,8 @@ public class UserController {
 }
 ```
 
+### @Service
+
 如果这个类是一个 service 类，那么一般使用 @Service 注解：
 
 ```java
@@ -50,6 +54,8 @@ public class UserService {
 
 }
 ```
+
+### @Repository
 
 如果这个类是一个 dao 类，那么一般使用 @Repository 注解：
 
@@ -102,7 +108,7 @@ Annotation-specified bean name 'myComponent' for bean class [org.susamlu.springw
 
 ### 与 @Configuration 一起使用
 
-@Bean 一般与 @Configuration 一起使用，@Bean 比 @Component 更为灵活（虽然如此，但有时候 @Component 使用起来会更方便），使用它既可以注册自己编写的类的实例，也可以注册第三方类的实例：
+@Bean 一般与 @Configuration 一起使用，@Bean 比 @Component 更为灵活（虽然如此，但有时候 @Component 使用起来会更方便），使用它既可以注册自己编写的类，也可以注册第三方类：
 
 ```java
 import org.springframework.context.annotation.Bean;
@@ -260,7 +266,7 @@ The bean 'restTemplateD', defined in class path resource [org/susamlu/springweb/
 
 #### autowire
 
-autowire 属性在 Spring 5.1 版本已置为弃用（本文使用的 Spring 版本为 5.3.22），所以在此不打算详细讲解。至于为何弃用，代码注释的说法是：1. 可以通过方法的参数解析进行注入，2. 可以通过 @Autowired 进行注入，因此，不建议再使用该属性。
+autowire 属性在 Spring 5.1 版本已置为弃用（本文使用的 Spring 版本为 5.3.22），所以在此不打算详细讲解。至于为何弃用，代码注释的说法是：1. 可以通过方法参数的解析进行实例变量的注入，2. 可以通过 @Autowired 进行实例变量的注入，因此，不建议再使用该属性。
 
 对于第三方类，我们可以通过定义方法参数的方式，处理变量的注入问题，如：
 
@@ -448,7 +454,7 @@ public class BeanConfig11 {
 
 ## @Import
 
-@Import 可以引入配置类、ImportSelector 和 ImportBeanDefinitionRegistrar 的实现类，也可以引入常规的其他组件类。通过它既可以引入自己编写的类，也可以引入第三方类。通过 @Import 引入的类的实例会被自动注册到 Spring IoC 中。
+@Import 可以引入配置类、ImportSelector 和 ImportBeanDefinitionRegistrar 的实现类，也可以引入常规的其他组件类。通过它既可以引入自己编写的类，也可以引入第三方类。通过 @Import 引入的类的实例会被自动注册到 Spring IoC 容器中。
 
 @Import 有一个数组类型的 value 属性，我们可以向这个属性传递一个或多个 class：
 
@@ -461,14 +467,14 @@ public class BeanConfig12 {
 
 @Import 可以重复多次引入同一个类（当然这是没有必要的），这个类对应的实例最终只会被注册一次。
 
-> ImportSelector 和 ImportBeanDefinitionRegistrar 是用来做什么的？它们都是接口，ImportSelector 有一个 selectImports() 方法，ImportBeanDefinitionRegistrar 有一个 registerBeanDefinitions() 方法，这两个方法一个是用来筛选类，一个是用来注册实例的，我们可以通过实现这两个接口，从而自定义类和实例的加载和注册逻辑。
+> ImportSelector 和 ImportBeanDefinitionRegistrar 是用来做什么的？它们都是接口，ImportSelector 有一个 selectImports() 方法，ImportBeanDefinitionRegistrar 有一个 registerBeanDefinitions() 方法，这两个方法一个是用来筛选类，一个是用来注册类的，我们可以通过实现这两个接口，从而自定义类的筛选和注册逻辑。
 
 ## @ImportResource
 
-@ImportResource 与 @Import 类似，都是为了引入 Spring Bean，@Import 可以直接声明引入的类，而 @ImportResource 引入的是外部文件，如 xml 文件或 groovy 文件。@ImportResource 有三个属性，其中两个是 value 和 locations，这两个属性的作用都是一样的，都是用来指定引入的资源的位置的。另外一个属性是 reader，如果我们还希望 @ImportResource 能解析 xml 和 groovy 以外的文件，那么可以自定义 BeanDefinitionReader 并将自定义的类传值给 reader 属性即可，具体如何自定义，在此不做详细讲解。下面是一个 @ImportResource 的使用例子：
+@ImportResource 与 @Import 类似，都是为了引入 Spring Bean。@Import 可以直接引入待引入的类，而 @ImportResource 能够引入的是外部文件，如 xml 文件或 groovy 文件。@ImportResource 有三个属性，其中两个是 value 和 locations，这两个属性的作用是一样的，都是用来指定引入的资源的位置的。另外一个属性是 reader，如果我们希望 @ImportResource 能解析 xml 和 groovy 以外的文件，那么只要自定义 BeanDefinitionReader，并将自定义的类传值给 reader 属性即可，具体如何自定义，在此不做详细讲解。下面是一个 @ImportResource 的使用例子：
 
 ```java
-public class MyComponent3 {
+public class MyBean {
 
     private String field;
 
@@ -487,7 +493,7 @@ public class MyComponent3 {
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean class="org.susamlu.springweb.component.MyComponent3">
+    <bean class="org.susamlu.springweb.component.MyBean">
         <property name="field" value="sample-value"></property>
     </bean>
 </beans>
@@ -502,9 +508,120 @@ public class BeanConfig13 {
 
 ## 手动注册
 
-> BeanDefinitionRegistry
+注册 BeanDefinition，一般可以使用 DefaultListableBeanFactory 的 registerBeanDefinition() 方法进行注册，注册的时候通常可以借助 GenericBeanDefinition 或 BeanDefinitionBuilder 来完成。
+
+### GenericBeanDefinition
+
+借助 GenericBeanDefinition 完成 BeanDefinition 的注册，示例代码如下：
+
+```java
+public class MyBean2 {
+
+    private String field;
+
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    public void doSomething() {
+        System.out.println("from my bean, field: " + field);
+    }
+
+}
+```
+
+```java
+public class GenericBeanDefinitionExample {
+
+    public static void main(String[] args) {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+        beanDefinition.setBeanClass(MyBean2.class);
+        beanDefinition.getPropertyValues().addPropertyValue("field", "sample-value");
+        beanFactory.registerBeanDefinition("myBean", beanDefinition);
+
+        MyBean2 bean = beanFactory.getBean(MyBean2.class);
+        bean.doSomething();
+    }
+
+}
+```
+
+### BeanDefinitionBuilder
+
+借助 BeanDefinitionBuilder 完成 BeanDefinition 的注册，示例代码如下：
+
+```java
+public class BeanDefinitionBuilderExample {
+
+    public static void main(String[] args) {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(MyBean2.class)
+                .addPropertyValue("field", "sample-value");
+        beanFactory.registerBeanDefinition("myBean", builder.getBeanDefinition());
+
+        MyBean2 bean = beanFactory.getBean(MyBean2.class);
+        bean.doSomething();
+    }
+
+}
+```
+
+为了在 Spring Boot 应用启动的过程中注册 BeanDefinition，可以通过实现 BeanFactoryPostProcessor 或 BeanDefinitionRegistryPostProcessor 来完成。
+
+### BeanFactoryPostProcessor
+
+通过实现 BeanFactoryPostProcessor 接口注册 BeanDefinition，示例代码如下：
+
+```java
+@Configuration
+public class BeanConfig14 implements BeanFactoryPostProcessor {
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(MyBean2.class)
+                .addPropertyValue("field", "sample-value");
+        ((DefaultListableBeanFactory) beanFactory)
+                .registerBeanDefinition("myBean2", builder.getBeanDefinition());
+    }
+
+}
+```
+
+### BeanDefinitionRegistryPostProcessor
+
+通过实现 BeanDefinitionRegistryPostProcessor 接口注册 BeanDefinition，示例代码如下：
+
+```java
+@Configuration
+public class BeanConfig15 implements BeanDefinitionRegistryPostProcessor {
+
+    @Override
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(MyBean2.class)
+                .addPropertyValue("field", "sample-value");
+        registry.registerBeanDefinition("myBean3", builder.getBeanDefinition());
+    }
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        // do nothing
+    }
+
+}
+```
 
 ## 一切引入了 @Component 的注解
+
+除了上面的方式可以注册 Spring Bean，还有其他方式吗？
+
+在前面的文章中，我们分析过 Spring 应用在启动的时候，会将含有 @Component 注解的全部类注册到 Spring IoC 容器中。而 Spring 框架的特性是，只要某个注解 `注解B` 引入了另一个注解 `注解A`，那么类在使用了 `注解B` 的时候其实也引入了 `注解A`，因此，只要一个类使用了一切引入了 @Component 的注解，它就会被注册到 Spring IoC 容器中。
+
+而这些注解就包括了：@ControllerAdvice、@RestControllerAdvice、@JsonComponent 等。
+
+## 小结
+
+本文系统介绍了声明 Spring Bean 的各种方式，相信读者在了解完这些内容后，对于在什么场景下使用什么方式进行 Bean 的声明，就再也不用范迷糊了。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
