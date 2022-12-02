@@ -12,7 +12,7 @@
 
 [深入学习 Spring Web 开发 —— Bean 的声明](spring-web/spring_web_bean_declaration.html)
 
-[深入学习 Spring Web 开发 —— Bean 的注入](spring-web/spring_web_bean_ injection.html)
+[深入学习 Spring Web 开发 —— Bean 的注入](spring-web/spring_web_bean_injection.html)
 
 [深入学习 Spring Web 开发 —— Validation](spring-web/spring_web_validation.html)
 
