@@ -6,11 +6,11 @@
 
 ## Bean 注入的方式
 
-Bean 的注入，主要有三种方式，即：构造函数注入、setter 注入和属性注入。
+Bean 注入的方式，主要包含三种，即：构造函数注入、setter 注入和属性注入。
 
 ### 构造函数注入
 
-构造函数注入，示例代码如下，对于下面的代码，应用启动后，InjectionComponent 的 myBean 属性会被顺利注入：
+构造函数注入，示例代码如下。对于下面的代码，应用启动后，myBean 属性会被顺利注入：
 
 ```java
 @Component
@@ -77,9 +77,9 @@ public class InjectionComponent3 {
 - @Autowared 有一个 required 属性，默认为 true，表示构造函数中的全部参数都必须在 Spring IoC 容器中存在，否则应用启动时将抛出异常。
 - 默认情况下，不能有多个构造函数存在 @Autowired 注解，否则，应用启动时将抛出异常。
 - 如果多个构造函数都加上 @Autowired 注解，那么，这些注解的 required 属性必须全都设置为 false。这种情况下，表示这几个构造函数都是候选构造函数，创建实例时，将选择能满足的参数最多的一个构造函数。在这基础上，会优先选择公共的构造函数。
-- 如果上面一条规则中的所有候选构造函数，没有一个可以被满足，并且存在无参构造函数，则会选择无参构造函数。如果此时不存在无参构造函数，则应用启动时将抛出异常。
+- 如果上面一条规则中的所有候选构造函数，没有一个可以被满足，并且存在无参构造函数，则创建实例时会选择无参构造函数。如果此时不存在无参构造函数，则应用启动时将抛出异常。
 
-如下面的代码，由于不存在 Cache 类的 Bean，而 MyBean 类和 RestTemplate 类的 Bean 是存在的，因此，应用启动时将使用构造函数 `InjectionComponent4(MyBean myBean, RestTemplate restTemplate)` 来初始化 InjectionComponent4 的 Bean。
+如下面的代码，由于不存在 Cache 的 Bean，而 MyBean 和 RestTemplate 的 Bean 是存在的，因此，应用启动时将使用构造函数 `InjectionComponent4(MyBean, RestTemplate)` 来初始化 InjectionComponent4 的 Bean。
 
 ```java
 @Component
@@ -112,7 +112,7 @@ public class InjectionComponent4 {
 
 ##### 作用在方法上
 
-配置方法可以有任意的名称和任意数量的参数，setter 方法只是其中的一种特殊形式，配置方法也可以是私有的：
+该方法可以有任意的名称和任意数量的参数，setter 方法只是其中的一种特殊形式，该方法也可以是私有的：
 
 ```java
 @Component
@@ -149,13 +149,108 @@ public class InjectionComponent6 {
 
 示例见前文的 `属性注入`。
 
-##### 作用在注解上
-
 #### Collection 和 Map 的注入
+
+使用 @Autowire 还可以注入 Collection 和 Map 类型的变量。
 
 ##### Collection 的注入
 
+如下面的代码，OrderBean 和 OrderBean2 的实例都会被注入到 InjectionComponent7 的 orderBeans 中，可以通过实现 Ordered 接口为类的实例提供排序功能，order 小的排在前面。
+
+```java
+@Component
+public class OrderBean extends BaseOrderBean implements Ordered {
+
+    @Override
+    public int getOrder() {
+        return 1;
+    }
+
+}
+```
+
+```java
+@Component
+public class OrderBean2 extends BaseOrderBean implements Ordered {
+
+    @Override
+    public int getOrder() {
+        return 2;
+    }
+
+}
+```
+
+```java
+@Component
+public class InjectionComponent7 {
+
+    @Autowired
+    private List<BaseOrderBean> orderBeans;
+
+}
+```
+
+也可以通过 @Order 实现排序：
+
+```java
+public class OrderBean3 {
+
+    private String field;
+
+    public void setField(String field) {
+        this.field = field;
+    }
+
+}
+```
+
+```java
+@Configuration
+public class BeanConfig16 {
+
+    @Bean
+    @Order(1)
+    public OrderBean3 orderBean3() {
+        OrderBean3 orderBean = new OrderBean3();
+        orderBean.setField("order 1");
+        return orderBean;
+    }
+
+    @Bean
+    @Order(2)
+    public OrderBean3 orderBean4() {
+        OrderBean3 orderBean = new OrderBean3();
+        orderBean.setField("order 2");
+        return orderBean;
+    }
+
+}
+```
+
+```java
+@Component
+public class InjectionComponent8 {
+
+    @Autowired
+    private List<OrderBean3> orderBeans;
+
+}
+```
+
 ##### Map 的注入
+
+下面的代码中，全部 BaseOrderBean 的实例都会注入到 orderBeanMap 中，Bean 的名字将作为 Map 的键，Bean 的实例将作为 Map 的值。
+
+```java
+@Component
+public class InjectionComponent9 {
+
+    @Autowired
+    private Map<String, BaseOrderBean> orderBeanMap;
+
+}
+```
 
 ### @Qualifier
 
