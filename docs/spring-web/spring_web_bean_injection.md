@@ -252,7 +252,112 @@ public class InjectionComponent9 {
 }
 ```
 
+### @Primary
+
+@Autowired 根据 Bean 的类型找到它，并将它注入到变量中，如果一个类型有两个 Bean，那么注入的时候将不知道要注入的是哪一个。如果用 @Primary 对 Bean 进行了标注，那么注入的时候就会选择该 Bean 进行注入。
+
+```java
+public class MyBean3 {
+
+    private String field;
+
+    public MyBean3(String field) {
+        this.field = field;
+    }
+
+}
+```
+
+```java
+@Configuration
+public class BeanConfig17 {
+
+    @Primary
+    @Bean
+    public MyBean3 primaryTestBean1() {
+        return new MyBean3("primaryTestBean1");
+    }
+
+    @Bean
+    public MyBean3 primaryTestBean2() {
+        return new MyBean3("primaryTestBean2");
+    }
+
+}
+```
+
+```java
+@Component
+public class InjectionComponent10 {
+
+    @Autowired
+    private MyBean3 myBean;
+
+}
+```
+
 ### @Qualifier
+
+一个类型有多个 Bean 的时候，也可以通过 @Qualifier 进行标注，以让变量注入的时候根据 Bean 的名字找到 Bean。
+
+```java
+@Configuration
+public class BeanConfig18 {
+
+    @Bean
+    public MyBean3 qualifierTestBean1() {
+        return new MyBean3("qualifierTestBean1");
+    }
+
+    @Bean
+    public MyBean3 qualifierTestBean2() {
+        return new MyBean3("qualifierTestBean2");
+    }
+
+}
+```
+
+```java
+@Component
+public class InjectionComponent11 {
+
+    @Qualifier("qualifierTestBean1")
+    @Autowired
+    private MyBean3 myBean;
+
+}
+```
+
+@Qualifier 还有另一个用法，就是在声明 Bean 和注入 Bean 的地方都使用该注解进行标注，那么注入的时候就会自动定位到对应的 Bean。
+
+```java
+@Configuration
+public class BeanConfig19 {
+
+    @Qualifier
+    @Bean
+    public MyBean3 qualifierTestBean3() {
+        return new MyBean3("qualifierTestBean3");
+    }
+
+    @Bean
+    public MyBean3 qualifierTestBean4() {
+        return new MyBean3("qualifierTestBean4");
+    }
+
+}
+```
+
+```java
+@Component
+public class InjectionComponent12 {
+
+    @Qualifier
+    @Autowired
+    private MyBean3 myBean;
+
+}
+```
 
 ### @Resource
 
