@@ -207,7 +207,7 @@ public class OrderBean3 {
 
 ```java
 @Configuration
-public class BeanConfig16 {
+public class BeanConfig {
 
     @Bean
     @Order(1)
@@ -252,7 +252,7 @@ public class InjectionComponent9 {
 }
 ```
 
-### @Primary
+#### @Primary
 
 @Autowired 根据 Bean 的类型找到它，并将它注入到变量中，如果一个类型有两个 Bean，那么注入的时候将不知道要注入的是哪一个。如果用 @Primary 对 Bean 进行了标注，那么注入的时候就会选择该 Bean 进行注入。
 
@@ -270,7 +270,7 @@ public class MyBean3 {
 
 ```java
 @Configuration
-public class BeanConfig17 {
+public class BeanConfig2 {
 
     @Primary
     @Bean
@@ -296,13 +296,13 @@ public class InjectionComponent10 {
 }
 ```
 
-### @Qualifier
+#### @Qualifier
 
 一个类型有多个 Bean 的时候，也可以通过 @Qualifier 进行标注，以让变量注入的时候根据 Bean 的名字找到 Bean。
 
 ```java
 @Configuration
-public class BeanConfig18 {
+public class BeanConfig3 {
 
     @Bean
     public MyBean3 qualifierTestBean1() {
@@ -332,7 +332,7 @@ public class InjectionComponent11 {
 
 ```java
 @Configuration
-public class BeanConfig19 {
+public class BeanConfig4 {
 
     @Qualifier
     @Bean
@@ -361,7 +361,85 @@ public class InjectionComponent12 {
 
 ### @Resource
 
+@Resource 也是用来声明 Bean 的注入的注解。
+
+- 默认情况下，优先使用名字查找待注入的 Bean；如果找不到，则使用类型查找待注入的 Bean。
+- @Resource 可以注释在方法和字段上。
+- 注释在方法上时，Bean 类型为方法参数的类型，Bean 名字优先使用方法的名字（如果是 setter 方法，回去去掉 set，并将首字母小写），如果通过方法名字找不到 Bean，则再使用参数的名字。
+- 注释在字段上时，Bean 类型为字段类型，Bean 名字为字段名字。
+
+代码示例如下：
+
+```java
+public class ResourceBean {
+
+    private String field;
+
+    public ResourceBean(String field) {
+        this.field = field;
+    }
+
+}
+```
+
+```java
+@Configuration
+public class BeanConfig5 {
+
+    @Bean
+    public ResourceBean resourceBean1() {
+        return new ResourceBean("resourceBean1");
+    }
+
+    @Bean
+    public ResourceBean resourceBean2() {
+        return new ResourceBean("resourceBean2");
+    }
+
+}
+```
+
+```java
+@Component
+public class InjectionComponent13 {
+
+    @Resource
+    private ResourceBean resourceBean1;
+
+    private ResourceBean resourceBean2;
+
+    @Resource
+    public void setResourceBean2(ResourceBean resourceBean) {
+        this.resourceBean2 = resourceBean;
+    }
+
+}
+```
+
+@Resource 有一个 name 属性，可以直接指定 Bean 的名字：
+
+```java
+@Component
+public class InjectionComponent14 {
+
+    @Resource(name = "resourceBean1")
+    private ResourceBean myBean1;
+
+    private ResourceBean myBean2;
+
+    @Resource(name = "resourceBean2")
+    public void setMyBean2(ResourceBean resourceBean) {
+        this.myBean2 = resourceBean;
+    }
+
+}
+```
+
+另外，@Resource 也可以配合 @Primary 或 @Qualifier 一起使用。
+
 ### @Inject
+
+### @Lookup
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
