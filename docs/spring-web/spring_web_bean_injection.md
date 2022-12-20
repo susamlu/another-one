@@ -365,7 +365,7 @@ public class InjectionComponent12 {
 
 - 对于 @Resource，默认情况下，优先使用名字查找待注入的 Bean；如果找不到，则使用类型查找待注入的 Bean。
 - @Resource 可以注释在方法和字段上。
-- 注释在方法上时，Bean 类型为方法参数的类型，Bean 名字优先使用方法的名字（如果是 setter 方法，会去去掉 “set”，并将首字母小写），如果通过方法名字找不到 Bean，则再使用参数的名字。
+- 注释在方法上时，Bean 类型为方法参数的类型，Bean 名字优先使用方法的名字（如果是 setter 方法，会去掉 “set”，并将首字母小写），如果通过方法名字找不到 Bean，则再使用参数的名字。
 - 注释在字段上时，Bean 类型为字段类型，Bean 名字为字段名字。
 
 代码示例如下：
@@ -439,7 +439,7 @@ public class InjectionComponent14 {
 
 ### @Inject
 
-要使用 @Inject，要先引入 jar 包：
+要使用 @Inject，需要先引入 jar 包：
 
 ```xml
 <dependency>
@@ -505,7 +505,7 @@ public class InjectionComponent16 {
 
 ## 小结
 
-@Autowired、@Resource、@Inject 有什么异同点？显然，它们都可以用来声明 Bean 的注入。它们的不同主要集中在：1. 可以标注的地方不同，2. 拥有的属性不同，3. 注入的方式略有差异。而它们最大的不同，笔者认为是，@Autowired 是 Spring 自定义的注解（@Primary、@Qualifier 也是 Spring 自定义的注解），@Resource 是 Jakarta 定义的注解，而 @Inject 则是在 JSR-330 中定义的注解，即它们的作用非常类似，最大的区别在于制定者的不同。
+@Autowired、@Resource、@Inject 有什么异同点？显然，它们都可以用来声明 Bean 的注入。它们的不同点主要集中在：1. 可以标注的地方有所差异，2. 拥有的属性不同，3. 注入的方式略有差异。而它们最大的不同，笔者认为是，@Autowired 是 Spring 自定义的注解（@Primary、@Qualifier 也是 Spring 自定义的注解），@Resource 是 Jakarta 定义的注解，而 @Inject 则是在 JSR-330 中定义的注解，即它们的作用非常类似，最大的区别在于制定者的不同。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
