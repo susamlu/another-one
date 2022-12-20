@@ -2,7 +2,7 @@
 
 [TOC]
 
-上一篇文章，我们聊了与 Bean 的声明相关的内容，本文，我们重点聊聊与 Bean 的注入相关的内容。
+上一篇文章，我们聊了与 Bean 的声明相关的内容，本文，我们重点聊聊与 Bean 注入相关的内容。
 
 ## 注入方式
 
@@ -361,7 +361,7 @@ public class InjectionComponent12 {
 
 ### @Resource
 
-@Resource 也是用来声明 Bean 的注入的注解。
+@Resource 也是用来声明 Bean 注入的注解。
 
 - 对于 @Resource，默认情况下，优先使用名字查找待注入的 Bean；如果找不到，则使用类型查找待注入的 Bean。
 - @Resource 可以注释在方法和字段上。
