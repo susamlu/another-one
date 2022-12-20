@@ -439,7 +439,73 @@ public class InjectionComponent14 {
 
 ### @Inject
 
-### @Lookup
+要使用 @Inject，要先引入 jar 包：
+
+```xml
+<dependency>
+    <groupId>javax.inject</groupId>
+    <artifactId>javax.inject</artifactId>
+    <version>1</version>
+</dependency>
+```
+
+@Inject 可以注释在构造函数、方法和字段上，@Inject 可以通过 class 注入：
+
+```java
+@Component
+public class InjectionComponent15 {
+
+    @Inject
+    private MyBean myBean1;
+
+    private MyBean myBean2;
+
+    @Inject
+    public void setMyBean(MyBean myBean) {
+        this.myBean2 = myBean;
+    }
+
+    private MyBean myBean3;
+
+    @Inject
+    public InjectionComponent15(MyBean myBean) {
+        this.myBean3 = myBean;
+    }
+
+}
+```
+
+@Inject 也可以通过 name 注入：
+
+```java
+@Component
+public class InjectionComponent16 {
+
+    @Inject
+    private ResourceBean resourceBean1;
+
+    private ResourceBean resourceBean2;
+
+    @Inject
+    public void setResourceBean(ResourceBean resourceBean2) {
+        this.resourceBean2 = resourceBean2;
+    }
+
+    private ResourceBean resourceBean3;
+
+    @Inject
+    public InjectionComponent16(ResourceBean resourceBean2) {
+        this.resourceBean3 = resourceBean2;
+    }
+
+}
+```
+
+同样地，@Inject 也可以配合 @Primary 或 @Qualifier 一起使用。
+
+## 小结
+
+@Autowired、@Resource、@Inject 有什么异同点？显然，它们都可以用来声明 Bean 的注入。它们的不同主要集中在：1. 可以标注的地方不同，2. 拥有的属性不同，3. 注入的方式略有差异。而它们最大的不同，笔者认为是，@Autowired、@Primary、@Qualifier 是 Spring 自定义的注解，@Resource 是 Jakarta 定义的注解，而 @Inject 则是在 JSR-330 中定义的注解，即它们的作用非常类似，最大的区别在于制定者的不同。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
