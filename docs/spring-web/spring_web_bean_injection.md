@@ -4,7 +4,7 @@
 
 上一篇文章，我们聊了与 Bean 的声明相关的内容，本文，我们重点聊聊与 Bean 的注入相关的内容。
 
-## Bean 注入的方式
+## 注入方式
 
 Bean 注入的方式，主要包含三种，即：构造函数注入、setter 注入和属性注入。
 
@@ -57,7 +57,7 @@ public class InjectionComponent3 {
 }
 ```
 
-## Bean 注入的注解
+## 声明注解
 
 ### @Autowared
 
@@ -72,14 +72,14 @@ public class InjectionComponent3 {
 - 如上面的例子 `构造函数注入`，使用该方式进行注入时，@Autowared 不是必须的。
 - 构造函数可以是公共的，也可以是私有的。
 - 构造函数中的参数，必须在 Spring IoC 容器中可以找到，否则应用启动时将抛出异常。
-- 如果存在多个构造函数，则必须存在一个无参构造函数，否则应用启动时将抛出异常。如果存在无参构造函数，则创建实例时，将使用该构造函数。
+- 如果存在多个构造函数，则必须存在一个无参构造函数，否则应用启动时将抛出异常。如果存在无参构造函数，则创建实例时，将使用该构造函数进行创建。
 - 当存在多个构造函数时，如果在其中一个构造函数上加上 @Autowared，则上面一条规则会被打破，即此时可以不存在无参构造函数，且创建实例时，使用的不是无参构造函数，而是加上了 @Autowared 的构造函数。
 - @Autowared 有一个 required 属性，默认为 true，表示构造函数中的全部参数都必须在 Spring IoC 容器中存在，否则应用启动时将抛出异常。
 - 默认情况下，不能有多个构造函数存在 @Autowired 注解，否则，应用启动时将抛出异常。
-- 如果多个构造函数都加上 @Autowired 注解，那么，这些注解的 required 属性必须全都设置为 false。这种情况下，表示这几个构造函数都是候选构造函数，创建实例时，将选择能满足的参数最多的一个构造函数。在这基础上，会优先选择公共的构造函数。
+- 如果多个构造函数都加上 @Autowired 注解，那么，这些注解的 required 属性必须全都设置为 false。这种情况下，表示这几个构造函数都是候选构造函数，创建实例时，将选择能够满足的参数最多的一个构造函数来进行对象的创建。在这基础上，会优先选择公共的构造函数。例如：如果存在一个包含 2 个参数和一个包含 3 个参数的构造函数，且这两个构造函数都能够被满足，但是包含 2 个参数的构造函数是公共的，包含 3 个参数的构造函数是私有的，那么，此时选择的将是包含 2 个参数的构造函数。
 - 如果上面一条规则中的所有候选构造函数，没有一个可以被满足，并且存在无参构造函数，则创建实例时会选择无参构造函数。如果此时不存在无参构造函数，则应用启动时将抛出异常。
 
-如下面的代码，由于不存在 Cache 的 Bean，而 MyBean 和 RestTemplate 的 Bean 是存在的，因此，应用启动时将使用构造函数 `InjectionComponent4(MyBean, RestTemplate)` 来初始化 InjectionComponent4 的 Bean。
+如下面的代码，由于不存在 Cache 类的实例，而 MyBean 类和 RestTemplate 类的实例是存在的，因此，应用启动时将使用构造函数 `InjectionComponent4(MyBean, RestTemplate)` 来初始化 InjectionComponent4 的实例。
 
 ```java
 @Component
@@ -112,7 +112,7 @@ public class InjectionComponent4 {
 
 ##### 作用在方法上
 
-该方法可以有任意的名称和任意数量的参数，setter 方法只是其中的一种特殊形式，该方法也可以是私有的：
+当 @Autowired 作用在某个方法时，该方法可以有任意的名称和任意数量的参数，setter 方法只是其中的一种特殊形式，该方法也可以是私有的：
 
 ```java
 @Component
@@ -130,7 +130,7 @@ public class InjectionComponent5 {
 
 ##### 作用在参数上
 
-虽然 Spring 框架 5.0 之后支持在构造函数和方法的参数上加上 @Autowired 注解，但是 Spring 框架中的大部分代码都不支持该方式的注入，目前只有 spring-test 部分支持。如下面的代码，在实际运行的时候，myBean 是注入不了的：
+虽然 Spring 框架 5.0 之后支持在构造函数和方法的参数上加上 @Autowired 注解，但是 Spring 框架中的大部分代码都不支持该方式的注入，目前只有 Spring Test 部分支持。如下面的代码，在实际运行的时候，myBean 是注入不了的：
 
 ```java
 @Component
@@ -363,9 +363,9 @@ public class InjectionComponent12 {
 
 @Resource 也是用来声明 Bean 的注入的注解。
 
-- 默认情况下，优先使用名字查找待注入的 Bean；如果找不到，则使用类型查找待注入的 Bean。
+- 对于 @Resource，默认情况下，优先使用名字查找待注入的 Bean；如果找不到，则使用类型查找待注入的 Bean。
 - @Resource 可以注释在方法和字段上。
-- 注释在方法上时，Bean 类型为方法参数的类型，Bean 名字优先使用方法的名字（如果是 setter 方法，回去去掉 set，并将首字母小写），如果通过方法名字找不到 Bean，则再使用参数的名字。
+- 注释在方法上时，Bean 类型为方法参数的类型，Bean 名字优先使用方法的名字（如果是 setter 方法，会去去掉 “set”，并将首字母小写），如果通过方法名字找不到 Bean，则再使用参数的名字。
 - 注释在字段上时，Bean 类型为字段类型，Bean 名字为字段名字。
 
 代码示例如下：
@@ -449,7 +449,7 @@ public class InjectionComponent14 {
 </dependency>
 ```
 
-@Inject 可以注释在构造函数、方法和字段上，@Inject 可以通过 class 注入：
+@Inject 可以注释在构造函数、方法和字段上，@Inject 可以通过类型注入：
 
 ```java
 @Component
@@ -475,7 +475,7 @@ public class InjectionComponent15 {
 }
 ```
 
-@Inject 也可以通过 name 注入：
+@Inject 也可以通过名字注入：
 
 ```java
 @Component
@@ -505,7 +505,7 @@ public class InjectionComponent16 {
 
 ## 小结
 
-@Autowired、@Resource、@Inject 有什么异同点？显然，它们都可以用来声明 Bean 的注入。它们的不同主要集中在：1. 可以标注的地方不同，2. 拥有的属性不同，3. 注入的方式略有差异。而它们最大的不同，笔者认为是，@Autowired、@Primary、@Qualifier 是 Spring 自定义的注解，@Resource 是 Jakarta 定义的注解，而 @Inject 则是在 JSR-330 中定义的注解，即它们的作用非常类似，最大的区别在于制定者的不同。
+@Autowired、@Resource、@Inject 有什么异同点？显然，它们都可以用来声明 Bean 的注入。它们的不同主要集中在：1. 可以标注的地方不同，2. 拥有的属性不同，3. 注入的方式略有差异。而它们最大的不同，笔者认为是，@Autowired 是 Spring 自定义的注解（@Primary、@Qualifier 也是 Spring 自定义的注解），@Resource 是 Jakarta 定义的注解，而 @Inject 则是在 JSR-330 中定义的注解，即它们的作用非常类似，最大的区别在于制定者的不同。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
