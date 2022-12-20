@@ -471,7 +471,7 @@ public class BeanConfig12 {
 
 ## @ImportResource
 
-@ImportResource 与 @Import 类似，都是为了引入 Spring Bean。@Import 可以直接引入待引入的类，而 @ImportResource 能够引入的是外部文件，如 xml 文件或 groovy 文件。@ImportResource 有三个属性，其中两个是 value 和 locations，这两个属性的作用是一样的，都是用来指定引入的资源的位置的。另外一个属性是 reader，如果我们希望 @ImportResource 能解析 xml 和 groovy 以外的文件，那么只要自定义 BeanDefinitionReader，并将自定义的类传值给 reader 属性即可，具体如何自定义，在此不做详细讲解。下面是一个 @ImportResource 的使用例子：
+@ImportResource 与 @Import 类似，都是为了引入 Spring Bean。@Import 可以直接引入待引入的类，而 @ImportResource 能够引入的是外部文件，如 xml 文件或 groovy 文件。@ImportResource 有三个属性，其中两个是 value 和 locations，这两个属性的作用是一样的，都是用来指定引入资源的位置的。另外一个属性是 reader，如果我们希望 @ImportResource 能解析 xml 和 groovy 以外的文件，那么只要自定义 BeanDefinitionReader，并将自定义的类传值给 reader 属性即可，具体如何自定义，在此不做详细讲解。下面是一个 @ImportResource 的使用例子：
 
 ```java
 public class MyBean {
@@ -486,6 +486,7 @@ public class MyBean {
 ```
 
 ```xml
+<!-- bean.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -508,7 +509,7 @@ public class BeanConfig13 {
 
 ## 手动注册
 
-注册 BeanDefinition，一般可以使用 DefaultListableBeanFactory 的 registerBeanDefinition() 方法进行注册，注册的时候通常可以借助 GenericBeanDefinition 或 BeanDefinitionBuilder 来完成。
+手动注册 BeanDefinition，一般可以使用 DefaultListableBeanFactory 的 registerBeanDefinition() 方法进行注册，注册的时候通常可以借助 GenericBeanDefinition 或 BeanDefinitionBuilder 来完成。
 
 ### GenericBeanDefinition
 
@@ -615,7 +616,7 @@ public class BeanConfig15 implements BeanDefinitionRegistryPostProcessor {
 
 除了上面的方式可以注册 Spring Bean，还有其他方式吗？
 
-在前面的文章中，我们分析过 Spring Boot 应用在启动的时候，会将含有 @Component 注解的全部类注册到 Spring IoC 容器中。而 Spring 框架的特性是，只要某个注解 `注解B` 引入了另一个注解 `注解A`，那么某个类在使用了 `注解B` 的时候其实也引入了 `注解A`，因此，只要一个类使用了 `一切引入了 @Component 的注解`，它就会被注册到 Spring IoC 容器中。
+在前面的文章中，我们分析过 Spring Boot 应用在启动的时候，会将含有 @Component 注解的全部类注册到 Spring IoC 容器中。而 Spring 框架的特性是，只要某个注解 `注解B` 引入了另一个注解 `注解A`，那么某个类在使用了这个注解 `注解B` 的时候其实也引入了另一个注解 `注解A`，因此，只要一个类使用了 `一切引入了 @Component 的注解`，它就会被注册到 Spring IoC 容器中。
 
 而这些注解就包括了：@ControllerAdvice、@RestControllerAdvice、@JsonComponent 等。
 
