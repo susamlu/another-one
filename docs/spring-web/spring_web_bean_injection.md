@@ -2,15 +2,21 @@
 
 [TOC]
 
-上一篇文章，我们聊了与 Bean 的声明相关的内容，本文，我们重点聊聊与 Bean 注入相关的内容。
+上一篇文章，我们聊了与 Bean 的声明相关的内容，本文，我们重点聊聊与 Bean 的注入相关的内容。
 
-## 注入方式
+## Bean 的注入方式
 
-Bean 注入的方式，主要包含三种，即：构造函数注入、setter 注入和属性注入。
+Bean 的注入方式，主要包含三种，即：构造函数注入、setter 注入和变量注入。
 
 ### 构造函数注入
 
-构造函数注入，示例代码如下。对于下面的代码，应用启动后，myBean 属性会被顺利注入：
+构造函数注入，即通过构造函数定义需要注入的 Bean，通过这种方式进行注入，@Autowired 注解不是必须的。下面是一个示例代码，对于下面的代码，应用启动后，myBean 变量会被顺利注入：
+
+```java
+@Component
+public class MyBean {
+}
+```
 
 ```java
 @Component
@@ -27,7 +33,7 @@ public class InjectionComponent {
 
 ### setter 注入
 
-setter 注入的示例代码如下（必须给 setter 方法添加 @Autowired 注解）：
+setter 注入，即通过 setter 方法定义需要注入的 Bean，setter 注入的示例代码如下，通过这种方式进行注入，@Autowired 注解是必须的：
 
 ```java
 @Component
@@ -43,9 +49,9 @@ public class InjectionComponent2 {
 }
 ```
 
-### 属性注入
+### 变量注入
 
-属性注入的示例代码如下：
+变量注入，即通过变量定义需要注入的 Bean，变量注入的示例代码如下，通过这种方式进行注入，@Autowired 注解也是必须的：
 
 ```java
 @Component
@@ -57,7 +63,7 @@ public class InjectionComponent3 {
 }
 ```
 
-## 声明注解
+## Bean 注入的声明注解
 
 ### @Autowired
 
@@ -147,7 +153,7 @@ public class InjectionComponent6 {
 
 ##### 作用在字段上
 
-示例见前文的 `属性注入`。
+示例见前文的 `变量注入`。
 
 #### Collection 和 Map 的注入
 
@@ -361,12 +367,12 @@ public class InjectionComponent12 {
 
 ### @Resource
 
-@Resource 也是用来声明 Bean 注入的注解。
+@Resource 也是用来声明 Bean 的注入的注解。
 
 - 对于 @Resource，默认情况下，优先使用名字查找待注入的 Bean；如果找不到，则使用类型查找待注入的 Bean。
-- @Resource 可以注释在方法和字段上。
-- 注释在方法上时，Bean 类型为方法参数的类型，Bean 名字优先使用方法的名字（如果是 setter 方法，会去掉 “set”，并将首字母小写），如果通过方法名字找不到 Bean，则再使用参数的名字。
-- 注释在字段上时，Bean 类型为字段类型，Bean 名字为字段名字。
+- @Resource 可以标注在方法和字段上。
+- 标注在方法上时，Bean 类型为方法参数的类型，Bean 名字优先使用方法的名字（如果是 setter 方法，会去掉 “set”，并将首字母小写），如果通过方法名字找不到 Bean，则再使用参数的名字。
+- 标注在字段上时，Bean 类型为字段类型，Bean 名字为字段名字。
 
 代码示例如下：
 
@@ -416,6 +422,8 @@ public class InjectionComponent13 {
 }
 ```
 
+上面的代码中，变量 resourceBean1 的类型为 ResourceBean，名字为 resourceBean1，@Resource 注解将根据变量的名字找到对应的 Bean 进行注入。方法 setResourceBean2 待注入的 Bean 的类型为 ResourceBean，名字为 resourceBean2（setResourceBean2 去掉 “set”，并将首字母小写），@Resource 注解将根据这个名字找到对应的 Bean 进行注入。
+
 @Resource 有一个 name 属性，可以直接指定 Bean 的名字：
 
 ```java
@@ -435,6 +443,8 @@ public class InjectionComponent14 {
 }
 ```
 
+上面的代码中，变量 myBean1 和 方法 setMyBean2 都通过 @Resource 的 name 属性指定了待注入 Bean 的名字，@Resource 将根据该名字找到对应的 Bean 进行注入。
+
 另外，@Resource 也可以配合 @Primary 或 @Qualifier 一起使用。
 
 ### @Inject
@@ -449,7 +459,7 @@ public class InjectionComponent14 {
 </dependency>
 ```
 
-@Inject 可以注释在构造函数、方法和字段上，@Inject 可以通过类型注入：
+@Inject 可以标注在构造函数、方法和字段上，@Inject 可以通过类型注入：
 
 ```java
 @Component
@@ -474,6 +484,8 @@ public class InjectionComponent15 {
 
 }
 ```
+
+上面的代码中，变量 myBean1、方法 setMyBean() 和 构造函数 InjectionComponent15()，均通过类型来进行 Bean 的注入。
 
 @Inject 也可以通过名字注入：
 
@@ -500,6 +512,8 @@ public class InjectionComponent16 {
 
 }
 ```
+
+上面的代码中，变量 resourceBean1、方法 setResourceBean() 和 构造函数 InjectionComponent16()，均通过名字来进行 Bean 的注入。
 
 同样地，@Inject 也可以配合 @Primary 或 @Qualifier 一起使用。
 
