@@ -375,7 +375,7 @@ public class InjectionComponent12 {
 }
 ```
 
-上面的代码中，方法 qualifierTestBean3() 上标注有 @Qualifier 注解，InjectionComponent12 的 myBean 变量上也标注有 @Qualifier InjectionComponent12 的 myBean 变量注入时，选择的 Bean 将是通过 qualifierTestBean3() 方法创建的 Bean。
+上面的代码中，方法 qualifierTestBean3() 上标注有 @Qualifier 注解，InjectionComponent12 的 myBean 变量上也标注有 @Qualifier，因此，InjectionComponent12 的 myBean 变量注入时，选择的 Bean 将是通过 qualifierTestBean3() 方法创建的 Bean。
 
 ### @Resource
 
