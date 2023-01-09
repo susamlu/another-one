@@ -151,6 +151,20 @@ public class InjectionComponent6 {
 }
 ```
 
+如果是在测试代码中，被 @Autowired 标注的参数却是可以成功注入的。如下面的测试代码，myBean 是可以被注入的：
+
+```java
+@SpringBootTest
+public class InjectionTest {
+
+    @Test
+    public void test(@Autowired MyBean myBean) {
+        assert myBean != null;
+    }
+
+}
+```
+
 ##### 作用在字段上
 
 示例见前文的 `变量注入`。
