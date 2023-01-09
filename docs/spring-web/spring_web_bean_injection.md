@@ -197,6 +197,8 @@ public class InjectionComponent7 {
 }
 ```
 
+上面的代码中，OrderBean 的 order 为 1，OrderBean2 的 order 为 2，因此，它们的实例被注入到 orderBeans 时，OrderBean 的实例将排在 OrderBean2 的实例前面。
+
 也可以通过 @Order 实现排序：
 
 ```java
@@ -244,6 +246,8 @@ public class InjectionComponent8 {
 }
 ```
 
+上面的代码中，实例 orderBean3 和 orderBean4 被注入到 orderBeans 时，orderBean3 将排在 orderBean4 前面。（orderBean3() 方法创建的实例为 orderBean3，orderBean4() 方法创建的实例为 orderBean4。）
+
 ##### Map 的注入
 
 下面的代码中，全部 BaseOrderBean 的实例都会注入到 orderBeanMap 中，Bean 的名字将作为 Map 的键，Bean 的实例将作为 Map 的值。
@@ -257,6 +261,8 @@ public class InjectionComponent9 {
 
 }
 ```
+
+即结合前面的代码，orderBeanMap 中会存在两个实例，一个是 OrderBean 的实例 orderBean，一个是 OrderBean2 的实例 orderBean2。
 
 #### @Primary
 
@@ -302,6 +308,8 @@ public class InjectionComponent10 {
 }
 ```
 
+上面的代码中，方法 primaryTestBean1() 上标注有 @Primary 注解，因此，InjectionComponent10 的 myBean 变量注入时，选择的 Bean 将是通过 primaryTestBean1() 方法创建的 Bean。
+
 #### @Qualifier
 
 一个类型有多个 Bean 的时候，也可以通过 @Qualifier 进行标注，以让变量注入的时候根据 Bean 的名字找到 Bean。
@@ -334,6 +342,8 @@ public class InjectionComponent11 {
 }
 ```
 
+上面的代码中，@Qualifier 的 value 值指定为 qualifierTestBean1，因此，InjectionComponent11 的 myBean 变量注入时，选择的 Bean 将是 qualifierTestBean1。
+
 @Qualifier 还有另一个用法，就是在声明 Bean 和注入 Bean 的地方都使用该注解进行标注，那么注入的时候就会自动定位到对应的 Bean。
 
 ```java
@@ -365,9 +375,11 @@ public class InjectionComponent12 {
 }
 ```
 
+上面的代码中，方法 qualifierTestBean3() 上标注有 @Qualifier 注解，InjectionComponent12 的 myBean 变量上也标注有 @Qualifier InjectionComponent12 的 myBean 变量注入时，选择的 Bean 将是通过 qualifierTestBean3() 方法创建的 Bean。
+
 ### @Resource
 
-@Resource 也是用来声明 Bean 的注入的注解。
+@Resource 也是用来声明 Bean 注入的注解。
 
 - 对于 @Resource，默认情况下，优先使用名字查找待注入的 Bean；如果找不到，则使用类型查找待注入的 Bean。
 - @Resource 可以标注在方法和字段上。
@@ -422,7 +434,7 @@ public class InjectionComponent13 {
 }
 ```
 
-上面的代码中，变量 resourceBean1 的类型为 ResourceBean，名字为 resourceBean1，@Resource 注解将根据变量的名字找到对应的 Bean 进行注入。方法 setResourceBean2 待注入的 Bean 的类型为 ResourceBean，名字为 resourceBean2（setResourceBean2 去掉 “set”，并将首字母小写），@Resource 注解将根据这个名字找到对应的 Bean 进行注入。
+上面的代码中，变量 resourceBean1 的类型为 ResourceBean，名字为 resourceBean1，@Resource 注解将根据变量的名字找到对应的 Bean 进行注入。方法 setResourceBean2() 待注入的 Bean 的类型为 ResourceBean，名字为 resourceBean2（setResourceBean2 去掉 “set”，并将首字母小写），@Resource 注解将根据这个名字找到对应的 Bean 进行注入。
 
 @Resource 有一个 name 属性，可以直接指定 Bean 的名字：
 
@@ -443,7 +455,7 @@ public class InjectionComponent14 {
 }
 ```
 
-上面的代码中，变量 myBean1 和 方法 setMyBean2 都通过 @Resource 的 name 属性指定了待注入 Bean 的名字，@Resource 将根据该名字找到对应的 Bean 进行注入。
+上面的代码中，变量 myBean1 和 方法 setMyBean2() 都通过 @Resource 的 name 属性指定了待注入 Bean 的名字，@Resource 将根据该名字找到对应的 Bean 进行注入。
 
 另外，@Resource 也可以配合 @Primary 或 @Qualifier 一起使用。
 
@@ -459,7 +471,7 @@ public class InjectionComponent14 {
 </dependency>
 ```
 
-@Inject 可以标注在构造函数、方法和字段上，@Inject 可以通过类型注入：
+@Inject 可以标注在构造函数、方法和字段上。@Inject 可以通过类型进行注入：
 
 ```java
 @Component
@@ -487,7 +499,7 @@ public class InjectionComponent15 {
 
 上面的代码中，变量 myBean1、方法 setMyBean() 和 构造函数 InjectionComponent15()，均通过类型来进行 Bean 的注入。
 
-@Inject 也可以通过名字注入：
+@Inject 也可以通过名字进行注入：
 
 ```java
 @Component
