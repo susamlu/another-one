@@ -31,6 +31,8 @@ public class InjectionComponent {
 }
 ```
 
+> @Autowired 注解通常用在 Spring 应用的 Bean 注入的声明中，下文我们会详细讲解。
+
 ### setter 注入
 
 setter 注入，即通过 setter 方法定义需要注入的 Bean，setter 注入的示例代码如下，通过这种方式进行注入，@Autowired 注解是必须的：
@@ -276,7 +278,7 @@ public class InjectionComponent9 {
 }
 ```
 
-即结合前面的代码，orderBeanMap 中会存在两个实例，一个是 OrderBean 的实例 orderBean，一个是 OrderBean2 的实例 orderBean2。
+结合前面的代码，orderBeanMap 中会存在两个实例，一个是 OrderBean 的实例 orderBean，一个是 OrderBean2 的实例 orderBean2。
 
 #### @Primary
 
@@ -395,9 +397,9 @@ public class InjectionComponent12 {
 
 @Resource 也是用来声明 Bean 注入的注解。
 
-- 对于 @Resource，默认情况下，优先使用名字查找待注入的 Bean；如果找不到，则使用类型查找待注入的 Bean。
+- 对于 @Resource，默认情况下，优先使用名字查找待注入的 Bean（当然，根据名字查找的 Bean，类型也是要匹配上的）；如果找不到，则使用类型查找待注入的 Bean。
 - @Resource 可以标注在方法和字段上。
-- 标注在方法上时，Bean 类型为方法参数的类型，Bean 名字优先使用方法的名字（如果是 setter 方法，会去掉 “set”，并将首字母小写），如果通过方法名字找不到 Bean，则再使用参数的名字。
+- 标注在方法上时，Bean 类型为方法参数的类型，Bean 名字优先使用方法的名字（如果是 setter 方法，会去掉 “set”，并将首字母小写），如果通过方法名字找不到 Bean，则再使用参数的名字。（@Resource 标注的方法只能存在一个参数。）
 - 标注在字段上时，Bean 类型为字段类型，Bean 名字为字段名字。
 
 代码示例如下：
