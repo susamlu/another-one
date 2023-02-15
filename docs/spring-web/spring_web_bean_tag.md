@@ -8,7 +8,7 @@
 
 @Scope 用于指定 Bean 的作用域。
 
-比如，我们可以使用 ConfigurableBeanFactory.SCOPE_SINGLETON，标注 Bean 的作用域为 Singleton，即该 Bean 是单例的：
+比如，通过 @Scope 可以标注 Bean 的作用域为 singleton（这也是 Spring Bean 的默认作用域），如下面代码得到的 Bean 就是单例的：
 
 ```java
 @Configuration
@@ -23,7 +23,7 @@ public class BeanConfig {
 }
 ```
 
-也可以通过 ConfigurableBeanFactory.SCOPE_PROTOTYPE，标注 Bean 的作用域为 Prototype，即该 Bean 是多例的（每次访问都会获取一个新的对象）：
+也可以通过 @Scope 标注 Bean 的作用域为 prototype，下面代码得到的 Bean 是多例的（每次访问都会获取一个新的对象）：
 
 ```java
 @Configuration
@@ -43,32 +43,34 @@ public class BeanConfig {
 public class GetBeanTest {
 
     @Autowired
-    private BeanConfig beanConfig;
+    private ScopeBeanConfig scopeBeanConfig;
 
     @EventListener
     private void getBeans(ApplicationReadyEvent event) {
-        MyBean singletonBean1 = beanConfig.singletonBean();
-        MyBean singletonBean2 = beanConfig.singletonBean();
-        MyBean prototypeBean1 = beanConfig.prototypeBean();
-        MyBean prototypeBean2 = beanConfig.prototypeBean();
-        System.out.println("singletonBean1 equals singletonBean2: " + singletonBean1.equals(singletonBean2));
-        System.out.println("prototypeBean1 equals prototypeBean2: " + prototypeBean1.equals(prototypeBean2));
+        MyBean singletonBean1 = scopeBeanConfig.singletonBean();
+        MyBean singletonBean2 = scopeBeanConfig.singletonBean();
+        MyBean prototypeBean1 = scopeBeanConfig.prototypeBean();
+        MyBean prototypeBean2 = scopeBeanConfig.prototypeBean();
+        System.out.println("singletonBean1 与 singletonBean2 是同一个对象: "
+                + ((singletonBean1.equals(singletonBean2) ? "是" : "不是")));
+        System.out.println("prototypeBean1 与 prototypeBean2 是同一个对象: "
+                + (prototypeBean1.equals(prototypeBean2) ? "是" : "不是"));
     }
 
 }
 ```
 
-上面代码的输出结果为：
+上面代码演示了多次请求获取同一个 Bean 时，得到的对象是否是同一个，它的输出结果为：
 
 ```html
-singletonBean1 equals singletonBean2: true
-prototypeBean1 equals prototypeBean2: false
+singletonBean1 与 singletonBean2 是同一个对象: 是
+prototypeBean1 与 prototypeBean2 是同一个对象: 不是
 ```
 
-@Scope 除了能定义这两种作用域，对于 Web 应用，还能定义以下三种作用域：Request、Session、Application，表示对象的生命周期是在请求、会话，还是在应用内。下面是具体的代码例子：
+@Scope 除了能定义这两种作用域，对于 Web 应用，还能定义以下三种作用域：Request、Session、Application，表示对象的生命周期是在请求内、会话内，还是在应用内。下面是具体的代码例子：
 
 ```java
-public class BeanConfig {
+public class ScopeBeanConfig {
 
     @Bean
     @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
