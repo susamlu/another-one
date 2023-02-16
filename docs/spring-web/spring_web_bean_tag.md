@@ -93,9 +93,76 @@ public class ScopeBeanConfig {
 }
 ```
 
-需要注意的是，这三种作用域的 Bean，定义时 proxyMode 是必须要指定的，否则应用启动时将抛出异常。
+需要注意的是，这三种作用域的 Bean，定义时 proxyMode 是必须要指定的，否则应用启动时将抛出异常。另外，上面几个作用域的标注，也可以用下面几个注解替代：
+
+```java
+public class ScopeBeanConfig {
+
+    @Bean
+    @RequestScope
+    public MyBean requestBean2() {
+        return new MyBean();
+    }
+
+    @Bean
+    @SessionScope
+    public MyBean sessionBean2() {
+        return new MyBean();
+    }
+
+    @Bean
+    @ApplicationScope
+    public MyBean applicationBean2() {
+        return new MyBean();
+    }
+
+}
+```
 
 ## @Lazy
+
+@Lazy 用于指定 Bean 的延迟加载，即用 @Lazy 标注过的 Bean 不会在应用启动的时候就初始化，会延迟到需要用到的时候才初始化。示例代码如下：
+
+```java
+public class MyLazyBean {
+
+    public MyLazyBean() {
+        System.out.println("init MyLazyBean");
+    }
+
+}
+```
+
+```java
+@Configuration
+public class LazyBeanConfig {
+
+    @Bean
+    @Lazy
+    public MyLazyBean lazyBean() {
+        return new MyLazyBean();
+    }
+
+}
+```
+
+需要注意的是，如果代码的某处注入了该 Bean，那么只要注入该 Bean 的类在应用启动时被初始化了，该 Bean 也会在此时被初始化（自动注入时会创建该 Bean），如：
+
+```java
+@Autowired
+private MyLazyBean myLazyBean;
+```
+
+如果要保证该 Bean 确实可以延迟加载，可以使用下面的方法获取：
+
+```java
+@Autowired
+private ApplicationContext applicationContext;
+
+...
+
+applicationContext.getBean(MyLazyBean.class);
+```
 
 ## @DependsOn
 
