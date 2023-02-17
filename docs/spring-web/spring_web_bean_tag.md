@@ -182,7 +182,7 @@ myDependsOnBeanA 依赖于 myDependsOnBeanB，因此它会在 myDependsOnBeanB �
 
 ## @Primary
 
-@Primary 用于指定依赖注入的首选 Bean，即指定有多个类型相同的 Bean 时，优先注入的是哪个。关于 @Primary 在上一篇文章中已经介绍，本文不再赘述。
+@Primary 用于指定依赖注入的首选 Bean，即指定有多个类型相同的 Bean 时，优先注入的是哪个。关于 @Primary 的用法，在上一篇文章中已经介绍，本文不再赘述。
 
 ## 总结
 
