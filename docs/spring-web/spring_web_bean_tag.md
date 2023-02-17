@@ -51,10 +51,8 @@ public class GetBeanTest {
         MyBean singletonBean2 = scopeBeanConfig.singletonBean();
         MyBean prototypeBean1 = scopeBeanConfig.prototypeBean();
         MyBean prototypeBean2 = scopeBeanConfig.prototypeBean();
-        System.out.println("singletonBean1 与 singletonBean2 是同一个对象: "
-                + ((singletonBean1.equals(singletonBean2) ? "是" : "不是")));
-        System.out.println("prototypeBean1 与 prototypeBean2 是同一个对象: "
-                + (prototypeBean1.equals(prototypeBean2) ? "是" : "不是"));
+        System.out.println("singletonBean1 与 singletonBean2 是同一个对象: " + ((singletonBean1.equals(singletonBean2) ? "是" : "不是")));
+        System.out.println("prototypeBean1 与 prototypeBean2 是同一个对象: " + (prototypeBean1.equals(prototypeBean2) ? "是" : "不是"));
     }
 
 }
@@ -67,7 +65,7 @@ singletonBean1 与 singletonBean2 是同一个对象: 是
 prototypeBean1 与 prototypeBean2 是同一个对象: 不是
 ```
 
-@Scope 除了能定义这两种作用域，对于 Web 应用，还能定义以下三种作用域：Request、Session、Application，表示对象的生命周期是在请求内、会话内，还是在应用内。下面是具体的代码例子：
+@Scope 除了能定义这两种作用域，对于 Web 应用，还能定义以下三种作用域：request、session、application，表示对象的生命周期是在请求内、会话内，还是在应用内。下面是具体的代码例子：
 
 ```java
 public class ScopeBeanConfig {
@@ -124,6 +122,8 @@ public class ScopeBeanConfig {
 @Lazy 用于指定 Bean 的延迟加载，即用 @Lazy 标注过的 Bean 不会在应用启动的时候就初始化，会延迟到需要用到的时候才初始化。示例代码如下：
 
 ```java
+@Component
+@Lazy
 public class MyLazyBean {
 
     public MyLazyBean() {
@@ -133,20 +133,7 @@ public class MyLazyBean {
 }
 ```
 
-```java
-@Configuration
-public class LazyBeanConfig {
-
-    @Bean
-    @Lazy
-    public MyLazyBean lazyBean() {
-        return new MyLazyBean();
-    }
-
-}
-```
-
-需要注意的是，如果代码的某处注入了该 Bean，那么只要注入该 Bean 的类在应用启动时被初始化了，该 Bean 也会在此时被初始化（自动注入时会创建该 Bean），如：
+需要注意的是，如果代码的某处注入了该 Bean，那么只要注入该 Bean 的类在应用启动时被初始化了，该 Bean 也会在此时被初始化（自动注入时会创建该 Bean 的对象），如：
 
 ```java
 @Autowired
@@ -166,7 +153,40 @@ applicationContext.getBean(MyLazyBean.class);
 
 ## @DependsOn
 
+@DependsOn 用来指定 Bean 之间的依赖关系，如下面的例子：
+
+```java
+@Component
+@DependsOn({"myDependsOnBeanB"})
+public class MyDependsOnBeanA {
+
+    public MyDependsOnBeanA() {
+        System.out.println("init MyDependsOnBeanA");
+    }
+
+}
+```
+
+```java
+@Component
+public class MyDependsOnBeanB {
+
+    public MyDependsOnBeanB() {
+        System.out.println("init MyDependsOnBeanB");
+    }
+
+}
+```
+
+myDependsOnBeanA 依赖于 myDependsOnBeanB，因此它会在 myDependsOnBeanB 加载完成之后才被加载。
+
 ## @Primary
+
+@Primary 用于指定依赖注入的首选 Bean，即指定有多个类型相同的 Bean 时，优先注入的是哪个。关于 @Primary 在上一篇文章中已经介绍，本文不再赘述。
+
+## 总结
+
+本文主要讲解了 Spring Bean 的几个附加注解的使用方法，它们都是我们平时开发中比较常用的几个注解，希望这些知识对读者会有所帮助。
 
 [返回首页](https://susamlu.github.io/paitse)
 [获取源码](https://github.com/susamlu/spring-web)
