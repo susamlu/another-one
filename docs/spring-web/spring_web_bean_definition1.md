@@ -143,3 +143,27 @@ public interface AttributeAccessor {
 ```
 
 AttributeAccessor 主要提供了访问和修改对像属性的方法。BeanMetadataElement 的源码如下：
+
+```java
+public interface BeanMetadataElement {
+
+	@Nullable
+	default Object getSource() {
+		return null;
+	}
+
+}
+```
+
+BeanMetadataElement 只提供了一个方法，它是用来获取 Bean 元数据的配置源的。了解完这两个接口，我们再看回到 BeanDefinition 的源码，其中包含了几个静态变量：
+
+```java
+	String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
+	String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+
+	int ROLE_APPLICATION = 0;
+	int ROLE_SUPPORT = 1;
+	int ROLE_INFRASTRUCTURE = 2;
+```
+
+SCOPE_SINGLETON、SCOPE_PROTOTYPE 用于表示对象是单例还是多例的，ROLE_ 开头的几个常量跟 ComponentDefinition 有关，具体的作用在此不做分析，有兴趣的读者可以自行研究。
