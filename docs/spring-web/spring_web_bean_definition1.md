@@ -142,7 +142,9 @@ public interface AttributeAccessor {
 }
 ```
 
-AttributeAccessor 主要提供了访问和修改对像属性的方法。
+AttributeAccessor 主要提供了访问和修改属性的方法。
+
+> 需要注意的是，这里的属性是额外加给 BeanDefinition 的属性，而不是它所代表的对象本身的属性。
 
 BeanMetadataElement 的源码如下：
 
@@ -157,7 +159,7 @@ public interface BeanMetadataElement {
 }
 ```
 
-BeanMetadataElement 只提供了一个方法，它是用来获取 Bean 元数据的配置源的。
+BeanMetadataElement 只提供了一个方法，它是用来获取 Bean 元数据的配置源的（一般指向 Bean 对象的 class 文件的磁盘目录）。
 
 了解完这两个接口，我们再看回到 BeanDefinition 的源码，其中包含了几个静态变量：
 
@@ -172,7 +174,7 @@ BeanMetadataElement 只提供了一个方法，它是用来获取 Bean 元数据
 
 SCOPE_SINGLETON、SCOPE_PROTOTYPE 用于表示对象是单例还是多例的，ROLE_ 开头的几个常量跟 ComponentDefinition 有关，具体的作用在此不做分析，有兴趣的读者可以自行研究。
 
-接下来，我们可以看到下面的方法，这些方法跟我们如何定义这个 BeanDefinition 有关，比如我们前面讲到的用来定义 Bean 特性的一些内容：@Scope、@Lazy、@DependsOn、@Primary、initMethod、destroyMethod、是否是候选类等，在这里都可以看到。
+接下来，我们可以看到下面的方法，这些方法跟我们如何定义这个 BeanDefinition 有关，比如我们前面讲到的用来定义 Bean 特性的一些内容，如：@Scope、@Lazy、@DependsOn、@Primary、initMethod、destroyMethod、是否是候选类等，在这里都可以看到。
 
 ```java
     void setScope(@Nullable String scope);
@@ -212,7 +214,7 @@ SCOPE_SINGLETON、SCOPE_PROTOTYPE 用于表示对象是单例还是多例的，R
     boolean isPrototype();
 ```
 
-再接着，我们看到下面的方法，基本是一些辅助性方法和对 Bean 对象本身的元数据进行操作的方法（如：对类名、构造函数参数值、属性值等进行管理的方法）。
+再接着，我们看到下面的方法，基本上是一些辅助性方法和对 Bean 对象本身的基本内容进行操作的方法（如：对类名、构造函数参数值、属性值等进行管理的方法）。
 
 ```java
     void setParentName(@Nullable String parentName);
