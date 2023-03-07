@@ -11,99 +11,99 @@
 ```java
 public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 
-	String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
-	String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+    String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
+    String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
-	int ROLE_APPLICATION = 0;
-	int ROLE_SUPPORT = 1;
-	int ROLE_INFRASTRUCTURE = 2;
+    int ROLE_APPLICATION = 0;
+    int ROLE_SUPPORT = 1;
+    int ROLE_INFRASTRUCTURE = 2;
 
-	void setParentName(@Nullable String parentName);
+    void setParentName(@Nullable String parentName);
 
-	@Nullable
-	String getParentName();
+    @Nullable
+    String getParentName();
 
-	void setBeanClassName(@Nullable String beanClassName);
+    void setBeanClassName(@Nullable String beanClassName);
 
-	@Nullable
-	String getBeanClassName();
+    @Nullable
+    String getBeanClassName();
 
-	void setScope(@Nullable String scope);
+    void setScope(@Nullable String scope);
 
-	@Nullable
-	String getScope();
+    @Nullable
+    String getScope();
 
-	void setLazyInit(boolean lazyInit);
+    void setLazyInit(boolean lazyInit);
 
-	boolean isLazyInit();
+    boolean isLazyInit();
 
-	void setDependsOn(@Nullable String... dependsOn);
+    void setDependsOn(@Nullable String... dependsOn);
 
-	@Nullable
-	String[] getDependsOn();
+    @Nullable
+    String[] getDependsOn();
 
-	void setAutowireCandidate(boolean autowireCandidate);
+    void setAutowireCandidate(boolean autowireCandidate);
 
-	boolean isAutowireCandidate();
+    boolean isAutowireCandidate();
 
-	void setPrimary(boolean primary);
+    void setPrimary(boolean primary);
 
-	boolean isPrimary();
+    boolean isPrimary();
 
-	void setFactoryBeanName(@Nullable String factoryBeanName);
+    void setFactoryBeanName(@Nullable String factoryBeanName);
 
-	@Nullable
-	String getFactoryBeanName();
+    @Nullable
+    String getFactoryBeanName();
 
-	void setFactoryMethodName(@Nullable String factoryMethodName);
+    void setFactoryMethodName(@Nullable String factoryMethodName);
 
-	@Nullable
-	String getFactoryMethodName();
+    @Nullable
+    String getFactoryMethodName();
 
-	ConstructorArgumentValues getConstructorArgumentValues();
+    ConstructorArgumentValues getConstructorArgumentValues();
 
-	default boolean hasConstructorArgumentValues() {
-		return !getConstructorArgumentValues().isEmpty();
-	}
+    default boolean hasConstructorArgumentValues() {
+        return !getConstructorArgumentValues().isEmpty();
+    }
 
-	MutablePropertyValues getPropertyValues();
+    MutablePropertyValues getPropertyValues();
 
-	default boolean hasPropertyValues() {
-		return !getPropertyValues().isEmpty();
-	}
+    default boolean hasPropertyValues() {
+        return !getPropertyValues().isEmpty();
+    }
 
-	void setInitMethodName(@Nullable String initMethodName);
+    void setInitMethodName(@Nullable String initMethodName);
 
-	@Nullable
-	String getInitMethodName();
+    @Nullable
+    String getInitMethodName();
 
-	void setDestroyMethodName(@Nullable String destroyMethodName);
+    void setDestroyMethodName(@Nullable String destroyMethodName);
 
-	@Nullable
-	String getDestroyMethodName();
+    @Nullable
+    String getDestroyMethodName();
 
-	void setRole(int role);
+    void setRole(int role);
 
-	int getRole();
+    int getRole();
 
-	void setDescription(@Nullable String description);
+    void setDescription(@Nullable String description);
 
-	@Nullable
-	String getDescription();
+    @Nullable
+    String getDescription();
 
-	ResolvableType getResolvableType();
+    ResolvableType getResolvableType();
 
-	boolean isSingleton();
+    boolean isSingleton();
 
-	boolean isPrototype();
+    boolean isPrototype();
 
-	boolean isAbstract();
+    boolean isAbstract();
 
-	@Nullable
-	String getResourceDescription();
+    @Nullable
+    String getResourceDescription();
 
-	@Nullable
-	BeanDefinition getOriginatingBeanDefinition();
+    @Nullable
+    BeanDefinition getOriginatingBeanDefinition();
 
 }
 ```
@@ -113,31 +113,31 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 ```java
 public interface AttributeAccessor {
 
-	void setAttribute(String name, @Nullable Object value);
+    void setAttribute(String name, @Nullable Object value);
 
-	@Nullable
-	Object getAttribute(String name);
+    @Nullable
+    Object getAttribute(String name);
 
-	@SuppressWarnings("unchecked")
-	default <T> T computeAttribute(String name, Function<String, T> computeFunction) {
-		Assert.notNull(name, "Name must not be null");
-		Assert.notNull(computeFunction, "Compute function must not be null");
-		Object value = getAttribute(name);
-		if (value == null) {
-			value = computeFunction.apply(name);
-			Assert.state(value != null,
-					() -> String.format("Compute function must not return null for attribute named '%s'", name));
-			setAttribute(name, value);
-		}
-		return (T) value;
-	}
+    @SuppressWarnings("unchecked")
+    default <T> T computeAttribute(String name, Function<String, T> computeFunction) {
+        Assert.notNull(name, "Name must not be null");
+        Assert.notNull(computeFunction, "Compute function must not be null");
+        Object value = getAttribute(name);
+        if (value == null) {
+            value = computeFunction.apply(name);
+            Assert.state(value != null,
+                    () -> String.format("Compute function must not return null for attribute named '%s'", name));
+            setAttribute(name, value);
+        }
+        return (T) value;
+    }
 
-	@Nullable
-	Object removeAttribute(String name);
+    @Nullable
+    Object removeAttribute(String name);
 
-	boolean hasAttribute(String name);
+    boolean hasAttribute(String name);
 
-	String[] attributeNames();
+    String[] attributeNames();
 
 }
 ```
@@ -149,10 +149,10 @@ BeanMetadataElement 的源码如下：
 ```java
 public interface BeanMetadataElement {
 
-	@Nullable
-	default Object getSource() {
-		return null;
-	}
+    @Nullable
+    default Object getSource() {
+        return null;
+    }
 
 }
 ```
@@ -162,12 +162,12 @@ BeanMetadataElement 只提供了一个方法，它是用来获取 Bean 元数据
 了解完这两个接口，我们再看回到 BeanDefinition 的源码，其中包含了几个静态变量：
 
 ```java
-	String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
-	String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+    String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
+    String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
-	int ROLE_APPLICATION = 0;
-	int ROLE_SUPPORT = 1;
-	int ROLE_INFRASTRUCTURE = 2;
+    int ROLE_APPLICATION = 0;
+    int ROLE_SUPPORT = 1;
+    int ROLE_INFRASTRUCTURE = 2;
 ```
 
 SCOPE_SINGLETON、SCOPE_PROTOTYPE 用于表示对象是单例还是多例的，ROLE_ 开头的几个常量跟 ComponentDefinition 有关，具体的作用在此不做分析，有兴趣的读者可以自行研究。
@@ -175,96 +175,96 @@ SCOPE_SINGLETON、SCOPE_PROTOTYPE 用于表示对象是单例还是多例的，R
 接下来，我们可以看到下面的方法，这些方法跟我们如何定义这个 BeanDefinition 有关，比如我们前面讲到的用来定义 Bean 特性的一些内容：@Scope、@Lazy、@DependsOn、@Primary、initMethod、destroyMethod、是否是候选类等，在这里都可以看到。
 
 ```java
-	void setScope(@Nullable String scope);
+    void setScope(@Nullable String scope);
 
-	@Nullable
-	String getScope();
+    @Nullable
+    String getScope();
 
-	void setLazyInit(boolean lazyInit);
+    void setLazyInit(boolean lazyInit);
 
-	boolean isLazyInit();
+    boolean isLazyInit();
 
-	void setDependsOn(@Nullable String... dependsOn);
+    void setDependsOn(@Nullable String... dependsOn);
 
-	@Nullable
-	String[] getDependsOn();
+    @Nullable
+    String[] getDependsOn();
 
-	void setAutowireCandidate(boolean autowireCandidate);
+    void setAutowireCandidate(boolean autowireCandidate);
 
-	boolean isAutowireCandidate();
+    boolean isAutowireCandidate();
 
-	void setPrimary(boolean primary);
+    void setPrimary(boolean primary);
 
-	boolean isPrimary();
+    boolean isPrimary();
 
-	void setInitMethodName(@Nullable String initMethodName);
+    void setInitMethodName(@Nullable String initMethodName);
 
-	@Nullable
-	String getInitMethodName();
+    @Nullable
+    String getInitMethodName();
 
-	void setDestroyMethodName(@Nullable String destroyMethodName);
+    void setDestroyMethodName(@Nullable String destroyMethodName);
 
-	@Nullable
-	String getDestroyMethodName();
+    @Nullable
+    String getDestroyMethodName();
 
-	boolean isSingleton();
+    boolean isSingleton();
 
-	boolean isPrototype();
+    boolean isPrototype();
 ```
 
 再接着，我们看到下面的方法，基本是一些辅助性方法和对 Bean 对象本身的元数据进行操作的方法（如：对类名、构造函数参数值、属性值等进行管理的方法）。
 
 ```java
-	void setParentName(@Nullable String parentName);
+    void setParentName(@Nullable String parentName);
 
-	@Nullable
-	String getParentName();
+    @Nullable
+    String getParentName();
 
-	void setBeanClassName(@Nullable String beanClassName);
+    void setBeanClassName(@Nullable String beanClassName);
 
-	@Nullable
-	String getBeanClassName();
+    @Nullable
+    String getBeanClassName();
 
-	void setFactoryBeanName(@Nullable String factoryBeanName);
+    void setFactoryBeanName(@Nullable String factoryBeanName);
 
-	@Nullable
-	String getFactoryBeanName();
+    @Nullable
+    String getFactoryBeanName();
 
-	void setFactoryMethodName(@Nullable String factoryMethodName);
+    void setFactoryMethodName(@Nullable String factoryMethodName);
 
-	@Nullable
-	String getFactoryMethodName();
+    @Nullable
+    String getFactoryMethodName();
 
-	ConstructorArgumentValues getConstructorArgumentValues();
+    ConstructorArgumentValues getConstructorArgumentValues();
 
-	default boolean hasConstructorArgumentValues() {
-		return !getConstructorArgumentValues().isEmpty();
-	}
+    default boolean hasConstructorArgumentValues() {
+        return !getConstructorArgumentValues().isEmpty();
+    }
 
-	MutablePropertyValues getPropertyValues();
+    MutablePropertyValues getPropertyValues();
 
-	default boolean hasPropertyValues() {
-		return !getPropertyValues().isEmpty();
-	}
+    default boolean hasPropertyValues() {
+        return !getPropertyValues().isEmpty();
+    }
 
-	void setDescription(@Nullable String description);
+    void setDescription(@Nullable String description);
 
-	@Nullable
-	String getDescription();
+    @Nullable
+    String getDescription();
 
-	void setRole(int role);
+    void setRole(int role);
 
-	int getRole();
+    int getRole();
 
-	ResolvableType getResolvableType();
+    ResolvableType getResolvableType();
 
-	boolean isAbstract();
+    boolean isAbstract();
 
-	@Nullable
-	String getResourceDescription();
+    @Nullable
+    String getResourceDescription();
 
-	@Nullable
-	BeanDefinition getOriginatingBeanDefinition();
+    @Nullable
+    BeanDefinition getOriginatingBeanDefinition();
 ```
 
 ## 总结
