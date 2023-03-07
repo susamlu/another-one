@@ -16,6 +16,10 @@
 
 [深入学习 Spring Web 开发 —— Bean 的附加注解](spring-web/spring_web_bean_tag.html)
 
+[深入学习 Spring Web 开发 —— BeanDefinition（上）](spring-web/spring_web_bean_definition1.html)
+
+[深入学习 Spring Web 开发 —— BeanDefinition（下）](spring-web/spring_web_bean_definition2.html)
+
 [深入学习 Spring Web 开发 —— Validation](spring-web/spring_web_validation.html)
 
 [深入学习 Spring Web 开发 —— HttpMessageConverter](spring-web/spring_web_http_message_converter.html)

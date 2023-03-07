@@ -142,7 +142,9 @@ public interface AttributeAccessor {
 }
 ```
 
-AttributeAccessor 主要提供了访问和修改对像属性的方法。BeanMetadataElement 的源码如下：
+AttributeAccessor 主要提供了访问和修改对像属性的方法。
+
+BeanMetadataElement 的源码如下：
 
 ```java
 public interface BeanMetadataElement {
@@ -155,7 +157,9 @@ public interface BeanMetadataElement {
 }
 ```
 
-BeanMetadataElement 只提供了一个方法，它是用来获取 Bean 元数据的配置源的。了解完这两个接口，我们再看回到 BeanDefinition 的源码，其中包含了几个静态变量：
+BeanMetadataElement 只提供了一个方法，它是用来获取 Bean 元数据的配置源的。
+
+了解完这两个接口，我们再看回到 BeanDefinition 的源码，其中包含了几个静态变量：
 
 ```java
 	String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
@@ -167,3 +171,102 @@ BeanMetadataElement 只提供了一个方法，它是用来获取 Bean 元数据
 ```
 
 SCOPE_SINGLETON、SCOPE_PROTOTYPE 用于表示对象是单例还是多例的，ROLE_ 开头的几个常量跟 ComponentDefinition 有关，具体的作用在此不做分析，有兴趣的读者可以自行研究。
+
+接下来，我们可以看到下面的方法，这些方法跟我们如何定义这个 BeanDefinition 有关，比如我们前面讲到的用来定义 Bean 特性的一些内容：@Scope、@Lazy、@DependsOn、@Primary、initMethod、destroyMethod、是否是候选类等，在这里都可以看到。
+
+```java
+	void setScope(@Nullable String scope);
+
+	@Nullable
+	String getScope();
+
+	void setLazyInit(boolean lazyInit);
+
+	boolean isLazyInit();
+
+	void setDependsOn(@Nullable String... dependsOn);
+
+	@Nullable
+	String[] getDependsOn();
+
+	void setAutowireCandidate(boolean autowireCandidate);
+
+	boolean isAutowireCandidate();
+
+	void setPrimary(boolean primary);
+
+	boolean isPrimary();
+
+	void setInitMethodName(@Nullable String initMethodName);
+
+	@Nullable
+	String getInitMethodName();
+
+	void setDestroyMethodName(@Nullable String destroyMethodName);
+
+	@Nullable
+	String getDestroyMethodName();
+
+	boolean isSingleton();
+
+	boolean isPrototype();
+```
+
+再接着，我们看到下面的方法，基本是一些辅助性方法和对 Bean 对象本身的元数据进行操作的方法（如：对类名、构造函数参数值、属性值等进行管理的方法）。
+
+```java
+	void setParentName(@Nullable String parentName);
+
+	@Nullable
+	String getParentName();
+
+	void setBeanClassName(@Nullable String beanClassName);
+
+	@Nullable
+	String getBeanClassName();
+
+	void setFactoryBeanName(@Nullable String factoryBeanName);
+
+	@Nullable
+	String getFactoryBeanName();
+
+	void setFactoryMethodName(@Nullable String factoryMethodName);
+
+	@Nullable
+	String getFactoryMethodName();
+
+	ConstructorArgumentValues getConstructorArgumentValues();
+
+	default boolean hasConstructorArgumentValues() {
+		return !getConstructorArgumentValues().isEmpty();
+	}
+
+	MutablePropertyValues getPropertyValues();
+
+	default boolean hasPropertyValues() {
+		return !getPropertyValues().isEmpty();
+	}
+
+	void setDescription(@Nullable String description);
+
+	@Nullable
+	String getDescription();
+
+	void setRole(int role);
+
+	int getRole();
+
+	ResolvableType getResolvableType();
+
+	boolean isAbstract();
+
+	@Nullable
+	String getResourceDescription();
+
+	@Nullable
+	BeanDefinition getOriginatingBeanDefinition();
+```
+
+## 总结
+
+本文，我们简单介绍了 BeanDefinition 的基本内容，下一篇文章，我们将探讨它是如何起作用的。
