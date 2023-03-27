@@ -27,10 +27,10 @@ npm i -g whistle && w2 start --init
 
 3. 存储 CA 证书：  
 <img src="./images/mac_whistle_iphone_https6.jpg" width="255px" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">  
-<img src="./images/mac_whistle_iphone_https7.jpg" width="255px" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
+<img src="./images/mac_whistle_iphone_https7.jpg" width="255px" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">  
+<img src="./images/mac_whistle_iphone_https8.jpg" width="255px" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 4. 找到并打开 CA 证书：  
-<img src="./images/mac_whistle_iphone_https8.jpg" width="255px" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">  
 <img src="./images/mac_whistle_iphone_https9.jpg" width="255px" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">  
 <img src="./images/mac_whistle_iphone_https10.jpg" width="255px" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">  
 <img src="./images/mac_whistle_iphone_https11.jpg" width="255px" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
@@ -47,7 +47,7 @@ npm i -g whistle && w2 start --init
 1. 设置代理（设置 -> 无线局域网 -> 点击具体的 WiFi）：  
 <img src="./images/mac_whistle_iphone_https15.jpeg" width="255px" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
-2. 在 PC 端配置要过滤的请求：  
+2. 在 PC 端配置需要过滤的请求：  
 <img src="./images/mac_whistle_iphone_https16.png" width="100%" style="border: solid 1px #dce6f0; border-radius: 0.3rem;">
 
 3. 在手机上访问应用，就可以抓到对应的包了：  
@@ -55,14 +55,14 @@ npm i -g whistle && w2 start --init
 
 ## 清理现场
 
-如果抓完包，需要关闭代理，则用以下命令关闭：
+如果抓完包，需要关闭代理，可以用以下命令关闭：
 
 ```shell
 w2 proxy off
 w2 stop
 ```
 
-需要重新启动，则敲一下命令：
+需要重新启动，则使用以下命令：
 
 ```shell
 w2 proxy on
