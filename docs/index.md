@@ -24,7 +24,7 @@
 
 [深入学习 Spring Web 开发 —— HttpMessageConverter](spring-web/spring_web_http_message_converter.html)
 
-## 网关相关
+## 网络相关
 
 [Mac + Whistle 抓取 IPhone HTTPS 包](network/mac_whistle_iphone_https.md)
 
