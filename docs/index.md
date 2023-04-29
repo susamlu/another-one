@@ -24,6 +24,10 @@
 
 [深入学习 Spring Web 开发 —— HttpMessageConverter](spring-web/spring_web_http_message_converter.html)
 
+## Dubbo
+
+[Dubbo 自定义 ReferenceAnnotationBeanPostProcessor，以支持灵活配置 group](dubbo/dubbo_custom_modify_group.html)
+
 ## 网络相关
 
 [Mac + Whistle 抓取 IPhone HTTPS 包](network/mac_whistle_iphone_https.md)
