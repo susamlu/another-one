@@ -101,7 +101,7 @@ public class ReferenceAnnotationBeanPostProcessor extends InstantiationAwareBean
 
 最终的实现如下：
 
-1. 复制 `ReferenceAnnotationBeanPostProcessor`：
+- 复制 `ReferenceAnnotationBeanPostProcessor`：
 
 > `ReferenceAnnotationBeanPostProcessor` 又引入了几个默认作用域的类，所以最终复制了以下几个类。
 
@@ -112,7 +112,7 @@ ReferenceAnnotationBeanPostProcessor.java
 ReferenceBeanBuilder.java
 ```
 
-2. 定义配置类：
+- 定义配置类：
 
 ```kotlin
 @Configuration
@@ -128,7 +128,7 @@ class CustomDubboProperties {
 }
 ```
 
-3. 自定义 `ReferenceAnnotationBeanPostProcessor`：
+- 自定义 `ReferenceAnnotationBeanPostProcessor`：
 
 ```kotlin
 @Component
@@ -200,7 +200,7 @@ class CustomReferenceAnnotationBeanPostProcessor : ReferenceAnnotationBeanPostPr
 }
 ```
 
-4. 使用自定义类替换 `ReferenceAnnotationBeanPostProcessor`：
+- 使用自定义类替换 `ReferenceAnnotationBeanPostProcessor`：
 
 ```kotlin
 @Component
